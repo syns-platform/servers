@@ -10,22 +10,36 @@ package main
 
 // @import
 import (
+	"Swyl/server/db"
 	"Swyl/server/utils"
-	"net/http"
+	"context"
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // @notice global variables
 var (
-	server *gin.Engine
+	server			*gin.Engine
+	ctx				context.Context
+	mongoClient		*mongo.Client
+	userCollection	*mongo.Collection
 )
 
 // @dev Runs before main()
 func init() {
 	// load env variables
 	if (os.Getenv("GIN_MODE") != "release") {utils.LoadEnvVars()}
+
+	// init context
+	ctx = context.TODO()
+
+	// init mongo client
+	mongoClient = db.EstablishMongoClient(ctx)
+
+	// get userCollection
+	userCollection = db.GetMongoCollection(mongoClient, "users")
 
 	// set up gin engine
 	server = gin.Default()
@@ -38,16 +52,6 @@ func init() {
 func main() {
 	// Catch all unallowed HTTP methods sent to the server
 	server.HandleMethodNotAllowed = true
-
-	// base path
-	basePath := server.Group("/v1/swyl")
-
-	// basic first GET request
-	basePath.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-		  "message": "pang",
-		})
-	})
 
 	// run server
 	if (os.Getenv("GIN_MODE") != "release") {
