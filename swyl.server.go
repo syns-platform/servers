@@ -48,7 +48,7 @@ func init() {
 	server.SetTrustedProxies([]string{os.Getenv("HOME_ROUTER")})
 }
 
-// @Root function
+// @dev Root function
 func main() {
 	// Catch all unallowed HTTP methods sent to the server
 	server.HandleMethodNotAllowed = true
