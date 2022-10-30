@@ -16,7 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// @notice Struct holds the root struct for other methods in dao-impl
+// @notice Root struct for other methods in dao-impl
 type UserDaoImpl struct {
 	ctx 				context.Context
 	mongoCollection		*mongo.Collection
