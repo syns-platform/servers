@@ -8,10 +8,9 @@
 // @package
 package main
 
-// @import
 import (
-	"Swyl/server/db"
-	"Swyl/server/utils"
+	"Swyl/servers/swyl-users-ms/db"
+	"Swyl/servers/swyl-users-ms/utils"
 	"context"
 	"os"
 
