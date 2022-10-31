@@ -11,8 +11,12 @@ package controllers
 // @import
 import (
 	"Swyl/servers/swyl-users-ms/dao"
+	"Swyl/servers/swyl-users-ms/models"
+	"Swyl/servers/swyl-users-ms/utils"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 // @notice Root struct for other methods in controller
@@ -35,7 +39,31 @@ func UserControllerConstructor(userDao dao.UserDao) *UserController{
 // @dev Connects to an account stored in the internal database using wallet address. Create a new account on first connect.
 // 
 // @param gc *gin.Context
-func (uc *UserController) Connect(gc *gin.Context){}
+func (uc *UserController) Connect(gc *gin.Context){
+	// declare user
+	var params models.User
+
+	// bind json post data to user
+	if err := gc.ShouldBindJSON(&params); err != nil {
+		gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;
+	}
+
+	// test params.wallet_address to match ETH Crypto wallet address convention
+	matched, err := utils.TestEthAddress(params.Wallet_address)
+	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - wallet_address is not an ETH crypto wallet address"}); return;}
+
+	// validate params
+	validate := validator.New()
+	if err := validate.Struct(params); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, err.Error()); return;}
+
+	// invoke UserDaoImpl.Connect() api
+	foundUser, err := uc.UserDao.Connect(params.Wallet_address)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(200, gin.H{"user": foundUser})
+}
 
 
 // @notice Method of UserController struct
