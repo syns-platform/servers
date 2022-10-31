@@ -26,13 +26,10 @@ func EstablishMongoClient(ctx context.Context) *mongo.Client {
 	// get the mongoDB uri
 	mongoUri := os.Getenv("MONGODB_URI")
 	if mongoUri == "" {log.Fatal("!MONGODB_URI - uri is not defined.")}
-	
+
 	// Establish the connection
 	mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoUri))
 	utils.HandleException(err)
-
-	// defer a call to `Disconnect()` after instantiating client
-	defer func() {if err := mongoClient.Disconnect(ctx); err != nil {panic(err)}}()
 
 	// return mongo client
 	log.Println("MongoDB connected...")
