@@ -36,7 +36,7 @@ func EstablishMongoClient(ctx context.Context) *mongo.Client {
 	return mongoClient
 }
 
-// @dev Gets a mongodb collection
+// @dev Gets a mongdb collection based on clooectionName
 // 
 // @param mongoClient *mongo.Client
 //  
