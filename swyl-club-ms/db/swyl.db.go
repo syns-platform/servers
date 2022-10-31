@@ -44,7 +44,7 @@ func EstablishMongoClient(ctx context.Context) *mongo.Client {
 // @return *mongo.Collection
 func GetMongoCollection(mongoClient *mongo.Client, collectionName string) *mongo.Collection {
 	// get the collection
-	collection := mongoClient.Database(os.Getenv("MONG_DB")).Collection(collectionName)
+	collection := mongoClient.Database(os.Getenv("MONGO_DB")).Collection(collectionName)
 
 	// return the collection
 	return collection
