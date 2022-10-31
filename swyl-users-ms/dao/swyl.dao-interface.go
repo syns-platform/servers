@@ -50,5 +50,5 @@ type UserDao interface {
 	// @param walletAddress *string
 	// 
 	// @return error
-	DeleteUserAt(walletAddress *string) error
+	DeactivateUserAt(walletAddress *string) error
 }
