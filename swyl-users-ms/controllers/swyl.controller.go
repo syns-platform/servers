@@ -80,7 +80,7 @@ func (uc *UserController) GetUserAt(gc *gin.Context) {
 	// test params.wallet_address to match ETH Crypto wallet address convention
 	matched, err := utils.TestEthAddress(&param)
 	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
-	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - wallet_address is not an ETH crypto wallet address"}); return;}
+	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - Wallet_address is not an ETH crypto wallet address"}); return;}
 
 	// invoke UserDaoImpl.GetUserAt
 	foundUser, err := uc.UserDao.GetUserAt(&param)
@@ -116,7 +116,30 @@ func (uc *UserController) GetAllUsers(gc *gin.Context) {
 // @dev Allows a user to update their account
 // 
 // @param gc *gin.Context
-func (uc *UserController) UpdateUser(gc *gin.Context) {}
+func (uc *UserController) UpdateUser(gc *gin.Context) {
+	// declare params as models.User
+	var params models.User
+
+	// bind json post data to user
+	if err := gc.ShouldBindJSON(&params); err != nil {
+		gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;
+	}
+
+	// test params.wallet_address to match ETH Crypto wallet address convention
+	matched, err := utils.TestEthAddress(params.Wallet_address)
+	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - wallet_address is not an ETH crypto wallet address"}); return;}
+
+	// extra validation on struct models.User
+	validate := validator.New()
+	if err := validate.Struct(params); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, err.Error()); return;}
+
+	// invoke UserDaoImpl.UpdateUser()
+	if err := uc.UserDao.UpdateUser(&params); err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, err.Error()); return;}
+
+	// http response
+	gc.JSON(http.StatusOK, gin.H{"msg": "User succesfully updated"})
+}
 
 
 // @notice Method of UserController struct
