@@ -36,7 +36,7 @@ type UserDao interface {
 	// @NOTE might not be necessary
 	// 
 	// @return []*models.User
-	GetAllUsers() []*models.User
+	GetAllUsers() (*[]models.User, error)
 
 	// @notice Updates a user.
 	// 

@@ -59,6 +59,7 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 	// logic: if dbResult error == nil => user with `walletAddress` has already connected before
 	// logic: if dbResult error != nil => user with `walletAddress` has never connected before
 	if (dbResult == nil) {
+		// return OK
 		return user, nil
 	} else if dbResult.Error() == "mongo: no documents in result" {
 		// prepare user
@@ -71,9 +72,10 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 		// insert new user to internal database
 		_, err := ui.mongoCollection.InsertOne(ui.ctx, user)
 
-		// return
+		// return user and err
 		return user, err
 	} else {
+		// return nil, and other error result from mongoDB
 		return nil, dbResult
 	}
 }
@@ -96,10 +98,9 @@ func (ui *UserDaoImpl) GetUserAt(walletAddress *string) (*models.User, error) {
 	query := bson.D{{Key: "wallet_address", Value: walletAddress}}
 
 	// find the user in database using user.wallet_address
-	if dbResult := ui.mongoCollection.FindOne(ui.ctx, query).Decode(user); dbResult != nil {
-		return nil, dbResult
-	}
+	if dbResult := ui.mongoCollection.FindOne(ui.ctx, query).Decode(user); dbResult != nil {return nil, dbResult}
 
+	// return OK
 	return user, nil
 }
 
@@ -111,8 +112,19 @@ func (ui *UserDaoImpl) GetUserAt(walletAddress *string) (*models.User, error) {
 // @NOTE might not be necessary
 // 
 // @return []*models.User
-func (ui *UserDaoImpl) GetAllUsers() []*models.User {
-	return nil
+func (ui *UserDaoImpl) GetAllUsers() (*[]models.User, error) {
+	// Declare a slice of models.User
+	var users []models.User
+
+	// find users in database
+	cursor, err := ui.mongoCollection.Find(ui.ctx, bson.D{})
+	if err != nil {return nil, err}
+
+	// decode cursor into a list of results
+	if err = cursor.All(ui.ctx, &users); err != nil {return nil, err}
+
+	// return OK
+	return &users, nil
 }
 
 
