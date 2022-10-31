@@ -49,35 +49,35 @@ func UserDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 // @TODO should return JWT token
 func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 	// declare user placeholder
-	var user *models.User = &models.User{}
+	user:= &models.User{}
 
 	// set up find query
 	query := bson.D{{Key: "wallet_address", Value: walletAddress}}
 	
 	// find the user in database using user.wallet_address
-	dbResult := ui.mongoCollection.FindOne(ui.ctx, query).Decode(user)
+	dbRes := ui.mongoCollection.FindOne(ui.ctx, query).Decode(user)
 
-	// logic: if dbResult error == nil => user with `walletAddress` has already connected before
-	// logic: if dbResult error != nil => user with `walletAddress` has never connected before
-	if (dbResult == nil) {
+	// logic: if dbRes error == nil => user with `walletAddress` has already connected before
+	// logic: if dbRes error != nil => user with `walletAddress` has never connected before
+	if dbRes == nil {
 		// return OK
 		return user, nil
-	} else if dbResult.Error() == "mongo: no documents in result" {
+	} else if dbRes.Error() == "mongo: no documents in result" {
 		// prepare user
-		user = &models.User{
+		newUser := &models.User{
 			Wallet_address: walletAddress,
 			Username: walletAddress,
 			Joined_at: time.Now().Unix(),
 		}
 
 		// insert new user to internal database
-		_, err := ui.mongoCollection.InsertOne(ui.ctx, user)
+		_, err := ui.mongoCollection.InsertOne(ui.ctx, newUser)
 
 		// return user and err
-		return user, err
+		return newUser, err
 	} else {
 		// return nil, and other error result from mongoDB
-		return nil, dbResult
+		return nil, dbRes
 	}
 }
 
