@@ -8,6 +8,7 @@
 // @package
 package dao
 
+// @import
 import (
 	"Swyl/servers/swyl-club-ms/models"
 	"context"
@@ -44,21 +45,7 @@ func (ci *ClubDaoImpl) CreateClub(clubOwner *string) error {
 
 // @notice Method of UserDaoImpl struct
 // 
-// @dev Gets a club at clubId
-// 
-// @param clubId *uint64
-// 
-// @return *models.Club
-// 
-// @return error
-func (ci *ClubDaoImpl) GetClubAt(clubId *uint64) (*models.Club, error) {
-	return nil, nil
-}
-
-
-// @notice Method of UserDaoImpl struct
-// 
-// @dev Gets a club at clubId
+// @dev Gets a club owned by clubOwner
 // 
 // @param clubOwner *string
 // 
@@ -72,11 +59,11 @@ func (ci *ClubDaoImpl) GetClubOwnedBy(clubOwner *string) (*models.Club, error) {
 
 // @notice Method of UserDaoImpl struct
 // 
-// @dev Updates a Club's Total_member
+// @dev Updates a Club
 // 
 // @param clubOwner *string
 // 
 // @param totalMember *uint64
-func (ci *ClubDaoImpl) UpdateClubTotalMember(clubOwner *string, totalMember *uint64) error {
+func (ci *ClubDaoImpl) UpdateClub(clubOwner *string, totalMember *uint64) error {
 	return nil
 }

@@ -24,16 +24,6 @@ type ClubDao interface {
 
 	// @notice Gets a club at clubId
 	// 
-	// @param clubId *uint64
-	// 
-	// @return *models.Club
-	// 
-	// @return error
-	GetClubAt(clubId *uint64) (*models.Club, error)
-
-
-	// @notice Gets a club at clubId
-	// 
 	// @param clubOwner *string
 	// 
 	// @return *models.Club
@@ -42,10 +32,10 @@ type ClubDao interface {
 	GetClubOwnedBy(clubOwner *string) (*models.Club, error)
 
 
-	// @notice Updates a Club's Total_member
+	// @notice Updates a Club
 	// 
 	// @param clubOwner *string
 	// 
 	// @param totalMember *uint64
-	UpdateClubTotalMember(clubOwner *string, totalMember *uint64) error
+	UpdateClub(clubOwner *string, totalMember *uint64) error
 }
