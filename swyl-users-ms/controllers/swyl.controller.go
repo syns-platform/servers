@@ -40,7 +40,7 @@ func UserControllerConstructor(userDao dao.UserDao) *UserController{
 // 
 // @param gc *gin.Context
 func (uc *UserController) Connect(gc *gin.Context){
-	// declare user
+	// declare params as models.User
 	var params models.User
 
 	// bind json post data to user
@@ -53,7 +53,7 @@ func (uc *UserController) Connect(gc *gin.Context){
 	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
 	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - wallet_address is not an ETH crypto wallet address"}); return;}
 
-	// validate params
+	// extra validation on struct models.User
 	validate := validator.New()
 	if err := validate.Struct(params); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, err.Error()); return;}
 
@@ -62,7 +62,7 @@ func (uc *UserController) Connect(gc *gin.Context){
 	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
 
 	// http response
-	gc.JSON(200, gin.H{"user": foundUser})
+	gc.JSON(200, gin.H{"user": &foundUser})
 }
 
 
@@ -73,7 +73,22 @@ func (uc *UserController) Connect(gc *gin.Context){
 // @dev Respond with a user at param `wallet-address`
 // 
 // @param gc *gin.Context
-func (uc *UserController) GetUserAt(gc *gin.Context) {}
+func (uc *UserController) GetUserAt(gc *gin.Context) {
+	// declare param
+	param := gc.Param("wallet-address")
+
+	// test params.wallet_address to match ETH Crypto wallet address convention
+	matched, err := utils.TestEthAddress(&param)
+	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - wallet_address is not an ETH crypto wallet address"}); return;}
+
+	// invoke UserDaoImpl.GetUserAt
+	foundUser, err := uc.UserDao.GetUserAt(&param)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(http.StatusOK, &foundUser)
+}
 
 
 // @notice Method of UserController struct
