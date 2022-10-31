@@ -9,7 +9,10 @@
 package main
 
 import (
+	"Swyl/servers/swyl-users-ms/controllers"
+	"Swyl/servers/swyl-users-ms/dao"
 	"Swyl/servers/swyl-users-ms/db"
+	"Swyl/servers/swyl-users-ms/routers"
 	"Swyl/servers/swyl-users-ms/utils"
 	"context"
 	"os"
@@ -24,6 +27,7 @@ var (
 	ctx				context.Context
 	mongoClient		*mongo.Client
 	userCollection	*mongo.Collection
+	ur 				*routers.UserRouter
 )
 
 // @dev Runs before main()
@@ -40,6 +44,15 @@ func init() {
 	// get userCollection
 	userCollection = db.GetMongoCollection(mongoClient, "users")
 
+	// init UserDao interface
+	ui := dao.UserDaoConstructor(ctx, userCollection)
+
+	// init UserController
+	uc := controllers.UserControllerConstructor(ui)
+
+	// init UserRouter
+	ur = routers.UserRouterConstructor(uc)
+
 	// set up gin engine
 	server = gin.Default()
 
@@ -51,6 +64,12 @@ func init() {
 func main() {
 	// Catch all unallowed HTTP methods sent to the server
 	server.HandleMethodNotAllowed = true
+
+	// init basePath
+	basePath := server.Group("/v1/swyl")
+
+	// init Handler
+	ur.UserRoutes(basePath)
 
 	// run server
 	if (os.Getenv("GIN_MODE") != "release") {
