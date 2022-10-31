@@ -43,7 +43,7 @@ type UserDao interface {
 	// @param *models.User
 	// 
 	// @return error
-	UpdateUser(*models.User) error
+	UpdateUser(user *models.User) error
 
 	// @notice Deletes a user at wallet address.
 	// 

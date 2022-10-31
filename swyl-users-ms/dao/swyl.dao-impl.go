@@ -12,6 +12,7 @@ package dao
 import (
 	"Swyl/servers/swyl-users-ms/models"
 	"context"
+	"errors"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -135,7 +136,29 @@ func (ui *UserDaoImpl) GetAllUsers() (*[]models.User, error) {
 // @param *models.User
 // 
 // @return error
-func (ui *UserDaoImpl) UpdateUser(*models.User) error {
+func (ui *UserDaoImpl) UpdateUser(user *models.User) error {
+	// set up filter query
+	filter := bson.M{"wallet_address": user.Wallet_address}
+
+	// set up update query
+	update := bson.D{
+		{Key: "$set", Value: bson.D{{Key: "username", Value: user.Username}}},
+		{Key: "$set", Value: bson.D{{Key: "avatar", Value: user.Avatar}}},
+		{Key: "$set", Value: bson.D{{Key: "display_name", Value: user.Display_name}}},
+		{Key: "$set", Value: bson.D{{Key: "email", Value: user.Email}}},
+		{Key: "$set", Value: bson.D{{Key: "bio", Value: user.Bio}}},
+		{Key: "$set", Value: bson.D{{Key: "website", Value: user.Website}}},
+		{Key: "$set", Value: bson.D{{Key: "social_media", Value: user.Social_media}}},
+	}
+
+	// update user 
+	result, err := ui.mongoCollection.UpdateOne(ui.ctx, filter, update)
+	if err != nil {return err}
+
+	// return error if no document found with declared filter
+	if result.MatchedCount != 1 {return errors.New("!MONGO - No matched document found with filter")}
+
+	// return OK
 	return nil
 }
 
