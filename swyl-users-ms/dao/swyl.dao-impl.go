@@ -90,6 +90,6 @@ func (ui *UserDaoImpl) UpdateUser(*models.User) error {
 // @param walletAddress *string
 // 
 // @return error
-func (ui *UserDaoImpl) DeleteUserAt(walletAddress *string) error {
+func (ui *UserDaoImpl) DeactivateUserAt(walletAddress *string) error {
 	return nil
 }
