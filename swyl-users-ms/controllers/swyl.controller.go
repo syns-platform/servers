@@ -99,7 +99,14 @@ func (uc *UserController) GetUserAt(gc *gin.Context) {
 // @dev Reponsd with a slice of models.User
 // 
 // @param gc *gin.Context
-func (uc *UserController) GetAllUsers(gc *gin.Context) {}
+func (uc *UserController) GetAllUsers(gc *gin.Context) {
+	// invoke UserDaoImpl.GetAllUsers
+	users, err := uc.UserDao.GetAllUsers()
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(http.StatusOK, users)
+}
 
 
 // @notice Method of UserController struct
