@@ -11,6 +11,8 @@ package utils
 // @import
 import (
 	"log"
+	"os"
+	"regexp"
 
 	"github.com/joho/godotenv"
 )
@@ -26,6 +28,16 @@ func LoadEnvVars() {
 // @param e error - the passed in error
 func HandleException(e error) {
 	if (e != nil) {
-		log.Fatal(e);
+		log.Panic(e);
 	}
+}
+
+// @dev Handle testing `wallet_address` to match ETH crypto wallet address
+// 
+// @param wallet_address *string
+// 
+// @return bool
+func TestEthAddress(wallet_address *string) (bool, error) {
+	pattern := os.Getenv("ETH_ADDRESS_REGEX")
+	return regexp.MatchString(pattern, *wallet_address)
 }
