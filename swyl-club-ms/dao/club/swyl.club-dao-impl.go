@@ -12,7 +12,10 @@ package dao
 import (
 	"Swyl/servers/swyl-club-ms/models"
 	"context"
+	"errors"
+	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -39,7 +42,35 @@ func ClubDaoConstructor (ctx context.Context, mongCollection *mongo.Collection) 
 // 
 // @return error
 func (ci *ClubDaoImpl) CreateClub(clubOwner *string) error {
-	return nil
+	// prepare club placeholder
+	// club := &models.Club{}
+
+	// set up find query
+	query := bson.M{"club_owner": clubOwner}
+
+	// check if club has already been created with the `clubOwner`
+	dbRes := ci.mongCollection.FindOne(ci.ctx, query)
+
+	// logic: if dbRes error != nil => club with `clubOwner` has never been created
+	// logic: if dbRes error == nil => club with `clubOwner` has already been created
+	if dbRes.Err() == nil {
+		return errors.New("!MONGO - A club has already been created by this clubOwner")
+	} else if dbRes.Err().Error() == "mongo: no documents in result" {
+		// prepare newClub
+		newClub := &models.Club{
+				Club_owner: clubOwner,
+				Created_at: uint64(time.Now().Unix()),
+				Total_member: uint64(0),
+			}
+
+		// insert newClub to internal database
+		_, err := ci.mongCollection.InsertOne(ci.ctx, newClub)
+	
+		// return
+		return err 
+	} else {
+		return dbRes.Err()
+	}
 }
 
 
