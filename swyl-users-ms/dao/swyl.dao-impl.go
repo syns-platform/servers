@@ -156,7 +156,7 @@ func (ui *UserDaoImpl) UpdateUser(user *models.User) error {
 	if err != nil {return err}
 
 	// return error if no document found with declared filter
-	if result.MatchedCount != 1 {return errors.New("!MONGO - No matched document found with filter")}
+	if result.MatchedCount == 0 {return errors.New("!MONGO - No matched document found with filter")}
 
 	// return OK
 	return nil
@@ -171,5 +171,16 @@ func (ui *UserDaoImpl) UpdateUser(user *models.User) error {
 // 
 // @return error
 func (ui *UserDaoImpl) DeactivateUserAt(walletAddress *string) error {
+	// set up find query
+	filter := bson.D{{Key: "wallet_address", Value: walletAddress}}
+
+	// delete user from internal database
+	result, err := ui.mongoCollection.DeleteOne(ui.ctx, filter)
+	if (err != nil) {return err}
+
+	// return error if no document found with declared filter
+	if (result.DeletedCount == 0) {return errors.New("!MONGO - No matched document found with filter")}
+
+	// response OK
 	return nil
 }

@@ -149,4 +149,18 @@ func (uc *UserController) UpdateUser(gc *gin.Context) {
 // @param gc *gin.Context
 // 
 // @return error
-func (uc *UserController) DeactivateUserAt(gc *gin.Context) {}
+func (uc *UserController) DeactivateUserAt(gc *gin.Context) {
+	// declare param
+	param := gc.Param("wallet-address")
+
+	// test params.wallet_address to match ETH Crypto wallet address convention
+	matched, err := utils.TestEthAddress(&param)
+	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - Wallet_address is not an ETH crypto wallet address"}); return;}
+
+	// invokde UserDaoImpl.DeactivateUserAt
+	if err := uc.UserDao.DeactivateUserAt(&param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, err.Error()); return;}
+
+	// http response
+	gc.JSON(http.StatusOK, gin.H{"msg": "User succesfully deactivated"})
+}
