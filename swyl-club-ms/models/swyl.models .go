@@ -11,8 +11,8 @@ package models
 // @notice The information related to a Swyl club
 type Club struct {
 	Club_owner					*string		`json:"club_owner" bson:"club_owner" validate:"required,len=42,alphanum"`
-	Created_at					*uint64		`json:"created_at" bson:"created_at"`
-	Total_member					*uint64		`json:"total_member" bson:"total_member"`
+	Created_at					uint64		`json:"created_at" bson:"created_at"`
+	Total_member					uint64		`json:"total_member" bson:"total_member"`
 }
 
 
