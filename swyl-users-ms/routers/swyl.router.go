@@ -21,9 +21,9 @@ type UserRouter struct {
 }
 
 // @dev Constructor
-func UserRouterConstructor(userController controllers.UserController) *UserRouter {
+func UserRouterConstructor(userController *controllers.UserController) *UserRouter {
    return &UserRouter{
-      UserController: &userController,
+      UserController: userController,
    }
 }
 
