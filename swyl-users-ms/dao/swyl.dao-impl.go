@@ -89,7 +89,18 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 // 
 // @return error
 func (ui *UserDaoImpl) GetUserAt(walletAddress *string) (*models.User, error) {
-	return nil, nil
+	// declare user placeholder
+	var user *models.User = &models.User{}
+
+	// set up find query
+	query := bson.D{{Key: "wallet_address", Value: walletAddress}}
+
+	// find the user in database using user.wallet_address
+	if dbResult := ui.mongoCollection.FindOne(ui.ctx, query).Decode(user); dbResult != nil {
+		return nil, dbResult
+	}
+
+	return user, nil
 }
 
 
