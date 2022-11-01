@@ -57,7 +57,7 @@ func (uc *UserController) Connect(gc *gin.Context){
 	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
 	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - wallet_address is not an ETH crypto wallet address"}); return;}
 
-	// invoke UserDaoImpl.Connect() api
+	// invoke UserDao.Connect() api
 	foundUser, err := uc.UserDao.Connect(params.Wallet_address)
 	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
 
@@ -82,7 +82,7 @@ func (uc *UserController) GetUserAt(gc *gin.Context) {
 	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
 	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - Wallet_address is not an ETH crypto wallet address"}); return;}
 
-	// invoke UserDaoImpl.GetUserAt
+	// invoke UserDao.GetUserAt
 	foundUser, err := uc.UserDao.GetUserAt(&param)
 	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
 
@@ -134,7 +134,7 @@ func (uc *UserController) UpdateUser(gc *gin.Context) {
 	validate := validator.New()
 	if err := validate.Struct(params); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, err.Error()); return;}
 
-	// invoke UserDaoImpl.UpdateUser()
+	// invoke UserDao.UpdateUser()
 	if err := uc.UserDao.UpdateUser(&params); err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, err.Error()); return;}
 
 	// http response
@@ -158,7 +158,7 @@ func (uc *UserController) DeactivateUserAt(gc *gin.Context) {
 	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
 	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - Wallet_address is not an ETH crypto wallet address"}); return;}
 
-	// invokde UserDaoImpl.DeactivateUserAt
+	// invokde UserDao.DeactivateUserAt
 	if err := uc.UserDao.DeactivateUserAt(&param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, err.Error()); return;}
 
 	// http response
