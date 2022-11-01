@@ -10,10 +10,13 @@ package main
 
 // @import
 import (
-	controllers "Swyl/servers/swyl-club-ms/controllers/club"
-	dao "Swyl/servers/swyl-club-ms/dao/club"
+	clubControllers "Swyl/servers/swyl-club-ms/controllers/club"
+	tierControllers "Swyl/servers/swyl-club-ms/controllers/tier"
+	clubDao "Swyl/servers/swyl-club-ms/dao/club"
+	tierDao "Swyl/servers/swyl-club-ms/dao/tier"
 	"Swyl/servers/swyl-club-ms/db"
-	routers "Swyl/servers/swyl-club-ms/routers/club"
+	clubRouters "Swyl/servers/swyl-club-ms/routers/club"
+	tierRouters "Swyl/servers/swyl-club-ms/routers/tier"
 	"Swyl/servers/swyl-club-ms/utils"
 	"context"
 	"os"
@@ -28,7 +31,9 @@ var (
 	ctx 			context.Context
 	mongoClient		*mongo.Client
 	clubCollection	*mongo.Collection
-	cr				*routers.ClubRouter
+	tierCollection	*mongo.Collection
+	cr				*clubRouters.ClubRouter
+	tr				*tierRouters.TierRouter
 )
 
 
@@ -40,26 +45,28 @@ func init() {
 	// init context
 	ctx = context.TODO()
 
-	// init mongo client
-	mongoClient = db.EstablishMongoClient(ctx)
-
-	// get clubCollection
-	clubCollection = db.GetMongoCollection(mongoClient, "clubs")
-
-	// init ClubDao interface
-	ci := dao.ClubDaoConstructor(ctx, clubCollection)
-
-	// init ClubController
-	cc := controllers.ClubControllerConstructor(ci)
-
-	// init ClubRouter
-	cr = routers.ClubRouterConstructor(cc)
-   
-   	// set up gin engine
+	// set up gin engine
 	server = gin.Default()
 
 	// Gin trust all proxies by default and it's not safe. Set trusted proxy to home router to to mitigate 
 	server.SetTrustedProxies([]string{os.Getenv("HOME_ROUTER")})
+
+	// init mongo client
+	mongoClient = db.EstablishMongoClient(ctx)
+
+	// ############ init club router ############
+	clubCollection = db.GetMongoCollection(mongoClient, "clubs") // get clubCollection
+	ci := clubDao.ClubDaoConstructor(ctx, clubCollection) // init ClubDao interface
+	cc := clubControllers.ClubControllerConstructor(ci) // init ClubController
+	cr = clubRouters.ClubRouterConstructor(cc) // init ClubRouter
+   
+
+	// ############ init tier router ############
+	tierCollection = db.GetMongoCollection(mongoClient, "tiers") // get tier Collections
+	ti := tierDao.TierDaoConstructor(ctx, tierCollection) // init TierDao interface
+	tc := tierControllers.TierControllerConstructor(ti) // init TierController
+	tr = tierRouters.TierRouterConstructor(tc)
+   	
 }
 
 
@@ -72,10 +79,13 @@ func main() {
 	server.HandleMethodNotAllowed = true
 
 	// init basePath
-	clubBasePath := server.Group("/v1/swyl/club")
+	clubBasePath := server.Group("/v1/swyl/club") // club bash path
+	tierBashPath := server.Group("/v1/swyl/tier") // tier base path
+
 
 	// init Handler
-	cr.ClubRoutes(clubBasePath)
+	cr.ClubRoutes(clubBasePath) // club routes
+	tr.TierRoutes(tierBashPath) // tier routes
 
 	// run server
 	if (os.Getenv("GIN_MODE") != "release") {
