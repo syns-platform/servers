@@ -83,7 +83,7 @@ func (tc *TierController) GetTierAt(gc *gin.Context) {
    tierId := gc.Param("tier_id")
 
    // sanitize tierId
-   matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}`, tierId)
+   matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}$`, tierId)
    if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
    if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!CLUBID - clubId is not valid"}); return;}
 
@@ -140,7 +140,7 @@ func (tc *TierController) UpdateTier(gc *gin.Context) {
 
    // sanitizing param.Tier_id
    tierId := primitive.ObjectID.Hex(param.Tier_ID)
-   matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}`, tierId)
+   matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}$`, tierId)
    if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
    if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!CLUBID - clubId is not valid"}); return;}
 
@@ -156,9 +156,20 @@ func (tc *TierController) UpdateTier(gc *gin.Context) {
 
 // @notice Method of TierController struct
 // 
-// @route `POST/connect`
+// @route `DELETE/delete-tier-at/:tier_id`
 // 
 // @param gc *gin.Context
 func (tc *TierController) DeleteTier(gc *gin.Context){
-   gc.JSON(200, gin.H{"msg": "swyl-v1"})
+   // Handle param
+   param := gc.Param("tier_id")
+
+   // sanitizing param
+   matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}$`, param)
+   if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
+   if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!CLUBID - clubId is not valid"}); return;}
+
+   // invoke TierDao.DeleteTier
+   if err := tc.TierDao.DeleteTier(&param); err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+   gc.JSON(200, gin.H{"msg": "Tier sucessfully deleted"})
 }
