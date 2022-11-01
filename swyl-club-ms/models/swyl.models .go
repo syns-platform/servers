@@ -12,7 +12,7 @@ package models
 type Club struct {
 	Club_owner					*string		`json:"club_owner" bson:"club_owner" validate:"required,len=42,alphanum"`
 	Created_at					uint64		`json:"created_at" bson:"created_at"`
-	Total_member					uint64		`json:"total_member" bson:"total_member"`
+	Total_members					uint64		`json:"total_members" bson:"total_members"`
 }
 
 
