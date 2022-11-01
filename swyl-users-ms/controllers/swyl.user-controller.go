@@ -100,12 +100,12 @@ func (uc *UserController) GetUserAt(gc *gin.Context) {
 // 
 // @param gc *gin.Context
 func (uc *UserController) GetAllUsers(gc *gin.Context) {
-	// invoke UserDaoImpl.GetAllUsers
+	// invoke UserDao.GetAllUsers
 	users, err := uc.UserDao.GetAllUsers()
 	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
 
 	// http response
-	gc.JSON(http.StatusOK, users)
+	gc.JSON(http.StatusOK, &users)
 }
 
 

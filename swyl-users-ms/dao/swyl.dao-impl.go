@@ -112,16 +112,18 @@ func (ui *UserDaoImpl) GetUserAt(walletAddress *string) (*models.User, error) {
 // 
 // @NOTE might not be necessary
 // 
-// @return []*models.User
+// @return *[]models.User
+// 
+// @return error
 func (ui *UserDaoImpl) GetAllUsers() (*[]models.User, error) {
-	// Declare a slice of models.User
+	// Declare a slice of placeholder models.User
 	var users []models.User
 
 	// find users in database
 	cursor, err := ui.mongoCollection.Find(ui.ctx, bson.D{})
 	if err != nil {return nil, err}
 
-	// decode cursor into a list of results
+	// decode cursor into the declared slice
 	if err = cursor.All(ui.ctx, &users); err != nil {return nil, err}
 
 	// return OK
