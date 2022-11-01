@@ -19,6 +19,9 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// global var
+var validate = validator.New()
+
 // @notice Root struct for other methods in controller
 type UserController struct {
 	UserDao dao.UserDao
@@ -49,7 +52,6 @@ func (uc *UserController) Connect(gc *gin.Context){
 	}
 
 	// extra validation on struct models.User
-	validate := validator.New()
 	if err := validate.Struct(params); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
 
 	// test params.wallet_address to match ETH Crypto wallet address convention
@@ -131,7 +133,6 @@ func (uc *UserController) UpdateUser(gc *gin.Context) {
 	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - wallet_address is not an ETH crypto wallet address"}); return;}
 
 	// extra validation on struct models.User
-	validate := validator.New()
 	if err := validate.Struct(params); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, err.Error()); return;}
 
 	// invoke UserDao.UpdateUser()
