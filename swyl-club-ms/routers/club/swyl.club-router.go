@@ -34,5 +34,6 @@ func ClubRouterConstructor(clubController *controllers.ClubController) *ClubRout
 func (cr *ClubRouter) ClubRoutes(rg *gin.RouterGroup) {
 	rg.POST("/create-club", cr.ClubController.CreateClub)
 	rg.GET("/get-club-owned-by/:club-owner", cr.ClubController.GetClubOwnedBy)
+	rg.GET("/get-all-clubs", cr.ClubController.GetAllClubs)
 	rg.PATCH("/update-club", cr.ClubController.UpdateClub)
 }
