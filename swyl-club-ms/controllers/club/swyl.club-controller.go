@@ -88,8 +88,26 @@ func (cc *ClubController) GetClubOwnedBy(gc *gin.Context) {
 	club, err := cc.ClubDao.GetClubOwnedBy(&param)
 	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
 
+	// http response
 	gc.JSON(http.StatusOK, &club)
 }
+
+// @notice Method of ClubController struct
+// 
+// @route `GET/get-all-club`
+// 
+// @dev Gets all club
+// 
+// @param gc *gin.Context
+func (cc *ClubController) GetAllClubs(gc *gin.Context) {
+	// invoke ClubDao.GetAllUsers
+	clubs, err := cc.ClubDao.GetAllClubs()
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(http.StatusOK, &clubs)
+}
+
 
 
 // @notice Method of ClubController struct
