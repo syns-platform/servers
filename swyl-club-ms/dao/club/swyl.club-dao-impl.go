@@ -84,7 +84,17 @@ func (ci *ClubDaoImpl) CreateClub(clubOwner *string) error {
 // 
 // @return error
 func (ci *ClubDaoImpl) GetClubOwnedBy(clubOwner *string) (*models.Club, error) {
-	return nil, nil
+	// declare club placeholder
+	club := &models.Club{}
+
+	// set up find query
+	query := bson.M{"club_owner": clubOwner}
+
+	// find the club in database using clubOwner
+	if dbRes := ci.mongCollection.FindOne(ci.ctx, query).Decode(club); dbRes != nil {return nil, dbRes}
+
+	// return OK
+	return club, nil
 }
 
 
