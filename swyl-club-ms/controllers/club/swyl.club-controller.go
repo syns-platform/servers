@@ -118,5 +118,32 @@ func (cc *ClubController) GetAllClubs(gc *gin.Context) {
 // 
 // @param gc *gin.Context
 func (cc *ClubController) UpdateClub(gc *gin.Context) {
-	gc.JSON(http.StatusOK, gin.H{"mes": "swylv1.0"})
+	// Declare param struct
+	type Param struct {
+		Club_owner *string `json:"club_owner" validate:"required,len=42,alphanum"`
+		Context	*uint16 `json:"context" validate:"eq=1|eq=0"`
+	}
+	
+	// Declare param placeholder
+	param := Param{}
+
+	// bind JSON post data to params
+	if err := gc.ShouldBindJSON(&param); err != nil {
+		gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"erorr": err.Error()}); return;
+	}
+
+	// extra validation on struct Param
+	validate := validator.New()
+	if err1 := validate.Struct(param); err1 != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err1.Error()}); return;}
+
+	// test params.wallet_address to match ETH Crypto wallet address convention
+	matched, err := utils.TestEthAddress(param.Club_owner)
+	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - wallet_address is not an ETH crypto wallet address"}); return;}
+
+	// invoke ClubDao.UpdateClub()
+	if err := cc.ClubDao.UpdateClub(param.Club_owner, param.Context); err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(http.StatusOK, gin.H{"msg": "Club sucessfully updated"})
 }
