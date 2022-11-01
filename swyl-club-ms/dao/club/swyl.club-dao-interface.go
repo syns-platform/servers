@@ -40,10 +40,10 @@ type ClubDao interface {
 	GetAllClubs() (*[]models.Club, error)
 
 
-	// @notice Updates a Club
+	// @notice Increase/decrease a Club's total members
 	// 
 	// @param clubOwner *string
 	// 
-	// @param totalMember *uint64
-	UpdateClub(clubOwner *string, totalMember *uint64) error
+	// @param context *uint16 0=decrease || 1=increase
+	UpdateClub(clubOwner *string, context *uint16) error
 }

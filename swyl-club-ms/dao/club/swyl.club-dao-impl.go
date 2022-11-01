@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -42,9 +43,6 @@ func ClubDaoConstructor (ctx context.Context, mongCollection *mongo.Collection) 
 // 
 // @return error
 func (ci *ClubDaoImpl) CreateClub(clubOwner *string) error {
-	// prepare club placeholder
-	// club := &models.Club{}
-
 	// set up find query
 	query := bson.M{"club_owner": clubOwner}
 
@@ -60,7 +58,7 @@ func (ci *ClubDaoImpl) CreateClub(clubOwner *string) error {
 		newClub := &models.Club{
 				Club_owner: clubOwner,
 				Created_at: uint64(time.Now().Unix()),
-				Total_member: uint64(0),
+				Total_members: uint64(0),
 			}
 
 		// insert newClub to internal database
@@ -122,11 +120,43 @@ func (ci *ClubDaoImpl) GetAllClubs() (*[]models.Club, error) {
 
 // @notice Method of UserDaoImpl struct
 // 
-// @dev Updates a Club
+// @dev Increase/decrease a Club's total members
 // 
 // @param clubOwner *string
 // 
-// @param totalMember *uint64
-func (ci *ClubDaoImpl) UpdateClub(clubOwner *string, totalMember *uint64) error {
+// @param context *uint16 0=decrease || 1=increase
+func (ci *ClubDaoImpl) UpdateClub(clubOwner *string, context *uint16) error {
+	// set up filter query
+	filter := bson.M{"club_owner": clubOwner}
+
+	// get club from database
+	club := &models.Club{}
+	if err := ci.mongCollection.FindOne(ci.ctx, filter).Decode(club); err != nil {return err}
+
+	// examine club.Total_members
+	if (club.Total_members == 0 && *context == 0) {return errors.New("!TOTAL_MEMBERS - Cannot decrease total members")}
+
+	// declare update query
+	var update primitive.D
+
+	// set up update query
+	if *context == 0 {
+		update = bson.D {
+			{Key: "$inc", Value: bson.D{{Key: "total_members", Value: -1}}},
+		}
+	} else {
+		update = bson.D {
+			{Key: "$inc", Value: bson.D{{Key: "total_members", Value: 1}}},
+		}
+	}
+
+	// update Club
+	updateRes, err := ci.mongCollection.UpdateOne(ci.ctx, filter, update)
+	if err != nil {return err}
+
+	// return error if no document found with declared filter
+	if updateRes.MatchedCount == 0 {return errors.New("!MONGO - No matched document found with filter")}
+
+	// return OK
 	return nil
 }
