@@ -12,7 +12,10 @@ package dao
 import (
 	"Swyl/servers/swyl-club-ms/models"
 	"context"
+	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -39,6 +42,14 @@ func TierDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 // 
 // @return error
 func (ti *TierDaoImpl) CreateTier(tier *models.Tier) error {
+   // updated tier.Created_at
+   tier.Created_at = uint64(time.Now().Unix())
+
+   // insert the tier to the internal database
+   _, err := ti.mongoCollection.InsertOne(ti.ctx, tier)
+   if err != nil {return err}
+
+   // return OK
    return nil
 }
 

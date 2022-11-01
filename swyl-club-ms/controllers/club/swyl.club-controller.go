@@ -19,11 +19,13 @@ import (
 	"github.com/go-playground/validator"
 )
 
+// global vars
+var validate = validator.New()
+
 // @notice Root struct for other methods in club-constrollers
 type ClubController struct {
 	ClubDao dao.ClubDao
 }
-
 
 // @dev Constructor
 func ClubControllerConstructor(clubDao dao.ClubDao) *ClubController {
@@ -42,24 +44,23 @@ func ClubControllerConstructor(clubDao dao.ClubDao) *ClubController {
 // @param gc *gin.Context
 func (cc *ClubController) CreateClub(gc *gin.Context) {
 	// declare params 
-	var params *models.Club
+	var param *models.Club
 
-	// bind json post data to params
-	if err := gc.ShouldBindJSON(&params); err != nil {
+	// bind json post data to param
+	if err := gc.ShouldBindJSON(&param); err != nil {
 		gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;
 	}
 
-	// extra validation on struct models.Club
-	validate := validator.New()
-	if err := validate.Struct(params); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, err.Error()); return;}
+	// validate struct models.Club
+	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, err.Error()); return;}
 
-	// test params.Club_owner to match ETH Crypto wallet address convention
-	matched, err := utils.TestEthAddress(params.Club_owner)
-	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
-	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - wallet_address is not an ETH crypto wallet address"}); return;}
+	// extra validatation on param.Club_owner to match ETH Crypto wallet address convention
+	matched, err := utils.TestEthAddress(param.Club_owner)
+	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - club_owner is not an ETH crypto wallet address"}); return;}
 
 	// invoke ClubDao.CreateClub() api
-	if err := cc.ClubDao.CreateClub(params.Club_owner); err != nil {
+	if err := cc.ClubDao.CreateClub(param.Club_owner); err != nil {
 		gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;
 	}
 
@@ -133,7 +134,6 @@ func (cc *ClubController) UpdateClub(gc *gin.Context) {
 	}
 
 	// extra validation on struct Param
-	validate := validator.New()
 	if err1 := validate.Struct(param); err1 != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err1.Error()}); return;}
 
 	// test params.wallet_address to match ETH Crypto wallet address convention
