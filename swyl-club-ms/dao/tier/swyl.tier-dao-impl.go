@@ -42,6 +42,9 @@ func TierDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 // 
 // @return error
 func (ti *TierDaoImpl) CreateTier(tier *models.Tier) error {
+   // updated tier.Tier_ID
+   tier.Tier_ID = primitive.NewObjectID()
+
    // updated tier.Created_at
    tier.Created_at = uint64(time.Now().Unix())
 
@@ -89,7 +92,18 @@ func (ti *TierDaoImpl) GetTierAt(tierId *string) (*models.Tier, error) {
 // 
 // @return error
 func (ti *TierDaoImpl) GetAllTiersOwnedBy(clubOwner *string) (*[]models.Tier, error) {
-   return nil, nil
+   // prepare tier struct holder slice
+   tiers := &[]models.Tier{}
+
+   // find documents in database
+   cursor, err := ti.mongoCollection.Find(ti.ctx, bson.M{"club_owner": clubOwner})
+   if err != nil {return nil, err}
+
+   // decode cursor into declared slice
+   if err := cursor.All(ti.ctx, tiers); err != nil {return nil, err}
+
+   // return OK
+   return tiers, nil
 }
 
 
