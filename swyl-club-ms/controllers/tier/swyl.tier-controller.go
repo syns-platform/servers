@@ -18,6 +18,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // global vars
@@ -128,7 +129,28 @@ func (tc *TierController) GetAllTiersOwnedBy(gc *gin.Context) {
 // 
 // @param gc *gin.Context
 func (tc *TierController) UpdateTier(gc *gin.Context) {
-   gc.JSON(200, gin.H{"msg": "swyl-v1"})
+   // prepare param holder
+   param := &models.Tier{}
+
+   // bind json post data to param holder
+   if err := gc.ShouldBindJSON(param); err != nil {
+      gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;
+   }
+
+
+   // sanitizing param.Tier_id
+   tierId := primitive.ObjectID.Hex(param.Tier_ID)
+   matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}`, tierId)
+   if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
+   if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!CLUBID - clubId is not valid"}); return;}
+
+   // validate struct
+   if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
+
+   // invoke TierDao.UpdateTier
+   if err := tc.TierDao.UpdateTier(param); err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+   gc.JSON(200, gin.H{"msg": "Club sucessfully updated"})
 }
 
 
