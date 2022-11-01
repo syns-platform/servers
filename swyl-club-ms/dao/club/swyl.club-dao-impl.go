@@ -97,6 +97,28 @@ func (ci *ClubDaoImpl) GetClubOwnedBy(clubOwner *string) (*models.Club, error) {
 	return club, nil
 }
 
+// @notice Method of UserDaoImpl struct
+// 
+// @dev Gets a slice of all the club
+// 
+// @return *[]models.Club
+// 
+// @return error
+func (ci *ClubDaoImpl) GetAllClubs() (*[]models.Club, error) {
+	// Declare a slice of placeholder models.User 
+	var clubs []models.Club
+
+	// Find clubs in database
+	cursor, err := ci.mongCollection.Find(ci.ctx, bson.D{})
+	if err != nil {return nil, err}
+
+	// decode cursor into the declared slice
+	if err := cursor.All(ci.ctx, &clubs); err != nil {return nil, err}
+
+	// return OK
+	return &clubs, nil
+}
+
 
 // @notice Method of UserDaoImpl struct
 // 

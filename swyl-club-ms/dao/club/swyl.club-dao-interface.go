@@ -32,6 +32,14 @@ type ClubDao interface {
 	GetClubOwnedBy(clubOwner *string) (*models.Club, error)
 
 
+	// @notice Gets a slice of all clubs
+	// 
+	// @return *[]models.Club
+	// 
+	// @return error
+	GetAllClubs() (*[]models.Club, error)
+
+
 	// @notice Updates a Club
 	// 
 	// @param clubOwner *string
