@@ -23,14 +23,12 @@ type TierDao interface {
 
    // @notice Gets a Tier at tierId and clubOwner
 	// 
-	// @param clubId *uint64
-	// 
-	// @param clubOwner *string
+	// @param tierId *string
 	// 
 	// @return *models.Tier
 	// 
 	// @return error
-   GetTierAt(clubId *uint64, clubOwner *string) (*models.Tier, error)
+   GetTierAt(tierId *string) (*models.Tier, error)
 
 
    // @notice Gets all tiers owned by clubOwner
