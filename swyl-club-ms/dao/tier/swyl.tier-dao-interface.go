@@ -50,10 +50,8 @@ type TierDao interface {
 
    // @notice Lets a clubOwner delete a tier
 	// 
-	// @param tierId *uint64
-	// 
-	// @param clubOwner *string
+	// @param tierId *string
 	// 
 	// @return error
-   DeleteTier(clubId *uint64, clubOwner *string) error
+   DeleteTier(clubId *string) error
 }
