@@ -58,7 +58,7 @@ func (cc *ClubController) CreateClub(gc *gin.Context) {
 	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
 	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - wallet_address is not an ETH crypto wallet address"}); return;}
 
-	// invoke ClubDaoImpl.CreateClub() api
+	// invoke ClubDao.CreateClub() api
 	if err := cc.ClubDao.CreateClub(params.Club_owner); err != nil {
 		gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;
 	}
@@ -76,7 +76,19 @@ func (cc *ClubController) CreateClub(gc *gin.Context) {
 // 
 // @param gc *gin.Context
 func (cc *ClubController) GetClubOwnedBy(gc *gin.Context) {
-	gc.JSON(http.StatusOK, gin.H{"mes": "swylv1.0"})
+	// decalre param 
+	param := gc.Param("club-owner")
+
+	// test params.club_owner to match ETH Crypto wallet address convention
+	matched, err := utils.TestEthAddress(&param)
+	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - Wallet_address is not an ETH crypto wallet address"}); return;}
+
+	// invoke ClubDao.GetClubOwnedBy()
+	club, err := cc.ClubDao.GetClubOwnedBy(&param)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+	gc.JSON(http.StatusOK, &club)
 }
 
 
