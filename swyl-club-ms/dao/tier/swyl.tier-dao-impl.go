@@ -62,9 +62,7 @@ func (ti *TierDaoImpl) CreateTier(tier *models.Tier) error {
 // 
 // @dev Gets a Tier at tierId and clubOwner
 // 
-// @param clubId *uint64
-// 
-// @return *models.Tier
+// @param tierId *string
 // 
 // @return error
 func (ti *TierDaoImpl) GetTierAt(tierId *string) (*models.Tier, error) {
@@ -134,17 +132,27 @@ func (ti *TierDaoImpl) UpdateTier(tier *models.Tier) error {
    if err != nil {return err}
    if dbRes.MatchedCount == 0 {return errors.New("!MONGO - No matched document found with filter")}
 
+   // return OK
    return nil
 }
 
 
 // @notice Lets a clubOwner delete a tier
 // 
-// @param tierId *uint64
-// 
-// @param clubOwner *string
+// @param tierId *string
 // 
 // @return error
-func (ti *TierDaoImpl) DeleteTier(tierId *uint64, clubOwner *string) error {
+func (ti *TierDaoImpl) DeleteTier(tierId *string) error {
+   // prepare objectId
+   objectId, err := primitive.ObjectIDFromHex(*tierId)
+   if err != nil {return err}
+
+   // preapre filter
+   filter := bson.M{"_id": objectId}
+
+   // delete tier
+   if _, err := ti.mongoCollection.DeleteOne(ti.ctx, filter); err != nil {return err}
+
+   // return OK
    return nil
 }
