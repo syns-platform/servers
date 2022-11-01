@@ -20,7 +20,7 @@ type UserDao interface {
 	// @param user	*models.User
 	// 
 	// @return error
-	Connect(walletAddress *string) (*models.User ,error);
+	Connect(walletAddress *string) (*models.User, error)
 
 	// @notice Gets a user at wallet address.
 	// 
