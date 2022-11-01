@@ -12,6 +12,7 @@ package dao
 import (
 	"Swyl/servers/swyl-club-ms/models"
 	"context"
+	"errors"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -115,6 +116,24 @@ func (ti *TierDaoImpl) GetAllTiersOwnedBy(clubOwner *string) (*[]models.Tier, er
 // 
 // @return error
 func (ti *TierDaoImpl) UpdateTier(tier *models.Tier) error {
+   // prepare filter query
+   filter := bson.M{"_id": tier.Tier_ID}
+
+   // prepare update query
+   query := bson.D{
+      {Key: "$set", Value: bson.D{{Key: "tier_name", Value: tier.Tier_name}}},
+      {Key: "$set", Value: bson.D{{Key: "tier_img", Value: tier.Tier_img}}},
+      {Key: "$set", Value: bson.D{{Key: "tier_bio", Value: tier.Tier_bio}}},
+      {Key: "$set", Value: bson.D{{Key: "tier_fee", Value: tier.Tier_fee}}},
+      {Key: "$set", Value: bson.D{{Key: "tier_limit", Value: tier.Tier_limit}}},
+      {Key: "$set", Value: bson.D{{Key: "tier_welcome_msg", Value: tier.Tier_welcome_msg}}},
+   }
+
+   // update tier
+   dbRes, err := ti.mongoCollection.UpdateOne(ti.ctx, filter, query)
+   if err != nil {return err}
+   if dbRes.MatchedCount == 0 {return errors.New("!MONGO - No matched document found with filter")}
+
    return nil
 }
 
