@@ -31,7 +31,7 @@ func TierDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
    }
 }
 
-// @notice Method of UserDaoImpl struct
+// @notice Method of TierDaoImpl struct
 // 
 // @dev Lets a club owner create a tier to internal database
 // 
@@ -43,7 +43,7 @@ func (ti *TierDaoImpl) CreateTier(tier *models.Tier) error {
 }
 
 
-// @notice Method of UserDaoImpl struct
+// @notice Method of TierDaoImpl struct
 // 
 // @dev Gets a Tier at tierId and clubOwner
 // 
@@ -59,7 +59,7 @@ func (ti *TierDaoImpl) GetTierAt(clubId *uint64, clubOwner *string) (*models.Tie
 }
 
 
-// @notice Method of UserDaoImpl struct
+// @notice Method of TierDaoImpl struct
 // 
 // @dev Gets all tiers owned by clubOwner
 // 
@@ -73,7 +73,7 @@ func (ti *TierDaoImpl) GetAllTiersOwnedBy(clubOwner *string) (*[]models.Tier, er
 }
 
 
-// @notice Method of UserDaoImpl struct
+// @notice Method of TierDaoImpl struct
 // 
 // @dev Lets a clubOwner update a tier
 // 
@@ -92,6 +92,6 @@ func (ti *TierDaoImpl) UpdateTier(tier *models.Tier) error {
 // @param clubOwner *string
 // 
 // @return error
-func (ti *TierDaoImpl) DeleteTier(clubId *uint64, clubOwner *string) error {
+func (ti *TierDaoImpl) DeleteTier(tierId *uint64, clubOwner *string) error {
    return nil
 }
