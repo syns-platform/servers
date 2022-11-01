@@ -60,13 +60,22 @@ func (ti *TierDaoImpl) CreateTier(tier *models.Tier) error {
 // 
 // @param clubId *uint64
 // 
-// @param clubOwner *string
-// 
 // @return *models.Tier
 // 
 // @return error
-func (ti *TierDaoImpl) GetTierAt(clubId *uint64, clubOwner *string) (*models.Tier, error) {
-   return nil, nil
+func (ti *TierDaoImpl) GetTierAt(tierId *string) (*models.Tier, error) {
+   // prepare tier struct
+   tier := &models.Tier{}
+
+   // set up objectId
+   objectId, err := primitive.ObjectIDFromHex(*tierId)
+   if err != nil {return nil, err}
+
+   // find the document with _id = tierId in
+   if err := ti.mongoCollection.FindOne(ti.ctx, bson.M{"_id": objectId}).Decode(tier); err != nil {return nil, err}
+
+   // return OK
+   return tier, nil
 }
 
 

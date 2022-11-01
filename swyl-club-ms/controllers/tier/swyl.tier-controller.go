@@ -72,32 +72,52 @@ func (tc *TierController) CreateTier(gc *gin.Context) {
 
 // @notice Method of TierController struct
 // 
-// @route `POST/connect`
+// @route `@GET/get-tier-at/:tier_id`
 // 
 // @dev Gets a Tier at tierId and clubOwner
 // 
 // @param gc *gin.Context
-func (tc *TierController) GetTierAt(gc *gin.Context) {}
+func (tc *TierController) GetTierAt(gc *gin.Context) {
+   // get tierId from param
+   tierId := gc.Param("tier_id")
+
+   // sanitize tierId
+   matched, err := regexp.MatchString(`^[a-zA-Z0-9]*$`, tierId)
+   if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
+   if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!CLUBID - clubId is not valid"}); return;}
+
+   
+   // invoke TierDao.GetTierAt
+   tier, err := tc.TierDao.GetTierAt(&tierId)
+   if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})}
+   
+   // http reponse
+   gc.JSON(200, tier)
+}
 
 
 // @notice Method of TierController struct
 // 
-// @route `POST/connect`
+// @route `GET//get-all-tiers-owned-by/:clubOwner`
 // 
 // @dev Gets all tiers owned by clubOwner
 // 
 // @param gc *gin.Context
-func (tc *TierController) GetAllTiersOwnedBy(gc *gin.Context) {}
+func (tc *TierController) GetAllTiersOwnedBy(gc *gin.Context) {
+   gc.JSON(200, gin.H{"msg": "swyl-v1"})
+}
 
 
 // @notice Method of TierController struct
 // 
-// @route `POST/connect`
+// @route `PATCH/update-tier`
 // 
 // @dev Lets a clubOwner update a tier
 // 
 // @param gc *gin.Context
-func (tc *TierController) UpdateTier(gc *gin.Context) {}
+func (tc *TierController) UpdateTier(gc *gin.Context) {
+   gc.JSON(200, gin.H{"msg": "swyl-v1"})
+}
 
 
 // @notice Method of TierController struct
@@ -105,4 +125,6 @@ func (tc *TierController) UpdateTier(gc *gin.Context) {}
 // @route `POST/connect`
 // 
 // @param gc *gin.Context
-func (tc *TierController) DeleteTier(gc *gin.Context){}
+func (tc *TierController) DeleteTier(gc *gin.Context){
+   gc.JSON(200, gin.H{"msg": "swyl-v1"})
+}
