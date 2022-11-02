@@ -69,10 +69,10 @@ type CommDao interface {
 	
 	// @notice Lets a Swyl user start following a community
 	// 
-	// @param follower *string
+	// @param comfollower *models.Follower
 	// 
-	// @param commOwner *string 
-	Follow(commOnwer *string, follower *string) error
+	// @return error
+	Follow(follower *models.Follower) error
 
 	
 	// @notice Gets a Swyl follower at followerId

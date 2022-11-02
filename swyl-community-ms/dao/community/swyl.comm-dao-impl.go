@@ -13,6 +13,7 @@ import (
 	"Swyl/servers/swyl-community-ms/models"
 	"context"
 	"errors"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -22,14 +23,16 @@ import (
 // @notice Root struct for other methods in comm-dao-impl
 type CommDaoImpl struct {
 	ctx					context.Context
-	mongoCollection		*mongo.Collection
+	commCollection		*mongo.Collection
+	followerCollection 	*mongo.Collection
 }
 
 // @dev Constructor
-func CommDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) CommDao {
+func CommDaoConstructor(ctx context.Context, commCollection *mongo.Collection, followerCollection *mongo.Collection) CommDao {
 	return &CommDaoImpl {
 		ctx: ctx,
-		mongoCollection: mongoCollection,
+		commCollection: commCollection,
+		followerCollection: followerCollection,
 	}
 }
 
@@ -46,7 +49,7 @@ func CommDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 func (ci *CommDaoImpl) CreateComm(comm *models.Community) error {
 	// find a community in the database using comm.comm_owner
 	filter := bson.M{"community_owner": comm.Community_owner}
-	dbRes := ci.mongoCollection.FindOne(ci.ctx, filter);
+	dbRes := ci.commCollection.FindOne(ci.ctx, filter);
 
 	// @logic: if dbRes == nil => a club with comm.community_owner has been created
 	// @logic: if dbRes != nil => a club with comm.community_owner has NOT been created
@@ -54,7 +57,7 @@ func (ci *CommDaoImpl) CreateComm(comm *models.Community) error {
 	if (dbRes.Err() == nil) {
 		return errors.New("!MONGO - A community has already been created by this commOwner")
 	} else if (dbRes.Err().Error() == "mongo: no documents in result") {
-		_, err := ci.mongoCollection.InsertOne(ci.ctx, comm)
+		_, err := ci.commCollection.InsertOne(ci.ctx, comm)
 		return err
 	} else {
 		return dbRes.Err()
@@ -79,7 +82,7 @@ func (ci *CommDaoImpl) GetCommOwnedBy(commOwner *string) (*models.Community, err
 	filter := bson.M{"community_owner": commOwner}
 
 	// find comm in database
-	if err := ci.mongoCollection.FindOne(ci.ctx, filter).Decode(comm); err != nil {return nil, err}
+	if err := ci.commCollection.FindOne(ci.ctx, filter).Decode(comm); err != nil {return nil, err}
 	
 	// return OK
 	return comm, nil
@@ -98,7 +101,7 @@ func (ci *CommDaoImpl) GetAllComms() (*[]models.Community, error) {
 	comms := &[]models.Community{}
 
 	// get communities from internal database
-	cursor, err := ci.mongoCollection.Find(ci.ctx, bson.M{})
+	cursor, err := ci.commCollection.Find(ci.ctx, bson.M{})
 	if err != nil {return nil, err}
 
 	// decode cursor into declared comms
@@ -126,7 +129,7 @@ func (ci *CommDaoImpl) UpdateCommBioOwnedBy(commOwner *string, commBio *string) 
 	query := bson.D{{Key: "$set", Value: bson.M{"bio": commBio}}} 
 
 	// update community in database
-	dbRes, err := ci.mongoCollection.UpdateOne(ci.ctx, filter, query)
+	dbRes, err := ci.commCollection.UpdateOne(ci.ctx, filter, query)
 	if err != nil {return err}
 	if dbRes.MatchedCount == 0 {return errors.New("!MONGO - No matched document found with filter")}
 	
@@ -151,7 +154,7 @@ func (ci *CommDaoImpl) UpdateCommTotalOwnedBy(commOwner *string, followerContext
 
 	// find the community with commOwner
 	comm := &models.Community{}
-	if err := ci.mongoCollection.FindOne(ci.ctx, filter).Decode(comm); err != nil {return err}
+	if err := ci.commCollection.FindOne(ci.ctx, filter).Decode(comm); err != nil {return err}
 
 	// @logic if comm.total_followers == 0 && followerContext == -1, block
 	// @logic if comm.total_posts == 0 && postContext == -1, block
@@ -166,7 +169,7 @@ func (ci *CommDaoImpl) UpdateCommTotalOwnedBy(commOwner *string, followerContext
 	}
 
 	// update community
-	if _, err := ci.mongoCollection.UpdateOne(ci.ctx, filter, update); err != nil {return err}
+	if _, err := ci.commCollection.UpdateOne(ci.ctx, filter, update); err != nil {return err}
 	
 	// return OK
 	return nil
@@ -177,10 +180,37 @@ func (ci *CommDaoImpl) UpdateCommTotalOwnedBy(commOwner *string, followerContext
 // 
 // @dev Lets a Swyl user start following a community
 // 
-// @param follower *string
-// 
-// @param commOwner *string 
-func (ci *CommDaoImpl) Follow(commOnwer *string, follower *string) error {return nil}
+// @param follower *models.Follower
+func (ci *CommDaoImpl) Follow(follower *models.Follower) error {
+	// Set up filter
+	filter := bson.D{
+		{Key: "community_owner", Value: follower.Community_owner},
+		{Key: "follower", Value: follower.Follower},
+	}
+
+	// @logic: if a document with follower.Commynity_owner & follower.Follower is found, block!
+	dbRes := ci.followerCollection.FindOne(ci.ctx, filter)
+	if dbRes.Err() == nil {
+		return errors.New("!MONGO - A club has already been created by this clubOwner")
+	} else if dbRes.Err().Error() == "mongo: no documents in result" {
+		// set up follower_id
+		follower.Follower_ID = primitive.NewObjectID()
+
+		// set up follow_at
+		follower.Follow_at = uint64(time.Now().Unix())
+
+		// insert new follower to internal database
+		if _, err := ci.followerCollection.InsertOne(ci.ctx, follower); err != nil {return err}
+
+		// return OK
+		return nil
+	} else {
+		// return err
+		return dbRes.Err()
+	}
+
+	
+}
 
 
 // @notice Method of CommDaoImpl struct

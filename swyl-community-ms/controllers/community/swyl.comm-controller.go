@@ -175,7 +175,29 @@ func (cc *CommController) UpdateCommTotalOwnedBy(gc *gin.Context) {
 // @route `POST/follow`
 // 
 // @dev Lets a Swyl user start following a community
-func (cc *CommController) Follow(gc *gin.Context) {gc.JSON(200, "swyl-v1")}
+func (cc *CommController) Follow(gc *gin.Context) {
+   // declare param holder
+   param := &models.Follower{}
+
+   // bind json post data to param holder
+   if err := gc.ShouldBindJSON(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
+
+   // test param.Community_owner to match ETH Crypto wallet address convention
+	ownerMatched, ownerErr := utils.TestEthAddress(param.Community_owner)
+	if ownerErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test community_owner against regex"}); return;}
+	if !ownerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - community_owner is not an ETH crypto wallet address"}); return;}   
+
+   // test param.Community_owner to match ETH Crypto wallet address convention
+	followerMatched, followerErr := utils.TestEthAddress(param.Follower)
+	if followerErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test follower against regex"}); return;}
+	if !followerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - follower is not an ETH crypto wallet address"}); return;}   
+
+   // invoke CommDao.Follow
+   if err := cc.CommDao.Follow(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+
+   // http response  
+   gc.JSON(200, "swyl-v1")
+}
 
 
 // @notice Method of CommController struct 
