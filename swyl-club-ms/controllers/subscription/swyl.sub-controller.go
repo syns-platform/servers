@@ -53,12 +53,12 @@ func (si *SubController) Subscribe(gc *gin.Context) {
 
 	// test param.Club_owner to match ETH Crypto wallet address convention
 	ownerMatched, ownerErr := utils.TestEthAddress(param.Club_owner)
-	if ownerErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
+	if ownerErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test clubOwner against regex"}); return;}
 	if !ownerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - club_owner is not an ETH crypto wallet address"}); return;}
 
 	// test param.Subscriber to match ETH Crypto wallet address convention
 	subsMatched, subsErr := utils.TestEthAddress(param.Subscriber)
-	if subsErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
+	if subsErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test subscriber against regex"}); return;}
 	if !subsMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - subscriber is not an ETH crypto wallet address"}); return;}
 
 	// invoke SubDao.Subscribe
@@ -79,8 +79,8 @@ func (si *SubController) GetSubscriptionAt(gc *gin.Context) {
 	subId := gc.Param("sub_id")
 
 	// sanitize subId
-	matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}$`, subId)
-	if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
+	matched, err := regexp.MatchString(`^[a-fA-f0-9]{24}$`, subId)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test subId using regex"}); return;}
 	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!CLUBID - subId is not valid"}); return;}
  
 	// invoke SubDao.GetSubscriptionAt
@@ -98,7 +98,26 @@ func (si *SubController) GetSubscriptionAt(gc *gin.Context) {
 //
 // @dev Gets all subscriptions onwed at tier_id and by club_owner
 func (si *SubController) GetAllSubsAt(gc *gin.Context) {
-	gc.JSON(http.StatusOK, gin.H{"msg": "swyl-v1"})
+	// Handle Param
+	tierId := gc.Query("tier_id")
+	clubOwner := gc.Query("club_owner")
+
+	// sanitize tierId
+	matched, err := regexp.MatchString(`^[a-fA-f0-9]{24}$`, tierId)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test tierId using regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!CLUBID - subId is not valid"}); return;}
+ 
+	// test clubOwner to match ETH Crypto wallet address convention
+	subsMatched, subsErr := utils.TestEthAddress(&clubOwner)
+	if subsErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test clubOwner against regex"}); return;}
+	if !subsMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - subscriber is not an ETH crypto wallet address"}); return;}
+
+	// invoke SubDao.GetAllSubsAt
+	subs, err := si.SubDao.GetAllSubsAt(&tierId, &clubOwner)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(http.StatusOK, subs)
 }
 
 
