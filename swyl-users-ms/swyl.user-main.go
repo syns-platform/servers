@@ -35,6 +35,12 @@ func init() {
 	// load env variables
 	if (os.Getenv("GIN_MODE") != "release") {utils.LoadEnvVars()}
 
+	// set up gin engine
+	server = gin.Default()
+
+	// Gin trust all proxies by default and it's not safe. Set trusted proxy to home router to to mitigate 
+	server.SetTrustedProxies([]string{os.Getenv("HOME_ROUTER")})
+
 	// init context
 	ctx = context.TODO()
 
@@ -52,12 +58,6 @@ func init() {
 
 	// init UserRouter
 	ur = routers.UserRouterConstructor(uc)
-
-	// set up gin engine
-	server = gin.Default()
-
-	// Gin trust all proxies by default and it's not safe. Set trusted proxy to home router to to mitigate 
-	server.SetTrustedProxies([]string{os.Getenv("HOME_ROUTER")})
 }
 
 // @dev Root function
