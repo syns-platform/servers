@@ -61,7 +61,7 @@ func (cc *CommController) CreateComm(gc *gin.Context) {
    if err := cc.CommDao.CreateComm(param); err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
 
    // http response
-   gc.JSON(200, gin.H{"msg": "Commnity successfull created"})
+   gc.JSON(200, gin.H{"msg": "Commnity successfully created"})
 }
 
 
@@ -107,7 +107,27 @@ func (cc *CommController) GetAllComms(gc *gin.Context) {
 // 
 // @route `PATCH/update-comm-owned-by`
 // 
-// @dev Updates Comm's total_followers || Comm's total_posts
-func (cc *CommController) UpdateCommOwnedBy(gc *gin.Context){
-   gc.JSON(200, gin.H{"msg": "swyl-v1"})
+// @dev Updates Comm's bio
+func (cc *CommController) UpdateCommBioOwnedBy(gc *gin.Context){
+   // declare param holder
+   param := &models.Community{}
+
+   // bind json post data to param holder
+   if err := gc.ShouldBindJSON(&param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
+
+   // validate param struct
+   if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
+
+   // test param.Community_owner to match ETH Crypto wallet address convention
+	ownerMatched, ownerErr := utils.TestEthAddress(param.Community_owner)
+	if ownerErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test community_owner against regex"}); return;}
+	if !ownerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - community_owner is not an ETH crypto wallet address"}); return;}
+
+   // invoke CommDao.UpdateCommBioOwnedBy
+   if err := cc.CommDao.UpdateCommBioOwnedBy(param.Community_owner, param.Bio); err != nil {
+      gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;
+   }
+
+   // http response
+   gc.JSON(200, gin.H{"msg": "Community Bio successfully updated"})
 }

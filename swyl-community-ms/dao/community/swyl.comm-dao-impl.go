@@ -110,9 +110,25 @@ func (ci *CommDaoImpl) GetAllComms() (*[]models.Community, error) {
 
 // @notice Method of CommDaoImpl struct
 // 
-// @dev Updates Comm's total_followers || Comm's total_posts
+// @dev Updates Comm's bio
 // 
 // @param commOwner *string
 // 
+// @param commBio *string
+// 
 // @return error
-func (ci *CommDaoImpl) UpdateCommOwnedBy(commOwner *string) error {return nil}
+func (ci *CommDaoImpl) UpdateCommBioOwnedBy(commOwner *string, commBio *string) error {
+	// prepare filter query
+	filter := bson.M{"community_owner": commOwner}
+
+	// prepare update query
+	query := bson.D{{Key: "$set", Value: bson.M{"bio": commBio}}} 
+
+	// update community in database
+	dbRes, err := ci.mongoCollection.UpdateOne(ci.ctx, filter, query)
+	if err != nil {return err}
+	if dbRes.MatchedCount == 0 {return errors.New("!MONGO - No matched document found with filter")}
+	
+	// return ok
+	return nil
+}

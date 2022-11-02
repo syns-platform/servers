@@ -45,7 +45,9 @@ type CommDao interface {
 	// 
 	// @param commOwner *string
 	// 
+	// @param commBio *string
+	// 
 	// @return error
-	UpdateCommOwnedBy(commOwner *string) error
+	UpdateCommBioOwnedBy(commOwner *string, commBio *string) error
 	
 }
