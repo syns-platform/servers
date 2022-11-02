@@ -197,7 +197,7 @@ func (cc *CommController) Follow(gc *gin.Context) {
    if err := cc.CommDao.Follow(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
 
    // http response  
-   gc.JSON(200, "swyl-v1")
+   gc.JSON(200, "Successfully follow a community")
 }
 
 
@@ -229,7 +229,22 @@ func (cc *CommController) GetFollowerAt(gc *gin.Context) {
 // @route `GET/get-all-followers/:community_owner`
 // 
 // @dev Gets all Swyl followers in a community own by commOwner
-func (cc *CommController) GetAllFollowersInCommOwnedBy(gc *gin.Context) {gc.JSON(200, "swyl-v1")}
+func (cc *CommController) GetAllFollowersInCommOwnedBy(gc *gin.Context) {
+   // handle param
+   commOwner := gc.Param("community_owner")
+
+   // test commOwner to match ETH Crypto wallet address convention
+	ownerMatched, ownerErr := utils.TestEthAddress(&commOwner)
+	if ownerErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test community_owner against regex"}); return;}
+	if !ownerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - community_owner is not an ETH crypto wallet address"}); return;}   
+   
+   // invoke CommDao.GetAllFollowersInCommOwnedBy()
+   followers, err := cc.CommDao.GetAllFollowersInCommOwnedBy(&commOwner)
+   if err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+
+   // http response
+   gc.JSON(200, followers)
+}
 
 
 // @notice Method of CommController struct 

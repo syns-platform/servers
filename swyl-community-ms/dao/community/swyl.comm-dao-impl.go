@@ -248,7 +248,23 @@ func (ci *CommDaoImpl) GetFollowerAt(followerId *string) (*models.Follower, erro
 // @return *[]models.Follower
 // 
 // @return error
-func (ci *CommDaoImpl) GetAllFollowersInCommOwnedBy(commOwner *string) (*[]models.Follower, error) {return nil, nil}
+func (ci *CommDaoImpl) GetAllFollowersInCommOwnedBy(commOwner *string) (*[]models.Follower, error) {
+	// declare followers placeholder
+	followers := &[]models.Follower{}
+
+	// prepare filter query
+	filter := bson.M{"community_owner": commOwner}
+
+	// find followers
+	cursor, err := ci.followerCollection.Find(ci.ctx, filter)
+	if err != nil {return nil, err}
+
+	// decode cursor to 
+	if err := cursor.All(ci.ctx, followers); err != nil {return nil, err}
+
+	// return OK
+	return followers, nil
+}
 
 
 // @notice Method of CommDaoImpl struct
