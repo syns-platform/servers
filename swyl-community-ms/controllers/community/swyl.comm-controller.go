@@ -168,3 +168,35 @@ func (cc *CommController) UpdateCommTotalOwnedBy(gc *gin.Context) {
    // http response
    gc.JSON(200, gin.H{"msg": "Community successfully updated"})
 }
+
+
+// @notice Method of CommController struct 
+// 
+// @route `POST/follow`
+// 
+// @dev Lets a Swyl user start following a community
+func (cc *CommController) Follow(gc *gin.Context) {gc.JSON(200, "swyl-v1")}
+
+
+// @notice Method of CommController struct 
+// 
+// @route `GET/get-follower-at/:follower_id`
+// 
+// @dev Gets a Swyl follower at followerId
+func (cc *CommController) GetFollowerAt(gc *gin.Context) {gc.JSON(200, "swyl-v1")}
+
+
+// @notice Method of CommController struct 
+// 
+// @route `GET/get-all-followers/:community_owner`
+// 
+// @dev Gets all Swyl followers in a community own by commOwner
+func (cc *CommController) GetAllFollowersInCommOwnedBy(gc *gin.Context) {gc.JSON(200, "swyl-v1")}
+
+
+// @notice Method of CommController struct 
+// 
+// @route `DELETE/unfollow/:follower_id`
+// 
+// @dev Lets a Swyl user at followerId unfollows a community
+func (cc *CommController) Unfollow(gc *gin.Context) {gc.JSON(200, "swyl-v1")}
