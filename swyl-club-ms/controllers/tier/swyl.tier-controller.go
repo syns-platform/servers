@@ -21,7 +21,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// global vars
+//@notice global vars
 var validate = validator.New()
 
 // @notice Root struct for other methods in controller
