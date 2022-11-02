@@ -105,7 +105,7 @@ func (cc *CommController) GetAllComms(gc *gin.Context) {
 
 // @notice Method of CommController struct
 // 
-// @route `PATCH/update-comm-owned-by`
+// @route `PATCH/update-comm-owned-by/bio`
 // 
 // @dev Updates Comm's bio
 func (cc *CommController) UpdateCommBioOwnedBy(gc *gin.Context){
@@ -130,4 +130,41 @@ func (cc *CommController) UpdateCommBioOwnedBy(gc *gin.Context){
 
    // http response
    gc.JSON(200, gin.H{"msg": "Community Bio successfully updated"})
+}
+
+
+// @notice Method of CommController struct 
+// 
+// @route `PATCH/update-comm-owned-by/total`
+// 
+// @dev Updates Comm's total_followers || Comm's total_posts
+func (cc *CommController) UpdateCommTotalOwnedBy(gc *gin.Context) {
+   // set up param struct
+   type Param struct {
+      Community_owner 		*string 		`json:"community_owner" bson:"community_owner" validate:"required,len=42,alphanum"`
+      Follower_context	 	int16				`json:"follower_context" bson:"follower_context" validate:"omitempty,oneof=-1 0 1"`
+      Post_context	 	int16				`json:"post_context" bson:"post_context" validate:"omitempty,oneof=-1 0 1"`
+   }
+
+   // delcare param holder
+   param := &Param{}
+
+   // bind json post data to param holder
+   if err := gc.ShouldBindJSON(&param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
+
+   // validate param
+   if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
+
+   // test param.Community_owner to match ETH Crypto wallet address convention
+	ownerMatched, ownerErr := utils.TestEthAddress(param.Community_owner)
+	if ownerErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test community_owner against regex"}); return;}
+	if !ownerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - community_owner is not an ETH crypto wallet address"}); return;}   
+
+   // invokde CommDao.UpdateCommTotalOwnedBy
+   if err := cc.CommDao.UpdateCommTotalOwnedBy(param.Community_owner, param.Follower_context, param.Post_context); err != nil {
+      gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;
+   }
+
+   // http response
+   gc.JSON(200, gin.H{"msg": "Community successfully updated"})
 }
