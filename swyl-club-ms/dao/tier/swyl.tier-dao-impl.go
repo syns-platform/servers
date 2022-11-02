@@ -13,7 +13,6 @@ import (
 	"Swyl/servers/swyl-club-ms/models"
 	"context"
 	"errors"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -45,9 +44,6 @@ func TierDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 func (ti *TierDaoImpl) CreateTier(tier *models.Tier) error {
    // updated tier.Tier_ID
    tier.Tier_ID = primitive.NewObjectID()
-
-   // updated tier.Created_at
-   tier.Created_at = uint64(time.Now().Unix())
 
    // insert the tier to the internal database
    _, err := ti.mongoCollection.InsertOne(ti.ctx, tier)

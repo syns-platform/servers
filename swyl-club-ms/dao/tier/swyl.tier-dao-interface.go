@@ -11,7 +11,7 @@ package dao
 // @import
 import "Swyl/servers/swyl-club-ms/models"
 
-// @notice Dao interface
+// @notice TierDao interface
 type TierDao interface {
 
    // @notice Lets a club owner create a tier to internal database

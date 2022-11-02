@@ -13,7 +13,6 @@ import (
 	"Swyl/servers/swyl-club-ms/models"
 	"context"
 	"errors"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -41,8 +40,10 @@ func ClubDaoConstructor (ctx context.Context, mongCollection *mongo.Collection) 
 // 
 // @param clubOwner *string
 // 
+// @param createdAt uint64
+// 
 // @return error
-func (ci *ClubDaoImpl) CreateClub(clubOwner *string) error {
+func (ci *ClubDaoImpl) CreateClub(clubOwner *string, createdAt uint64) error {
 	// set up find query
 	query := bson.M{"club_owner": clubOwner}
 
@@ -57,7 +58,7 @@ func (ci *ClubDaoImpl) CreateClub(clubOwner *string) error {
 		// prepare newClub
 		newClub := &models.Club{
 				Club_owner: clubOwner,
-				Created_at: uint64(time.Now().Unix()),
+				Created_at: createdAt,
 				Total_members: uint64(0),
 			}
 

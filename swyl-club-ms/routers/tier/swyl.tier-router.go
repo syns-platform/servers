@@ -8,13 +8,14 @@
 // @package
 package routers
 
+// @import
 import (
 	controllers "Swyl/servers/swyl-club-ms/controllers/tier"
 
 	"github.com/gin-gonic/gin"
 )
 
-// @notice Root struct for other methods in router
+// @notice Root struct for other methods in tier-router
 type TierRouter struct {
    TierController *controllers.TierController
 }

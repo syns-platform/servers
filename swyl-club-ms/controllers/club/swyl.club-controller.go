@@ -60,7 +60,7 @@ func (cc *ClubController) CreateClub(gc *gin.Context) {
 	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - club_owner is not an ETH crypto wallet address"}); return;}
 
 	// invoke ClubDao.CreateClub() api
-	if err := cc.ClubDao.CreateClub(param.Club_owner); err != nil {
+	if err := cc.ClubDao.CreateClub(param.Club_owner, param.Created_at); err != nil {
 		gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;
 	}
 

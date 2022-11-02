@@ -15,7 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @notice Root struct for other methods in router
+// @notice Root struct for other methods in club-router
 type ClubRouter struct {
 	ClubController *controllers.ClubController
 }

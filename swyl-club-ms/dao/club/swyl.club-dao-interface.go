@@ -11,15 +11,17 @@ package dao
 // @import
 import "Swyl/servers/swyl-club-ms/models"
 
-// @notice Dao interface
+// @notice ClubDao interface
 type ClubDao interface {
 
 	// @notice Creates a club
 	// 
 	// @param clubOwner *string
 	// 
+	// @param createdAt uint64
+	// 
 	// @return error
-	CreateClub(clubOwner *string) error
+	CreateClub(clubOwner *string, createdAt uint64) error
 
 
 	// @notice Gets a club at clubId
