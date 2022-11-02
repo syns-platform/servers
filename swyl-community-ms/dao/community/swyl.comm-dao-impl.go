@@ -31,7 +31,7 @@ func CommDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 }
 
 
-// @notice Method of CommDaoImp struct
+// @notice Method of CommDaoImpl struct
 // 
 // @dev Lets a Swyl user create a community
 // 
@@ -43,7 +43,7 @@ func CommDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 func (ci *CommDaoImpl) CreateComm(commOwner *string) error {return nil}
 
 
-// @notice Method of CommDaoImp struct
+// @notice Method of CommDaoImpl struct
 // 
 // @dev Gets a Comm owned by commOwner
 // 
@@ -55,7 +55,7 @@ func (ci *CommDaoImpl) CreateComm(commOwner *string) error {return nil}
 func (ci *CommDaoImpl) GetCommOwnedBy(commOwner *string) (*models.Community, error) {return nil, nil}
 
 
-// @notice Method of CommDaoImp struct
+// @notice Method of CommDaoImpl struct
 // 
 // @dev Gets all Comm has ever created
 // 
@@ -65,11 +65,11 @@ func (ci *CommDaoImpl) GetCommOwnedBy(commOwner *string) (*models.Community, err
 func (ci *CommDaoImpl) GetAllComms() (*models.Community, error) {return nil, nil}
 
 
-// @notice Method of CommDaoImp struct
+// @notice Method of CommDaoImpl struct
 // 
 // @dev Updates Comm's total_followers || Comm's total_posts
 // 
 // @param commOwner *string
 // 
 // @return error
-func (ci *CommDaoImpl) UpdateComm(commOwner *string) error {return nil}
+func (ci *CommDaoImpl) UpdateCommOwnedBy(commOwner *string) error {return nil}
