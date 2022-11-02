@@ -10,8 +10,6 @@ package dao
 
 import (
 	"Swyl/servers/swyl-community-ms/models"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // @notice Dao interface
@@ -67,12 +65,16 @@ type CommDao interface {
 	UpdateCommTotalOwnedBy(commOwner *string, followerContext int16, postContext int16) error
 
 	
-	// @notice Lets a Swyl user start following a community
+	// @notice Lets a Swyl user follow and unfollow a community
+	// 
+	// @logic if a user has already followed the community => unfollow
+	// 
+	// @logic if a user does NOT followed the community => follow
 	// 
 	// @param comfollower *models.Follower
 	// 
 	// @return error
-	Follow(follower *models.Follower) error
+	ToggleFollow(follower *models.Follower) (int, error)
 
 	
 	// @notice Gets a Swyl follower at followerId
@@ -91,13 +93,4 @@ type CommDao interface {
 	// 
 	// @return error
 	GetAllFollowersInCommOwnedBy(commOwner *string) (*[]models.Follower, error)
-
-
-	// @notice Lets a Swyl user at followerId unfollows a community
-	// 
-	// @param followerId *primitive.ObjectID
-	// 
-	// @return error
-	Unfollow(followerId *primitive.ObjectID) error
-
 }

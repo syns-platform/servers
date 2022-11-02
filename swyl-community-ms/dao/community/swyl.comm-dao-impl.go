@@ -178,20 +178,29 @@ func (ci *CommDaoImpl) UpdateCommTotalOwnedBy(commOwner *string, followerContext
 
 // @notice Method of CommDaoImpl struct
 // 
+// @logic if a user has already followed the community => unfollow
+// 
+// @logic if a user does NOT followed the community => follow
+// 
 // @dev Lets a Swyl user start following a community
 // 
 // @param follower *models.Follower
-func (ci *CommDaoImpl) Follow(follower *models.Follower) error {
+func (ci *CommDaoImpl) ToggleFollow(follower *models.Follower) (int, error) {
 	// Set up filter
 	filter := bson.D{
 		{Key: "community_owner", Value: follower.Community_owner},
 		{Key: "follower", Value: follower.Follower},
 	}
 
-	// @logic: if a document with follower.Commynity_owner & follower.Follower is found, block!
+	// find follower in database
 	dbRes := ci.followerCollection.FindOne(ci.ctx, filter)
+
+	// @logic: if dbRes.Err() == nil => a document with follower.Commynity_owner & follower.Follower is found => followed => unfollow
+	// @logic: if dbRes.Err() == nil => a document with follower.Commynity_owner & follower.Follower is NOT found => unfollowed => follow
 	if dbRes.Err() == nil {
-		return errors.New("!MONGO - follower has already followed this community")
+		// delete follower document
+		_, err := ci.followerCollection.DeleteOne(ci.ctx, filter)
+		return 0, err
 	} else if dbRes.Err().Error() == "mongo: no documents in result" {
 		// set up follower_id
 		follower.Follower_ID = primitive.NewObjectID()
@@ -200,16 +209,14 @@ func (ci *CommDaoImpl) Follow(follower *models.Follower) error {
 		follower.Follow_at = uint64(time.Now().Unix())
 
 		// insert new follower to internal database
-		if _, err := ci.followerCollection.InsertOne(ci.ctx, follower); err != nil {return err}
+		if _, err := ci.followerCollection.InsertOne(ci.ctx, follower); err != nil {return -1, err}
 
 		// return OK
-		return nil
+		return 1, nil
 	} else {
 		// return err
-		return dbRes.Err()
+		return -1, dbRes.Err()
 	}
-
-	
 }
 
 
@@ -265,13 +272,3 @@ func (ci *CommDaoImpl) GetAllFollowersInCommOwnedBy(commOwner *string) (*[]model
 	// return OK
 	return followers, nil
 }
-
-
-// @notice Method of CommDaoImpl struct
-// 
-// @dev Lets a Swyl user at followerId unfollows a community
-// 
-// @param followerId *primitive.ObjectID
-// 
-// @return error
-func (ci *CommDaoImpl) Unfollow(followerId *primitive.ObjectID) error {return nil}

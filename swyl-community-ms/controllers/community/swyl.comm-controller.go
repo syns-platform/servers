@@ -176,7 +176,7 @@ func (cc *CommController) UpdateCommTotalOwnedBy(gc *gin.Context) {
 // @route `POST/follow`
 // 
 // @dev Lets a Swyl user start following a community
-func (cc *CommController) Follow(gc *gin.Context) {
+func (cc *CommController) ToggleFollow(gc *gin.Context) {
    // declare param holder
    param := &models.Follower{}
 
@@ -194,10 +194,17 @@ func (cc *CommController) Follow(gc *gin.Context) {
 	if !followerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - follower is not an ETH crypto wallet address"}); return;}   
 
    // invoke CommDao.Follow
-   if err := cc.CommDao.Follow(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+   status, err := cc.CommDao.ToggleFollow(param)
+   if err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
 
    // http response  
-   gc.JSON(200, "Successfully follow a community")
+   if status == 0 {
+      gc.JSON(200, gin.H{"unfollow": "Successfully unfollow"})
+   } else if status == 1 {
+      gc.JSON(200, gin.H{"follow": "Successfully follow"})
+   } else {
+      gc.AbortWithStatusJSON(500, gin.H{"error": "an unknown error has occured"}); return;
+   }
 }
 
 
@@ -245,11 +252,3 @@ func (cc *CommController) GetAllFollowersInCommOwnedBy(gc *gin.Context) {
    // http response
    gc.JSON(200, followers)
 }
-
-
-// @notice Method of CommController struct 
-// 
-// @route `DELETE/unfollow/:follower_id`
-// 
-// @dev Lets a Swyl user at followerId unfollows a community
-func (cc *CommController) Unfollow(gc *gin.Context) {gc.JSON(200, "swyl-v1")}
