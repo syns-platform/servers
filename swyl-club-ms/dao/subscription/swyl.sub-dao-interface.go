@@ -19,7 +19,7 @@ type SubDao interface {
 	// @param subParam *models.Subscription
 	// 
 	// @return error
-	Subscribe(subParam *models.Subscription)
+	Subscribe(subParam *models.Subscription) error
 
 
 	// @notice Gets a subscription using subscription_id
