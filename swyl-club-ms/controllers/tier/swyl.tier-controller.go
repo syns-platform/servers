@@ -58,7 +58,7 @@ func (tc *TierController) CreateTier(gc *gin.Context) {
 
    // extra validation on param.club_owner to match ETH Crypto Wallet address convention
    matched, err := utils.TestEthAddress(param.Club_owner)
-   if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
+   if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test tierId using regex"}); return;}
    if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - club_owner is not an ETH crypto wallet address"}); return;}
 
    // invoke TierDao.CreateTier() api
@@ -84,8 +84,8 @@ func (tc *TierController) GetTierAt(gc *gin.Context) {
 
    // sanitize tierId
    matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}$`, tierId)
-   if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
-   if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!CLUBID - clubId is not valid"}); return;}
+   if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test tierId using regex"}); return;}
+   if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!TIERID - tierId is not valid"}); return;}
 
    
    // invoke TierDao.GetTierAt
@@ -141,8 +141,8 @@ func (tc *TierController) UpdateTier(gc *gin.Context) {
    // sanitizing param.Tier_id
    tierId := primitive.ObjectID.Hex(param.Tier_ID)
    matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}$`, tierId)
-   if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
-   if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!CLUBID - clubId is not valid"}); return;}
+   if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test tierId using regex"}); return;}
+   if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!TIERID - clubId is not valid"}); return;}
 
    // validate struct
    if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
@@ -165,8 +165,8 @@ func (tc *TierController) DeleteTier(gc *gin.Context){
 
    // sanitizing param
    matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}$`, param)
-   if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
-   if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!CLUBID - clubId is not valid"}); return;}
+   if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test tierId using regex"}); return;}
+   if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!TIERID - tierId is not valid"}); return;}
 
    // invoke TierDao.DeleteTier
    if err := tc.TierDao.DeleteTier(&param); err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
