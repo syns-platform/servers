@@ -12,7 +12,9 @@ package dao
 import (
 	"Swyl/servers/swyl-community-ms/models"
 	"context"
+	"errors"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -37,10 +39,26 @@ func CommDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 // 
 // @NOTE Should be fired off when #user/connect api is called
 // 
-// @param commOwner *string
+// @param comm *models.Community
 // 
 // @return error
-func (ci *CommDaoImpl) CreateComm(commOwner *string) error {return nil}
+func (ci *CommDaoImpl) CreateComm(comm *models.Community) error {
+	// find a community in the database using comm.comm_owner
+	filter := bson.M{"community_owner": comm.Community_owner}
+	dbRes := ci.mongoCollection.FindOne(ci.ctx, filter);
+
+	// @logic: if dbRes == nil => a club with comm.community_owner has been created
+	// @logic: if dbRes != nil => a club with comm.community_owner has NOT been created
+	// @logic: else return dbRes
+	if (dbRes.Err() == nil) {
+		return errors.New("!MONGO - A community has already been created by this commOwner")
+	} else if (dbRes.Err().Error() == "mongo: no documents in result") {
+		_, err := ci.mongoCollection.InsertOne(ci.ctx, comm)
+		return err
+	} else {
+		return dbRes.Err()
+	}
+}
 
 
 // @notice Method of CommDaoImpl struct

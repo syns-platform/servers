@@ -17,10 +17,10 @@ type CommDao interface {
 	// 
 	// @NOTE Should be fired off when #user/connect api is called
 	// 
-	// @param commOwner *string
+	// @param comm *models.Community
 	// 
 	// @return error
-	CreateComm(commOwner *string) error
+	CreateComm(comm *models.Community) error
 
 	
 	// @notice Gets a Comm owned by commOwner
