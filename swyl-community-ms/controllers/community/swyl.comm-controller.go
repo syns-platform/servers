@@ -94,7 +94,12 @@ func (cc *CommController) GetCommOwnedBy(gc *gin.Context) {
 // 
 // @dev Gets all Comm has ever created
 func (cc *CommController) GetAllComms(gc *gin.Context) {
-   gc.JSON(200, gin.H{"msg": "swyl-v1"})
+   // invode CommDao.GetAllClubs
+   comms, err := cc.CommDao.GetAllComms()
+   if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+   // http response
+   gc.JSON(200, gin.H{"msg": comms})
 }
 
 
