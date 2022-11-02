@@ -33,6 +33,7 @@ type Tier struct {
 
 
 // @notice The information related to a Swyl Subscription
+// @TODO: add username, email, displayname
 type Subscription struct {
 	Subscription_ID					primitive.ObjectID 		`json:"subscription_id" bason:"_id"`
 	Club_owner					*string 			`json:"club_owner" bson:"club_owner" validate:"required,len=42,alphanum"`
