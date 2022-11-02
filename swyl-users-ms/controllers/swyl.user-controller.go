@@ -19,7 +19,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-// global var
+// @notice global var
 var validate = validator.New()
 
 // @notice Root struct for other methods in controller
