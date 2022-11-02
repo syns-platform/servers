@@ -70,7 +70,19 @@ func (ci *CommDaoImpl) CreateComm(comm *models.Community) error {
 // @return *models.Community
 // 
 // @return error
-func (ci *CommDaoImpl) GetCommOwnedBy(commOwner *string) (*models.Community, error) {return nil, nil}
+func (ci *CommDaoImpl) GetCommOwnedBy(commOwner *string) (*models.Community, error) {
+	// declare comm holder
+	comm := &models.Community{}
+
+	// prepare filter
+	filter := bson.M{"community_owner": commOwner}
+
+	// find comm in database
+	if err := ci.mongoCollection.FindOne(ci.ctx, filter).Decode(comm); err != nil {return nil, err}
+	
+	// return OK
+	return comm, nil
+}
 
 
 // @notice Method of CommDaoImpl struct
