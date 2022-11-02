@@ -71,7 +71,20 @@ func (cc *CommController) CreateComm(gc *gin.Context) {
 // 
 // @dev Gets a Comm owned by commOwner
 func (cc *CommController) GetCommOwnedBy(gc *gin.Context) {
-   gc.JSON(200, gin.H{"msg": "swyl-v1"})
+   // Handle commOwner param
+   commOwner := gc.Param("comm_owner")
+
+   // test commOwner to match ETH Crypto wallet address convention
+	ownerMatched, ownerErr := utils.TestEthAddress(&commOwner)
+	if ownerErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test commOwner against regex"}); return;}
+	if !ownerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - commOwner is not an ETH crypto wallet address"}); return;}
+
+   // invoke CommDao.GetCommOwnedBy
+   comm, err := cc.CommDao.GetCommOwnedBy(&commOwner)
+   if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+   // http response
+   gc.JSON(200, gin.H{"msg": comm})
 }
 
 
