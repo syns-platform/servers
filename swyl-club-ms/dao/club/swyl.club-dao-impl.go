@@ -50,8 +50,9 @@ func (ci *ClubDaoImpl) CreateClub(clubOwner *string, createdAt uint64) error {
 	// check if club has already been created with the `clubOwner`
 	dbRes := ci.mongCollection.FindOne(ci.ctx, query)
 
-	// logic: if dbRes error != nil => club with `clubOwner` has never been created
-	// logic: if dbRes error == nil => club with `clubOwner` has already been created
+	// @logic: if dbRes error != nil => club with `clubOwner` has never been created
+	// @logic: if dbRes error == nil => club with `clubOwner` has already been created
+	// @logic: else return dbRes
 	if dbRes.Err() == nil {
 		return errors.New("!MONGO - A club has already been created by this clubOwner")
 	} else if dbRes.Err().Error() == "mongo: no documents in result" {
@@ -105,17 +106,17 @@ func (ci *ClubDaoImpl) GetClubOwnedBy(clubOwner *string) (*models.Club, error) {
 // @return error
 func (ci *ClubDaoImpl) GetAllClubs() (*[]models.Club, error) {
 	// Declare a slice of placeholder models.User 
-	var clubs []models.Club
+	clubs := &[]models.Club{}
 
 	// Find clubs in database
 	cursor, err := ci.mongCollection.Find(ci.ctx, bson.D{})
 	if err != nil {return nil, err}
 
 	// decode cursor into the declared slice
-	if err := cursor.All(ci.ctx, &clubs); err != nil {return nil, err}
+	if err := cursor.All(ci.ctx, clubs); err != nil {return nil, err}
 
 	// return OK
-	return &clubs, nil
+	return clubs, nil
 }
 
 

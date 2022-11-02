@@ -38,7 +38,7 @@ type CommDao interface {
 	// @NOTE Might not be necessary
 	// 
 	// return *[]models.Community
-	GetAllComms() (*models.Community, error)
+	GetAllComms() (*[]models.Community, error)
 
 
 	// @notice Updates Comm's total_followers || Comm's total_posts

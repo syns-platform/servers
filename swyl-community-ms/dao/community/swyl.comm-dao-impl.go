@@ -92,7 +92,20 @@ func (ci *CommDaoImpl) GetCommOwnedBy(commOwner *string) (*models.Community, err
 // @NOTE Might not be necessary
 // 
 // return *[]models.Community
-func (ci *CommDaoImpl) GetAllComms() (*models.Community, error) {return nil, nil}
+func (ci *CommDaoImpl) GetAllComms() (*[]models.Community, error) {
+	// declare comms holder
+	comms := &[]models.Community{}
+
+	// get communities from internal database
+	cursor, err := ci.mongoCollection.Find(ci.ctx, bson.M{})
+	if err != nil {return nil, err}
+
+	// decode cursor into declared comms
+	if err := cursor.All(ci.ctx, comms); err != nil {return nil, err}
+	
+	// return OK
+	return comms, nil
+}
 
 
 // @notice Method of CommDaoImpl struct
