@@ -12,6 +12,7 @@ package dao
 import (
 	"Swyl/servers/swyl-club-ms/models"
 	"context"
+	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -145,9 +146,22 @@ func (si *SubDaoImpl) ToggleSubStatusAt(subId *string) error {
 //
 // @dev Lets a subscriber unsubscribe a tier 
 // 
-// @param tierId *string
-// 
 // @param subId *string
 // 
 // @return error
-func (si *SubDaoImpl) Unsubscribe(tierId *string, subId *string) error {return nil}
+func (si *SubDaoImpl) Unsubscribe(subId *string) error {
+	// set up objectId
+	objectId, err := primitive.ObjectIDFromHex(*subId)
+	if err != nil {return err}
+
+	// prepare filter 
+	filter := bson.M{"_id": objectId}
+
+	// delete subscription in the database
+	dbRes, err := si.mongoCollection.DeleteOne(si.ctx, filter)
+	if err != nil {return err}
+	if dbRes.DeletedCount == 0 {return errors.New("!MONGO - No matched document found")}
+
+	// return OK
+	return nil
+}

@@ -54,8 +54,6 @@ type SubDao interface {
 	// 
 	// @param tierId *string
 	// 
-	// @param subId *string
-	// 
 	// @return error
-	Unsubscribe(tierId *string, subId *string) error
+	Unsubscribe(subId *string) error
 }
