@@ -14,6 +14,7 @@ import (
 	"Swyl/servers/swyl-club-ms/models"
 	"Swyl/servers/swyl-club-ms/utils"
 	"net/http"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -74,7 +75,20 @@ func (si *SubController) Subscribe(gc *gin.Context) {
 //
 // @dev Gets a subscription using subscription_id
 func (si *SubController) GetSubscriptionAt(gc *gin.Context) {
-	gc.JSON(http.StatusOK, gin.H{"msg": "swyl-v1"})
+	// Handle param
+	subId := gc.Param("sub_id")
+
+	// sanitize subId
+	matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}$`, subId)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!CLUBID - subId is not valid"}); return;}
+ 
+	// invoke SubDao.GetSubscriptionAt
+	subs, err := si.SubDao.GetSubscriptionAt(&subId)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(http.StatusOK, subs)
 }
 
 
