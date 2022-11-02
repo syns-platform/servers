@@ -77,10 +77,10 @@ type CommDao interface {
 	
 	// @notice Gets a Swyl follower at followerId
 	// 
-	// @param followerId *primitive.ObjectID
+	// @param followerId *string
 	// 
 	// @return *models.Follower
-	GetFollowerAt(followerId *primitive.ObjectID) (*models.Follower, error)
+	GetFollowerAt(followerId *string) (*models.Follower, error)
 
 
 	// @notice Gets all Swyl followers in a community own by commOwner

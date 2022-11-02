@@ -191,7 +191,7 @@ func (ci *CommDaoImpl) Follow(follower *models.Follower) error {
 	// @logic: if a document with follower.Commynity_owner & follower.Follower is found, block!
 	dbRes := ci.followerCollection.FindOne(ci.ctx, filter)
 	if dbRes.Err() == nil {
-		return errors.New("!MONGO - A club has already been created by this clubOwner")
+		return errors.New("!MONGO - follower has already followed this community")
 	} else if dbRes.Err().Error() == "mongo: no documents in result" {
 		// set up follower_id
 		follower.Follower_ID = primitive.NewObjectID()
@@ -217,10 +217,26 @@ func (ci *CommDaoImpl) Follow(follower *models.Follower) error {
 // 
 // @dev Gets a Swyl follower at followerId
 // 
-// @param followerId *primitive.ObjectID
+// @param followerId *string
 // 
 // @return *models.Follower
-func (ci *CommDaoImpl) GetFollowerAt(followerId *primitive.ObjectID) (*models.Follower, error) {return nil, nil}
+func (ci *CommDaoImpl) GetFollowerAt(followerId *string) (*models.Follower, error) {
+	// declare follower placeholder
+	follower := &models.Follower{}
+
+	// prepare objectId
+	objectId, err := primitive.ObjectIDFromHex(*followerId)
+	if err != nil {return nil, err}
+
+	// prepare filter query
+	qeury := bson.M{"_id": objectId}
+
+	// find follower in database
+	if err := ci.followerCollection.FindOne(ci.ctx, qeury).Decode(follower); err != nil {return nil, err}
+	
+	// return OK
+	return follower, nil
+}
 
 
 // @notice Method of CommDaoImpl struct

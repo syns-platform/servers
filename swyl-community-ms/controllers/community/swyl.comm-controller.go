@@ -14,6 +14,7 @@ import (
 	"Swyl/servers/swyl-community-ms/models"
 	"Swyl/servers/swyl-community-ms/utils"
 	"net/http"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -187,7 +188,7 @@ func (cc *CommController) Follow(gc *gin.Context) {
 	if ownerErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test community_owner against regex"}); return;}
 	if !ownerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - community_owner is not an ETH crypto wallet address"}); return;}   
 
-   // test param.Community_owner to match ETH Crypto wallet address convention
+   // test param.Follower to match ETH Crypto wallet address convention
 	followerMatched, followerErr := utils.TestEthAddress(param.Follower)
 	if followerErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test follower against regex"}); return;}
 	if !followerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - follower is not an ETH crypto wallet address"}); return;}   
@@ -205,7 +206,22 @@ func (cc *CommController) Follow(gc *gin.Context) {
 // @route `GET/get-follower-at/:follower_id`
 // 
 // @dev Gets a Swyl follower at followerId
-func (cc *CommController) GetFollowerAt(gc *gin.Context) {gc.JSON(200, "swyl-v1")}
+func (cc *CommController) GetFollowerAt(gc *gin.Context) {
+   // Handle param
+   followerId := gc.Param("follower_id")
+
+   // sanitize followerId
+   matched, err := regexp.MatchString(`^[a-fA-f0-9]{24}$`, followerId)
+   if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test followerId using regex"}); return;}
+   if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!FOLLOWERID - followerId is not valid"}); return;}
+   
+   // invoke CommDao.GetFollowerAt() 
+   follower, err := cc.CommDao.GetFollowerAt(&followerId)
+   if err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+
+   // http response
+   gc.JSON(200, follower)
+}
 
 
 // @notice Method of CommController struct 
