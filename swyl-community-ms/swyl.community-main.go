@@ -47,7 +47,8 @@ func init() {
 
 	// ############ init club router ############
 	commCollection := db.GetMongoCollection(mongoClient, "communities") //init communities collection
-	cd := commDao.CommDaoConstructor(ctx, commCollection) // init CommDao
+	followerCollection := db.GetMongoCollection(mongoClient, "followers") //init follower collection
+	cd := commDao.CommDaoConstructor(ctx, commCollection, followerCollection) // init CommDao
 	cc := commControllers.CommControllerConstructor(cd) // init CommController
 	cr = commRouters.CommRouterConstructor(cc) // init CommRouter
 }
