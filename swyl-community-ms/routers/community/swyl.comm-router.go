@@ -34,5 +34,6 @@ func (cr *CommRouter) CommRoutes(rg *gin.RouterGroup) {
 	rg.POST("create-community", cr.CommController.CreateComm)
 	rg.GET("get-comminity-owned-by/:comm_owner", cr.CommController.GetCommOwnedBy)
 	rg.GET("get-all-comms", cr.CommController.GetAllComms)
-	rg.PATCH("update-comm-owned-by", cr.CommController.UpdateCommBioOwnedBy)
+	rg.PATCH("update-comm-owned-by/bio", cr.CommController.UpdateCommBioOwnedBy)
+	rg.PATCH("update-comm-owned-by/total", cr.CommController.UpdateCommTotalOwnedBy)
 }
