@@ -69,7 +69,7 @@ func main() {
 	server.HandleMethodNotAllowed = true
 
 	// init basePath
-	basePath := server.Group("/v1/swyl")
+	basePath := server.Group("/v1/swyl/user")
 
 	// init Handler
 	ur.UserRoutes(basePath)
