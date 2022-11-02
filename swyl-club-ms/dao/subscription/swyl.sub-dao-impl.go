@@ -113,12 +113,32 @@ func (si *SubDaoImpl) GetAllSubsAt(tierId *string, clubOwner *string) (*[]models
 
 // @notice Method of SubDaoImpl struct
 //
-// @dev Updates a subscription status
+// @dev Toggles a subscription status at subId
 // 
 // @param subId *string
 // 
 // @return error
-func (si *SubDaoImpl) UpdateSubStatus(subIb *string) error {return nil}
+func (si *SubDaoImpl) ToggleSubStatusAt(subId *string) error {
+	// set up objectId
+	objectId, err := primitive.ObjectIDFromHex(*subId)
+	if err != nil {return err}
+
+	// prepare filter query
+	filter := bson.M{"_id": objectId}
+
+	// find sub at subId
+	sub := &models.Subscription{}
+	if err := si.mongoCollection.FindOne(si.ctx, filter).Decode(sub); err != nil {return err}
+
+	// prepare update query
+	update := bson.D{{Key: "$set", Value: bson.M{"status": !sub.Status}}}
+
+	// update the sub
+	if _, err := si.mongoCollection.UpdateOne(si.ctx, filter, update); err != nil {return err}
+	
+	// response OK
+	return nil
+}
 
 
 // @notice Method of SubDaoImpl struct
