@@ -42,12 +42,12 @@ type SubDao interface {
 	GetAllSubsAt(tierId *string, clubOwner *string) (*[]models.Subscription, error)
 
 
-	// @notice Updates a subscription status
+	// @notice Toggles a subscription status at subId
 	// 
 	// @param subId *string
 	// 
 	// @return error
-	UpdateSubStatus(subIb *string) error
+	ToggleSubStatusAt(subId *string) error
 
 
 	// @notice Lets a subscriber unsubscribe a tier 
