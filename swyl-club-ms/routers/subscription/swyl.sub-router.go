@@ -33,6 +33,6 @@ func (sr *SubRouter) SubRoutes(rg *gin.RouterGroup) {
    rg.POST("/subscribe", sr.SubController.Subscribe)
    rg.GET("/get-sub-at/:sub_id", sr.SubController.GetSubscriptionAt)
    rg.GET("/get-all-subs-at", sr.SubController.GetAllSubsAt)
-   rg.PATCH("/update-sub-status-at/:sub_id", sr.SubController.UpdateSubStatus)
-   rg.DELETE("/unsubscribe", sr.SubController.Unsubscribe)
+   rg.PATCH("/toggle-sub-status-at/:sub_id", sr.SubController.ToggleSubStatusAt)
+   rg.DELETE("/unsubscribe/:sub_id", sr.SubController.Unsubscribe)
 }
