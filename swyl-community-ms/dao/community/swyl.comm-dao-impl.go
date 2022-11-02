@@ -132,3 +132,41 @@ func (ci *CommDaoImpl) UpdateCommBioOwnedBy(commOwner *string, commBio *string) 
 	// return ok
 	return nil
 }
+
+// @notice Method of CommDaoImpl struct
+// 
+// @notice Updates Comm's total_followers || Comm's total_posts
+// 
+// @param commOnwer *string
+// 
+// @param followerContext int16
+// 
+// @param postContext int16
+// 
+// @return error
+func (ci *CommDaoImpl) UpdateCommTotalOwnedBy(commOwner *string, followerContext int16, postContext int16) error {
+	// prepare filter query
+	filter := bson.M{"community_owner": commOwner}
+
+	// find the community with commOwner
+	comm := &models.Community{}
+	if err := ci.mongoCollection.FindOne(ci.ctx, filter).Decode(comm); err != nil {return err}
+
+	// @logic if comm.total_followers == 0 && followerContext == -1, block
+	// @logic if comm.total_posts == 0 && postContext == -1, block
+	if ((comm.Total_followers == 0 && followerContext == -1) || (comm.Total_posts == 0 && postContext == -1)) {
+		return errors.New("!OVERFLOW - total_followers *uint64 & total_posts *uint64 cannot be negative")
+	}
+	
+	// prepare update query
+	update := bson.D{
+		{Key: "$set", Value: bson.M{"total_followers": comm.Total_followers + uint64(followerContext)}},
+		{Key: "$set", Value: bson.M{"total_posts": comm.Total_posts + uint64(postContext)}},
+	}
+
+	// update community
+	if _, err := ci.mongoCollection.UpdateOne(ci.ctx, filter, update); err != nil {return err}
+	
+	// return OK
+	return nil
+}
