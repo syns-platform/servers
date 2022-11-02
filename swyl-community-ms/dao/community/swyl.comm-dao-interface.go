@@ -41,7 +41,7 @@ type CommDao interface {
 	GetAllComms() (*[]models.Community, error)
 
 
-	// @notice Updates Comm's total_followers || Comm's total_posts
+	// @notice Updates Comm's bio
 	// 
 	// @param commOwner *string
 	// 
@@ -49,5 +49,16 @@ type CommDao interface {
 	// 
 	// @return error
 	UpdateCommBioOwnedBy(commOwner *string, commBio *string) error
-	
+
+
+	// @notice Updates Comm's total_followers || Comm's total_posts
+	// 
+	// @param commOnwer *string
+	// 
+	// @param followerContext int16
+	// 
+	// @param postContext int16
+	// 
+	// @return error
+	UpdateCommTotalOwnedBy(commOwner *string, followerContext int16, postContext int16) error
 }
