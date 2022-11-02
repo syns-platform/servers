@@ -15,6 +15,7 @@ import (
 	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -170,3 +171,45 @@ func (ci *CommDaoImpl) UpdateCommTotalOwnedBy(commOwner *string, followerContext
 	// return OK
 	return nil
 }
+
+
+// @notice Method of CommDaoImpl struct
+// 
+// @dev Lets a Swyl user start following a community
+// 
+// @param follower *string
+// 
+// @param commOwner *string 
+func (ci *CommDaoImpl) Follow(commOnwer *string, follower *string) error {return nil}
+
+
+// @notice Method of CommDaoImpl struct
+// 
+// @dev Gets a Swyl follower at followerId
+// 
+// @param followerId *primitive.ObjectID
+// 
+// @return *models.Follower
+func (ci *CommDaoImpl) GetFollowerAt(followerId *primitive.ObjectID) (*models.Follower, error) {return nil, nil}
+
+
+// @notice Method of CommDaoImpl struct
+// 
+// @dev Gets all Swyl followers in a community own by commOwner
+// 
+// @param commOwner *string
+// 
+// @return *[]models.Follower
+// 
+// @return error
+func (ci *CommDaoImpl) GetAllFollowersInCommOwnedBy(commOwner *string) (*[]models.Follower, error) {return nil, nil}
+
+
+// @notice Method of CommDaoImpl struct
+// 
+// @dev Lets a Swyl user at followerId unfollows a community
+// 
+// @param followerId *primitive.ObjectID
+// 
+// @return error
+func (ci *CommDaoImpl) Unfollow(followerId *primitive.ObjectID) error {return nil}
