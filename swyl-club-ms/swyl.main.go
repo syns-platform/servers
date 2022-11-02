@@ -11,11 +11,14 @@ package main
 // @import
 import (
 	clubControllers "Swyl/servers/swyl-club-ms/controllers/club"
+	subControllers "Swyl/servers/swyl-club-ms/controllers/subscription"
 	tierControllers "Swyl/servers/swyl-club-ms/controllers/tier"
 	clubDao "Swyl/servers/swyl-club-ms/dao/club"
+	subDao "Swyl/servers/swyl-club-ms/dao/subscription"
 	tierDao "Swyl/servers/swyl-club-ms/dao/tier"
 	"Swyl/servers/swyl-club-ms/db"
 	clubRouters "Swyl/servers/swyl-club-ms/routers/club"
+	subRouters "Swyl/servers/swyl-club-ms/routers/subscription"
 	tierRouters "Swyl/servers/swyl-club-ms/routers/tier"
 	"Swyl/servers/swyl-club-ms/utils"
 	"context"
@@ -32,8 +35,10 @@ var (
 	mongoClient		*mongo.Client
 	clubCollection	*mongo.Collection
 	tierCollection	*mongo.Collection
+	subCollection	*mongo.Collection
 	cr				*clubRouters.ClubRouter
 	tr				*tierRouters.TierRouter
+	sr				*subRouters.SubRouter
 )
 
 
@@ -67,6 +72,12 @@ func init() {
 	tc := tierControllers.TierControllerConstructor(ti) // init TierController
 	tr = tierRouters.TierRouterConstructor(tc)
    	
+
+	// ############ init sub router ############
+	subCollection = db.GetMongoCollection(mongoClient, "subs")
+	si := subDao.SubDaoConstructor(ctx, subCollection)
+	sc := subControllers.SubControllerConstructor(si)
+	sr = subRouters.SubRouterConstructor(sc)
 }
 
 
@@ -81,11 +92,13 @@ func main() {
 	// init basePath
 	clubBasePath := server.Group("/v1/swyl/club") // club bash path
 	tierBashPath := server.Group("/v1/swyl/tier") // tier base path
+	subBashPath := server.Group("/v1/swyl/sub") // subs base path
 
 
 	// init Handler
 	cr.ClubRoutes(clubBasePath) // club routes
 	tr.TierRoutes(tierBashPath) // tier routes
+	sr.SubRoutes(subBashPath) // sub routes
 
 	// run server
 	if (os.Getenv("GIN_MODE") != "release") {

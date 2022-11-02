@@ -16,11 +16,11 @@ import (
 
 // @notice Root struct for other methods in sub-router
 type SubRouter struct {
-   SubController controllers.SubController
+   SubController *controllers.SubController
 }
 
 // @dev Constructor
-func SubRouterConstructor(subController controllers.SubController) *SubRouter {
+func SubRouterConstructor(subController *controllers.SubController) *SubRouter {
    return &SubRouter{
       SubController: subController,
    }

@@ -51,7 +51,7 @@ func (si *SubController) GetSubscriptionAt(gc *gin.Context) {
 
 // @notice Method of SubController struct
 //
-// @route `GET/get-all-subs-at?tier_id=?club_owner=`
+// @route `GET/get-all-subs-at?tier_id=&club_owner=`
 //
 // @dev Gets all subscriptions onwed at tier_id and by club_owner
 func (si *SubController) GetAllSubsAt(gc *gin.Context) {
