@@ -83,7 +83,7 @@ func (tc *TierController) GetTierAt(gc *gin.Context) {
    tierId := gc.Param("tier_id")
 
    // sanitize tierId
-   matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}$`, tierId)
+   matched, err := regexp.MatchString(`^[a-fA-f0-9]{24}$`, tierId)
    if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test tierId using regex"}); return;}
    if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!TIERID - tierId is not valid"}); return;}
 
@@ -140,7 +140,7 @@ func (tc *TierController) UpdateTier(gc *gin.Context) {
 
    // sanitizing param.Tier_id
    tierId := primitive.ObjectID.Hex(param.Tier_ID)
-   matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}$`, tierId)
+   matched, err := regexp.MatchString(`^[a-fA-f0-9]{24}$`, tierId)
    if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test tierId using regex"}); return;}
    if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!TIERID - clubId is not valid"}); return;}
 
@@ -164,7 +164,7 @@ func (tc *TierController) DeleteTier(gc *gin.Context){
    param := gc.Param("tier_id")
 
    // sanitizing param
-   matched, err := regexp.MatchString(`^[a-zA-Z0-9]{24}$`, param)
+   matched, err := regexp.MatchString(`^[a-fA-f0-9]{24}$`, param)
    if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test tierId using regex"}); return;}
    if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!TIERID - tierId is not valid"}); return;}
 
