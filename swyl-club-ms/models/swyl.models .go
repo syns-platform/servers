@@ -34,9 +34,9 @@ type Tier struct {
 
 // @notice The information related to a Swyl Subscription
 type Subscription struct {
-	Subscription_ID					primitive.ObjectID 		`json:"subscription_id" bason:"subscription_id"`
+	Subscription_ID					primitive.ObjectID 		`json:"subscription_id" bason:"_id"`
 	Club_owner					*string 			`json:"club_owner" bson:"club_owner" validate:"required,len=42,alphanum"`
-	Tier_ID						primitive.ObjectID		`json:"tier_id" bson:"_id, omitempty"`
+	Tier_ID						primitive.ObjectID		`json:"tier_id" bson:"tier_id, omitempty"`
 	Subscriber					*string 	`json:"subscriber" bson:"subscriber" validate:"required,len=42,alphanum"`
 	Status						bool		`json:"status" bson:"status"`
 	Joined_at					uint64		`json:"joined_at" bson:"joined_at" validate:"required"`
