@@ -149,5 +149,17 @@ func (si *SubController) ToggleSubStatusAt(gc *gin.Context) {
 //
 // @dev Lets a subscriber unsubscribe a tier 
 func (si *SubController) Unsubscribe(gc *gin.Context) {
-	gc.JSON(http.StatusOK, gin.H{"msg": "swyl-v1"})
+	// handle subId param
+	subId := gc.Param("sub_id")
+
+	// sanitize subId
+	matched, err := regexp.MatchString(`^[a-fA-f0-9]{24}$`, subId)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test subId using regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!CLUBID - subId is not valid"}); return;}
+ 
+	// invoke SubDao.Unsubscribe
+	if err := si.SubDao.Unsubscribe(&subId); err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(http.StatusOK, gin.H{"msg": "Sucessfully unsubscribe!"})
 }
