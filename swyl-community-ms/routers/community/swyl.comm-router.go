@@ -36,4 +36,8 @@ func (cr *CommRouter) CommRoutes(rg *gin.RouterGroup) {
 	rg.GET("get-all-comms", cr.CommController.GetAllComms)
 	rg.PATCH("update-comm-owned-by/bio", cr.CommController.UpdateCommBioOwnedBy)
 	rg.PATCH("update-comm-owned-by/total", cr.CommController.UpdateCommTotalOwnedBy)
+	rg.POST("follow", cr.CommController.Follow)
+	rg.GET("get-follower-at/:follower_id", cr.CommController.GetFollowerAt)
+	rg.GET("get-all-followers/:community_owner", cr.CommController.GetAllFollowersInCommOwnedBy)
+	rg.DELETE("unfollow/:follower_id", cr.CommController.Unfollow)
 }
