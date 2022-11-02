@@ -11,10 +11,16 @@ package controllers
 // @import
 import (
 	dao "Swyl/servers/swyl-club-ms/dao/subscription"
+	"Swyl/servers/swyl-club-ms/models"
+	"Swyl/servers/swyl-club-ms/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator"
 )
+
+// @notice global var
+var validate = validator.New()
 
 // @notice Root struct for other methods in sub-controller
 type SubController struct {
@@ -35,7 +41,30 @@ func SubControllerConstructor(subDao dao.SubDao) *SubController {
 // 
 // @dev Lets a user subscribe to a tier
 func (si *SubController) Subscribe(gc *gin.Context) {
-	gc.JSON(http.StatusOK, gin.H{"msg": "swyl-v1"})
+	// Declare param *model
+	param := &models.Subscription{}
+
+	// bind json post data to param
+	if err := gc.ShouldBindJSON(param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
+
+	// validate struct param
+	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
+
+	// test param.Club_owner to match ETH Crypto wallet address convention
+	ownerMatched, ownerErr := utils.TestEthAddress(param.Club_owner)
+	if ownerErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
+	if !ownerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - club_owner is not an ETH crypto wallet address"}); return;}
+
+	// test param.Subscriber to match ETH Crypto wallet address convention
+	subsMatched, subsErr := utils.TestEthAddress(param.Subscriber)
+	if subsErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
+	if !subsMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - subscriber is not an ETH crypto wallet address"}); return;}
+
+	// invoke SubDao.Subscribe
+	if err := si.SubDao.Subscribe(param); err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(http.StatusOK, gin.H{"msg": "New subscription has sucessfully been made"})
 }
 
 
