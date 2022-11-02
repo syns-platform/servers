@@ -13,6 +13,7 @@ import (
 	"Swyl/servers/swyl-club-ms/models"
 	"context"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -57,7 +58,23 @@ func (si *SubDaoImpl) Subscribe(sub *models.Subscription) error{
 // @param subId *string
 // 
 // @return *models.Subscription
-func (si *SubDaoImpl) GetSubscriptionAt(subId *string) (*models.Subscription, error){return nil, nil}
+func (si *SubDaoImpl) GetSubscriptionAt(subId *string) (*models.Subscription, error){
+	// prepare sub placeholder
+	sub := &models.Subscription{}
+
+	// set up ObjectId
+	objectId, err := primitive.ObjectIDFromHex(*subId)
+	if err != nil {return nil, err}
+
+	// prepare filter
+	filter := bson.M{"_id": objectId}
+
+	// find the sub in database
+	if err := si.mongoCollection.FindOne(si.ctx, filter).Decode(sub); err != nil {return nil, err}
+
+	// return OK
+	return sub, nil
+}
 
 
 // @notice Method of SubDaoImpl struct
