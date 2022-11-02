@@ -10,15 +10,25 @@ package main
 
 // @improt
 import (
+	commControllers "Swyl/servers/swyl-community-ms/controllers/community"
+	commDao "Swyl/servers/swyl-community-ms/dao/community"
+	"Swyl/servers/swyl-community-ms/db"
+	commRouters "Swyl/servers/swyl-community-ms/routers/community"
 	"Swyl/servers/swyl-community-ms/utils"
+	"context"
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // @notice global variables
 var (
 	server			*gin.Engine
+	ctx 			context.Context
+	mongoClient		*mongo.Client
+	commCollection	*mongo.Collection
+	cr 				*commRouters.CommRouter
 )
 
 // @dev Runs before main()
@@ -31,6 +41,15 @@ func init() {
 
 	// Gin trust all proxies by default and it's not safe. Set trusted proxy to home router to to mitigate 
 	server.SetTrustedProxies([]string{os.Getenv("HOME_ROUTER")})
+
+	// init mongo client
+	mongoClient = db.EstablishMongoClient(ctx)
+
+	// ############ init club router ############
+	commCollection := db.GetMongoCollection(mongoClient, "communities") //init communities collection
+	cd := commDao.CommDaoConstructor(ctx, commCollection) // init CommDao
+	cc := commControllers.CommControllerConstructor(cd) // init CommController
+	cr = commRouters.CommRouterConstructor(cc) // init CommRouter
 }
 
 
@@ -40,12 +59,10 @@ func main() {
 	server.HandleMethodNotAllowed = true
 
 	// init basePath
-	basePath := server.Group("v1/swyl/community")
+	commBasePath := server.Group("v1/swyl/community") // community base path
 
-	// basic route
-	basePath.GET("/whort", func(gc *gin.Context) {
-		gc.JSON(200, gin.H{"msg": "hort?"})
-	})
+	// init handlers
+	cr.CommRoutes(commBasePath)
 
 	// run server 
 	if (os.Getenv("GIN_MODE") != "release") {
