@@ -17,7 +17,7 @@ type User struct {
 	Email 				*string					`json:"email" bson:"email" validate:"omitempty,min=3,max=40"`
 	Bio 				*string					`json:"bio" bson:"bio" validate:"omitempty,max=200"`
 	Website 			*string					`json:"website" bson:"website"`
-	Joined_at			int64				`json:"joined_at" bson:"joined_at"`
+	Joined_at			int64					`json:"joined_at" bson:"joined_at"`
 	Social_media 			[]SocialMedia				`json:"social_media" bson:"social_media"`
 }
 

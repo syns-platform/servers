@@ -21,7 +21,7 @@ import (
 
 // @notice Root struct for other methods in club-dao-impl
 type ClubDaoImpl struct {
-	ctx 				context.Context
+	ctx 			context.Context
 	mongCollection		*mongo.Collection
 }
 

@@ -21,7 +21,7 @@ import (
 
 // @notice Root struct for other methods in sub-dao-impl
 type SubDaoImpl struct {
-	ctx			 		context.Context
+	ctx			context.Context
 	mongoCollection 	*mongo.Collection
 }
 

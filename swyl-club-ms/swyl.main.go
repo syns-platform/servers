@@ -33,12 +33,12 @@ var (
 	server			*gin.Engine
 	ctx 			context.Context
 	mongoClient		*mongo.Client
-	clubCollection	*mongo.Collection
-	tierCollection	*mongo.Collection
-	subCollection	*mongo.Collection
-	cr				*clubRouters.ClubRouter
-	tr				*tierRouters.TierRouter
-	sr				*subRouters.SubRouter
+	clubCollection		*mongo.Collection
+	tierCollection		*mongo.Collection
+	subCollection		*mongo.Collection
+	cr			*clubRouters.ClubRouter
+	tr			*tierRouters.TierRouter
+	sr			*subRouters.SubRouter
 )
 
 
@@ -60,24 +60,24 @@ func init() {
 	mongoClient = db.EstablishMongoClient(ctx)
 
 	// ############ init club router ############
-	clubCollection = db.GetMongoCollection(mongoClient, "clubs") // get clubCollection
+	clubCollection = db.GetMongoCollection(mongoClient, "clubs") // get clubs Collections
 	ci := clubDao.ClubDaoConstructor(ctx, clubCollection) // init ClubDao interface
 	cc := clubControllers.ClubControllerConstructor(ci) // init ClubController
 	cr = clubRouters.ClubRouterConstructor(cc) // init ClubRouter
    
 
 	// ############ init tier router ############
-	tierCollection = db.GetMongoCollection(mongoClient, "tiers") // get tier Collections
+	tierCollection = db.GetMongoCollection(mongoClient, "tiers") // get tiers Collections
 	ti := tierDao.TierDaoConstructor(ctx, tierCollection) // init TierDao interface
 	tc := tierControllers.TierControllerConstructor(ti) // init TierController
-	tr = tierRouters.TierRouterConstructor(tc)
+	tr = tierRouters.TierRouterConstructor(tc) // init TierRouter
    	
 
 	// ############ init sub router ############
-	subCollection = db.GetMongoCollection(mongoClient, "subs")
-	si := subDao.SubDaoConstructor(ctx, subCollection)
-	sc := subControllers.SubControllerConstructor(si)
-	sr = subRouters.SubRouterConstructor(sc)
+	subCollection = db.GetMongoCollection(mongoClient, "subs") // get subs Collections
+	si := subDao.SubDaoConstructor(ctx, subCollection) // init SubDao interface
+	sc := subControllers.SubControllerConstructor(si) // init SubController
+	sr = subRouters.SubRouterConstructor(sc) // init SubRouter
 }
 
 

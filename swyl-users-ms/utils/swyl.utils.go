@@ -26,11 +26,7 @@ func LoadEnvVars() {
 // @dev Handdle error exception
 //
 // @param e error - the passed in error
-func HandleException(e error) {
-	if (e != nil) {
-		log.Panic(e);
-	}
-}
+func HandleException(e error) {if (e != nil) {log.Panic(e)}}
 
 // @dev Handle testing `wallet_address` to match ETH crypto wallet address
 // 

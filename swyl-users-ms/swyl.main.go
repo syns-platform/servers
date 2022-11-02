@@ -24,10 +24,10 @@ import (
 // @notice global variables
 var (
 	server			*gin.Engine
-	ctx				context.Context
+	ctx			context.Context
 	mongoClient		*mongo.Client
-	userCollection	*mongo.Collection
-	ur 				*routers.UserRouter
+	userCollection		*mongo.Collection
+	ur 			*routers.UserRouter
 )
 
 // @dev Runs before main()
