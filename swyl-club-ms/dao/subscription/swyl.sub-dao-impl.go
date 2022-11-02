@@ -13,6 +13,7 @@ import (
 	"Swyl/servers/swyl-club-ms/models"
 	"context"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -34,10 +35,19 @@ func SubDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) S
 // 
 // @dev Lets a user subscribe to a tier
 // 
-// @param subParam *models.Subscription
+// @param sub *models.Subscription
 // 
 // @return error
-func (si *SubDaoImpl) Subscribe(subParam *models.Subscription) error{return nil}
+func (si *SubDaoImpl) Subscribe(sub *models.Subscription) error{
+	// updated sub.Subscription_ID
+	sub.Subscription_ID = primitive.NewObjectID()
+
+	// insert subscription to internal database
+	if _, err := si.mongoCollection.InsertOne(si.ctx, sub); err != nil {return err}
+
+	// return OK
+	return nil
+}
 
 
 // @notice Method of SubDaoImpl struct

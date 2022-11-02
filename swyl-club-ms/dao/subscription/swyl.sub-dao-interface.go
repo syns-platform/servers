@@ -16,10 +16,10 @@ type SubDao interface {
 
 	// @notice Lets a user subscribe to a tier
 	// 
-	// @param subParam *models.Subscription
+	// @param sub *models.Subscription
 	// 
 	// @return error
-	Subscribe(subParam *models.Subscription) error
+	Subscribe(sub *models.Subscription) error
 
 
 	// @notice Gets a subscription using subscription_id

@@ -46,8 +46,7 @@ func (ti *TierDaoImpl) CreateTier(tier *models.Tier) error {
    tier.Tier_ID = primitive.NewObjectID()
 
    // insert the tier to the internal database
-   _, err := ti.mongoCollection.InsertOne(ti.ctx, tier)
-   if err != nil {return err}
+   if _, err := ti.mongoCollection.InsertOne(ti.ctx, tier); err != nil {return err}
 
    // return OK
    return nil
