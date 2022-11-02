@@ -88,7 +88,27 @@ func (si *SubDaoImpl) GetSubscriptionAt(subId *string) (*models.Subscription, er
 // @return *[]models.Subscription
 // 
 // @return error
-func (si *SubDaoImpl) GetAllSubsAt(tierId *string, clubOwner *string) (*[]models.Subscription, error) {return nil, nil}
+func (si *SubDaoImpl) GetAllSubsAt(tierId *string, clubOwner *string) (*[]models.Subscription, error) {
+	// Declare subs holder
+	subs := &[]models.Subscription{}
+
+	// set up tierObjectId 
+	tierObjectId, err := primitive.ObjectIDFromHex(*tierId)
+	if err != nil {return nil, err}
+
+	// prepare filter
+	filter := bson.D{{Key: "tier_id", Value: tierObjectId}, {Key: "club_owner", Value: clubOwner}}
+
+	// get subs from internal database
+	cursor, err := si.mongoCollection.Find(si.ctx, filter)
+	if err != nil {return nil, err}
+
+	// decode cursor into declared subs
+	if err := cursor.All(si.ctx, subs); err != nil {return nil ,err}
+
+	// return OK
+	return subs, nil
+}
 
 
 // @notice Method of SubDaoImpl struct
