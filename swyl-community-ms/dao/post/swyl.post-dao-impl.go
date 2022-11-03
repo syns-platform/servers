@@ -12,6 +12,7 @@ package dao
 import (
 	"Swyl/servers/swyl-community-ms/models"
 	"context"
+	"errors"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -228,7 +229,22 @@ func (pi *PostDaoImpl) ReactPost(reaction *models.Reaction) error {
 // @param postId *string
 // 
 // @return error
-func (pi *PostDaoImpl) DeletePostAt(postId *string) error {return nil}
+func (pi *PostDaoImpl) DeletePostAt(postId *string) error {
+	// prepare objectId
+	objectId, err := primitive.ObjectIDFromHex(*postId)
+	if err != nil {return err}
+
+	// prepare filter query
+	filter := bson.M{"_id": objectId}
+
+	// delete post
+	dbRes, err := pi.postCollection.DeleteOne(pi.ctx, filter) 
+	if err != nil {return nil}
+	if dbRes.DeletedCount == 0 {return errors.New("!MONGO - No matched document found with filter")}
+	
+	// return ok
+	return nil
+}
 
 
 // #############################################

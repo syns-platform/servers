@@ -187,7 +187,7 @@ func (pi *PostController) ReactPost(gc *gin.Context) {
 	if err := pi.PostDao.ReactPost(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
 
 	// http response
-	gc.JSON(200, "Swyl-v1")
+	gc.JSON(200, "Reaction successfully updated")
 }
 
 
@@ -198,7 +198,21 @@ func (pi *PostController) ReactPost(gc *gin.Context) {
 // @dev Lets a commOwner delete own post
 // 
 // @param gc *gin.Context
-func (pi *PostController) DeletePostAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pi *PostController) DeletePostAt(gc *gin.Context) {
+	// handle postId param
+	postId := gc.Param("post_id")
+
+	// sanitizing postId
+	idMatched, idErr := regexp.MatchString(`^[a-fA-f0-9]{24}$`, postId)
+	if idErr != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test postId using regex"}); return;}
+	if !idMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - postId is not valid"}); return;}
+
+	// invoke PostDao.DeletePostAt()
+	if err := pi.PostDao.DeletePostAt(&postId); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return}
+	
+	// http response
+	gc.JSON(200, "Post successfully updated")
+}
 
 
 // #############################################
