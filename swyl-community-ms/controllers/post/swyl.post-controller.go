@@ -101,7 +101,22 @@ func (pi *PostController) GetPostAt(gc *gin.Context) {
 // @dev Gets all posts created by commOwner
 // 
 // @param gc *gin.Context
-func (pi *PostController) GetPostsBy(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pi *PostController) GetPostsBy(gc *gin.Context) {
+	// Handle commOwner param
+	commOwner := gc.Param("community_owner")
+
+	// validate commOwner to match ETH Crypto Wallet address convention
+	matched, err := utils.TestEthAddress(&commOwner)
+	if err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test commOwner using regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(400, gin.H{"error": "!ETH_ADDRESS - commOwner is not an ETH crypto wallet address"}); return;}
+	
+	// invokde PostDao.GetPostsBy()
+	posts, err := pi.PostDao.GetPostsBy(&commOwner); 
+	if err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()})}
+
+	// http response
+	gc.JSON(200, posts)
+}
 
 
 // @notice Method of PostController struct

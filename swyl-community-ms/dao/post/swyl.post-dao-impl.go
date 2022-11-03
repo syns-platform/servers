@@ -100,7 +100,22 @@ func (pi *PostDaoImpl) GetPostAt(postId *string) (*models.Post, error) {
 // @param commOwner *string
 // 
 // @return *[]models.Post
-func (pi *PostDaoImpl) GetPostsBy(commOnwer *string) (*[]models.Post, error) {return nil, nil}
+func (pi *PostDaoImpl) GetPostsBy(commOnwer *string) (*[]models.Post, error) {
+	// prepare posts placeholder
+	posts := &[]models.Post{}
+
+	// prepare filter query
+	filter := bson.M{"community_owner": commOnwer}
+	
+	// find all posts by commOnwer
+	cursor, err := pi.postCollection.Find(pi.ctx, filter); if err != nil {return nil, err}
+
+	// decode cursor into posts placeholder
+	decodeErr := cursor.All(pi.ctx, posts)
+
+	// return OK
+	return posts, decodeErr
+}
 
 
 // @notice Method of UserDaoImpl struct
