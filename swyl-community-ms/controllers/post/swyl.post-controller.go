@@ -126,7 +126,28 @@ func (pi *PostController) GetPostsBy(gc *gin.Context) {
 // @dev Lets a commOwner update a post - only post.Title and post.Content are allowed
 // 
 // @param gc *gin.Context
-func (pi *PostController) UpdatePostContent(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pi *PostController) UpdatePostContent(gc *gin.Context) {
+	// declare param placeholder
+	param := &models.Post{}
+	
+	
+	// bind json post data to param placeholder
+	if err := gc.ShouldBindJSON(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
+
+	// sanitizing param.post_id
+	matched, err := regexp.MatchString(`^[a-fA-f0-9]{24}$`, param.Post_ID.Hex())
+	if err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test param.Post_ID using regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - param.Post_ID is not valid"}); return;}
+
+	// validate on struct param
+	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
+
+	// invokde PostDao.UpdatePostContent
+	if err := pi.PostDao.UpdatePostContent(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(200, "Post successfully updated")
+}
 
 
 // @notice Method of PostController struct

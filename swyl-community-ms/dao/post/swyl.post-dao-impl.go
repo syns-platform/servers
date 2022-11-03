@@ -125,7 +125,25 @@ func (pi *PostDaoImpl) GetPostsBy(commOnwer *string) (*[]models.Post, error) {
 // @param *model.Post
 // 
 // @return error
-func (pi *PostDaoImpl) UpdatePostContent(post *models.Post) error {return nil}
+func (pi *PostDaoImpl) UpdatePostContent(post *models.Post) error {
+	// prepare filter query
+	filter := bson.M{"_id": post.Post_ID}
+
+	// find the post in database
+	if dbRes := pi.postCollection.FindOne(pi.ctx, filter); dbRes.Err() != nil {return dbRes.Err()}
+	
+	// prepare update query
+	update := bson.D{
+		{Key: "$set", Value: bson.M{"title": post.Title}},
+		{Key: "$set", Value: bson.M{"content": post.Content}},
+	}
+
+	// update the post in database
+	_, err := pi.postCollection.UpdateOne(pi.ctx, filter, update)
+
+	// return OK
+	return err
+}
 
 
 // @notice Method of UserDaoImpl struct
