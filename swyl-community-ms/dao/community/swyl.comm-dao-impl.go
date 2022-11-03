@@ -185,7 +185,7 @@ func (ci *CommDaoImpl) UpdateCommTotalOwnedBy(commOwner *string, followerContext
 // @dev Lets a Swyl user start following a community
 // 
 // @param follower *models.Follower
-func (ci *CommDaoImpl) ToggleFollow(follower *models.Follower) (int, error) {
+func (ci *CommDaoImpl) ToggleFollow(follower *models.Follower) (int16, error) {
 	// Set up filter
 	filter := bson.D{
 		{Key: "community_owner", Value: follower.Community_owner},

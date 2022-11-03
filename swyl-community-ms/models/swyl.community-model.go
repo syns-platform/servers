@@ -52,7 +52,7 @@ type Comment struct {
 	Commenter 						*string 			`json:"commenter" bson:"commenter" validate:"required,len=42,alphanum"`
 	Content							*string				`json:"content" bson:"content" validate:"required,max=1000"`
 	Reaction						*[]Reaction			`json:"reaction" bson:"reaction"`
-	Commente_at						uint64				`json:"commente_at" bson:"commente_at"`
+	Comment_at						uint64				`json:"commente_at" bson:"commente_at"`
 }
 
 // @notice The information related to a Swyl Reply

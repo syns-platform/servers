@@ -74,7 +74,7 @@ type CommDao interface {
 	// @param comfollower *models.Follower
 	// 
 	// @return error
-	ToggleFollow(follower *models.Follower) (int, error)
+	ToggleFollow(follower *models.Follower) (int16, error)
 
 	
 	// @notice Gets a Swyl follower at followerId
