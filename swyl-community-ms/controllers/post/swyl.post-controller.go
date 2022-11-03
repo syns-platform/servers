@@ -17,11 +17,11 @@ import (
 
 // @notice Root struct for other methods in post-controller
 type PostController struct {
-	PostDao *dao.PostDao
+	PostDao dao.PostDao
 }
 
 // @dev Constructor
-func PostControllerConstructor(postDao *dao.PostDao) *PostController {
+func PostControllerConstructor(postDao dao.PostDao) *PostController {
 	return &PostController {
 		PostDao: postDao,
 	}
@@ -209,7 +209,7 @@ func (pi *PostController) GetAllRepliesAt(gc *gin.Context) {gc.JSON(200, "Swyl-v
 // @dev Lets a user update own reply - only reply.Content is allowed
 // 
 // @param gc *gin.Context
-func (pi *PostController) UpdateReply(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pi *PostController) UpdateReplyContent(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // @notice Method of PostController struct

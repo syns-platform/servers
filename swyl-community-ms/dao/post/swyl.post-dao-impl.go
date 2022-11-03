@@ -19,14 +19,23 @@ import (
 // @notice Root struct for other methods in post-dao-impl
 type PostDaoImpl struct {
 	ctx 				context.Context
-	mongoCollection 	*mongo.Collection
+	postCollection 		*mongo.Collection
+	commentCollection	*mongo.Collection
+	replyCollection		*mongo.Collection
 }
 
 // @dev Constructor
-func PostDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) PostDao {
+func PostDaoConstructor(
+	ctx context.Context, 
+	postCollection *mongo.Collection,
+	commentCollection *mongo.Collection,
+	replyCollection *mongo.Collection,
+) PostDao {
 	return &PostDaoImpl {
 		ctx: ctx,
-		mongoCollection: mongoCollection,
+		postCollection: postCollection,
+		commentCollection: commentCollection,
+		replyCollection: replyCollection,
 	}
 }
 
@@ -220,7 +229,7 @@ func (pi *PostDaoImpl) GetAllRepliesAt(commentId *string) (*[]models.Reply, erro
 // @param reply *models.Reply
 // 
 // @return error
-func (pi *PostDaoImpl) UpdateReply(reply *models.Reply) error {return nil}
+func (pi *PostDaoImpl) UpdateReplyContent(reply *models.Reply) error {return nil}
 
 
 // @notice Method of UserDaoImpl struct
