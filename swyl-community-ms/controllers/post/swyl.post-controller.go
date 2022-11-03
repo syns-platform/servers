@@ -27,6 +27,11 @@ func PostControllerConstructor(postDao *dao.PostDao) *PostController {
 	}
 }
 
+
+// #############################################
+// 			 		Post Handlers 
+// #############################################
+
 // @notice Method of PostController struct
 // 
 // @route `POST/create-post`
@@ -85,6 +90,20 @@ func (pi *PostController) ReactPost(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 // @notice Method of PostController struct
 // 
+// @route `DELETE/delete-post-at/:post_id`
+// 
+// @dev Lets a commOwner delete own post
+// 
+// @param gc *gin.Context
+func (pi *PostController) DeletePostAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+
+
+// #############################################
+// 			 		Comment Handlers 
+// #############################################
+
+// @notice Method of PostController struct
+// 
 // @route `POST/comment-post`
 // 
 // @dev Lets a user comment on a post
@@ -95,12 +114,32 @@ func (pi *PostController) Comment(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 // @notice Method of PostController struct
 // 
-// @route `PATCH/update-comment`
+// @route `GET/get-comment-at/:comment_id`
+// 
+// @dev Gets a comment at commentId
+// 
+// @param gc *gin.Context
+func (pi *PostController) GetCommentAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+
+
+// @notice Method of PostController struct
+// 
+// @route `GET/get-all-comments-at/:post_id`
+// 
+// @dev Gets all comments at postId
+// 
+// @param gc *gin.Context
+func (pi *PostController) GetAllCommentsAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+
+
+// @notice Method of PostController struct
+// 
+// @route `PATCH/update-comment-content`
 // 
 // @dev Lets a user to update own comment - only comment.Content is allowed
 // 
 // @param gc *gin.Context
-func (pi *PostController) UpdateComment(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pi *PostController) UpdateCommentContent(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // @notice Method of PostController struct
@@ -129,14 +168,38 @@ func (pi *PostController) ReactComment(gc *gin.Context) {gc.JSON(200, "Swyl-v1")
 func (pi *PostController) DeleteCommentAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
+// #############################################
+// 			 		Reply Handlers 
+// #############################################
+
 // @notice Method of PostController struct
 // 
-// @route `POST/create-reply`
+// @route `POST/reply`
 // 
 // @dev Lets a user reply to a comment
 // 
 // @param gc *gin.Context
 func (pi *PostController) Reply(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+
+
+// @notice Method of PostController struct
+// 
+// @route `GET/get-reply-at/:reply_id`
+// 
+// @dev Gets a reply at replyId
+// 
+// @param gc *gin.Context
+func (pi *PostController) GetReplyAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+
+
+// @notice Method of PostController struct
+// 
+// @route `GET/get-all-reply-at/:comment_id`
+// 
+// @dev Gets all replies at commentId
+// 
+// @param gc *gin.Context
+func (pi *PostController) GetAllRepliesAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // @notice Method of PostController struct
@@ -151,7 +214,7 @@ func (pi *PostController) UpdateReply(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 // @notice Method of PostController struct
 // 
-// @route `POST/create-tier`
+// @route `PATCH/react-reply`
 // 
 // @dev Lets a user react a reply
 // 
