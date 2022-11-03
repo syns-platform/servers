@@ -13,6 +13,7 @@ import (
 	dao "Swyl/servers/swyl-community-ms/dao/post"
 	"Swyl/servers/swyl-community-ms/models"
 	"Swyl/servers/swyl-community-ms/utils"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -60,7 +61,7 @@ func (pi *PostController) CreatePost(gc *gin.Context) {
 	if err != nil{gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test Community_owner using regex"}); return;}
 	if !matched {gc.AbortWithStatusJSON(400, gin.H{"error": "!ETH_ADDRESS - Community_owner is not an ETH crypto wallet address"}); return;}
 
-	// invokde PostDao.CreatePost
+	// invokde PostDao.CreatePost()
 	if err := pi.PostDao.CreatePost(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return}
 
 	// http response
@@ -75,7 +76,22 @@ func (pi *PostController) CreatePost(gc *gin.Context) {
 // @dev Gets a post at postId
 // 
 // @param gc *gin.Context
-func (pi *PostController) GetPostAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pi *PostController) GetPostAt(gc *gin.Context) {
+	// Handle postId param
+	postId := gc.Param("post_id")
+
+	// sanitizing postId
+	matched, err := regexp.MatchString(`^[a-fA-f0-9]{24}$`, postId)
+	if err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test postId using regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - postId is not valid"}); return;}
+	
+	// invokde PostDao.GetPostAt()
+	post, err := pi.PostDao.GetPostAt(&postId)
+	if err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return}
+
+	// http response
+	gc.JSON(200, post)
+}
 
 
 // @notice Method of PostController struct

@@ -14,6 +14,7 @@ import (
 	"context"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -73,7 +74,23 @@ func (pi *PostDaoImpl) CreatePost(post *models.Post) error {
 // @param postId *string
 // 
 // @return *models.Post
-func (pi *PostDaoImpl) GetPostAt(postId *string) (*models.Post, error) {return nil, nil}
+func (pi *PostDaoImpl) GetPostAt(postId *string) (*models.Post, error) {
+	// prepare post placeholder
+	post := &models.Post{}
+
+	// prepare objectId
+	objectId, idErr := primitive.ObjectIDFromHex(*postId)
+	if idErr != nil {return nil, idErr}
+
+	// prepare filter query
+	filter := bson.M{"_id": objectId}
+
+	// find post in database and decode to post placeholder
+	err := pi.postCollection.FindOne(pi.ctx, filter).Decode(post)
+	
+	// return OK
+	return post, err
+}
 
 
 // @notice Method of UserDaoImpl struct
