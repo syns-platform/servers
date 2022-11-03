@@ -159,7 +159,66 @@ func (pi *PostDaoImpl) UpdatePostContent(post *models.Post) error {
 // @param reaction *models.Reaction
 // 
 // @return error
-func (pi *PostDaoImpl) ReactPost(reaction *models.Reaction) error {return nil}
+func (pi *PostDaoImpl) ReactPost(reaction *models.Reaction) error {
+	// set up reaction.React_at
+	reaction.React_at = uint64(time.Now().Unix())
+
+	// prepare filter
+	filter := bson.M{"_id": reaction.Post_ID}
+
+	// find the post in postCollection
+	targetPost := &models.Post{}
+	if err := pi.postCollection.FindOne(pi.ctx, filter).Decode(targetPost); err != nil {return err}
+
+	// get Reaction slice from targetPost
+	reactions := targetPost.Reaction
+
+	// loop through reactions slice to examine each reactionItem in the slice
+	// @logic-a if len(reactions) == 0 => no reaction yet => simply add the reaction to reactions slice
+	if len(reactions) == 0 {
+		reactions = append(reactions, *reaction)
+	} else {
+		// @logic-b if reaction.Reacter is not found in reactions slice, simply add the reaction to reactions slice
+		// @logic-c if a reactionItem.Reacter == reaction.Reacter => this request is to either update the react_type, or unreact the post
+		// @logic-c.1 if the reactionItem.React_type != reaction.React_type => update the new react_type to reactionItem
+		// @logic-c.2 if the reactionItem.React_type == reaction.React_type => remove the reactionItem off of the reactions slice
+		shouldUpdateReact := false
+		shouldUnreact := false
+		unreactIndex := 0
+
+		for index, reactionItem := range reactions {
+			if (*reactionItem.Reacter == *reaction.Reacter && *reactionItem.React_type != *reaction.React_type) { //logic-c.1
+				// update reactionItem.React_type
+				reactions[index].React_type = reaction.React_type
+				shouldUpdateReact = true
+				break
+			} else if (*reactionItem.Reacter == *reaction.Reacter && *reactionItem.React_type == *reaction.React_type) { //logic-c.2
+				// update shouldUnreact & unreactIndex
+				unreactIndex = index
+				shouldUnreact = true
+				break
+			}
+		}
+
+		if shouldUnreact { // logic-c.2
+			reactions[unreactIndex] = reactions[len(reactions) - 1]
+			reactions = reactions[:len(reactions)-1]
+		} else if !shouldUpdateReact && !shouldUnreact { // logic-b
+			reactions = append(reactions, *reaction)
+		}
+	}
+
+	// prepare update query
+	update := bson.D{
+		{Key: "$set", Value: bson.M{"reaction": reactions}},
+	}
+
+	// update post
+	_, err := pi.postCollection.UpdateOne(pi.ctx, filter, update)
+
+	// return OK
+	return err
+}
 
 
 // @notice Method of UserDaoImpl struct

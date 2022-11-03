@@ -163,7 +163,32 @@ func (pi *PostController) UpdatePostContent(gc *gin.Context) {
 // @logic if the post has different `reaction.React_type` by reacter, update `reaction.React_type` in post.Reaction
 // 
 // @param gc *gin.Context
-func (pi *PostController) ReactPost(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pi *PostController) ReactPost(gc *gin.Context) {
+	// declare param placeholder
+	param := &models.Reaction{}
+
+	// bind json post data to param placeholder
+	if err := gc.ShouldBindJSON(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
+	
+	// sanitizing param.post_id
+	idMatched, idErr := regexp.MatchString(`^[a-fA-f0-9]{24}$`, param.Post_ID.Hex())
+	if idErr != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test param.Post_ID using regex"}); return;}
+	if !idMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - param.Post_ID is not valid"}); return;}
+
+	// validate param.Reacter to match ETH Crypto wallet address convention
+	reacterMatched, reacterErr := utils.TestEthAddress(param.Reacter)
+	if reacterErr != nil{gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test reacter using regex"}); return;}
+	if !reacterMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!ETH_ADDRESS - reacter is not an ETH crypto wallet address"}); return;}
+
+	// extra validation using validator
+	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
+
+	// validate PostDao.ReactPost
+	if err := pi.PostDao.ReactPost(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(200, "Swyl-v1")
+}
 
 
 // @notice Method of PostController struct

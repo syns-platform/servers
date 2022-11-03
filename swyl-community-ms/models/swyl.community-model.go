@@ -32,16 +32,16 @@ type Post struct {
 	Community_owner 					*string 			`json:"community_owner" bson:"community_owner" validate:"required,len=42,alphanum"`
 	Title 							*string				`json:"title" bson:"title" validate:"required,min=2,max=100"`
 	Content							*string				`json:"content" bson:"content" validate:"required,max=10000"`
-	Reaction						*[]Reaction			`json:"reaction" bson:"reaction"`
-	Comments						*[]Comment			`json:"comments" bson:"comments"`
+	Reaction						[]Reaction			`json:"reaction" bson:"reaction"`
+	Comments						[]Comment			`json:"comments" bson:"comments"`
 	Created_at						uint64				`json:"created_at" bson:"created_at"`
 }
 
 // @notice The information related to a Swyl Reaction
 type Reaction struct {
 	Reacter 						*string				`json:"reacter" bson:"reacter" validate:"required,len=42,alphanum"`
-	Post_ID							primitive.ObjectID 		`json:"post_id" bson:"post_id"`
-	React_type 						*string 			`json:"react_type" bson:"react_type" validate:"oneof=SUPPORT BRAVO LAUGH FIRE"`
+	Post_ID							primitive.ObjectID 		`json:"post_id" bson:"post_id" validate:"required"`
+	React_type 						*string 			`json:"react_type" bson:"react_type" validate:"required,oneof=SUPPORT BRAVO LAUGH FIRE"`
 	React_at						uint64				`json:"react_at" bson:"react_at"`
 }
 
@@ -51,7 +51,7 @@ type Comment struct {
 	Post_ID							primitive.ObjectID 		`json:"post_id" bson:"post_id"`
 	Commenter 						*string 			`json:"commenter" bson:"commenter" validate:"required,len=42,alphanum"`
 	Content							*string				`json:"content" bson:"content" validate:"required,max=1000"`
-	Reaction						*[]Reaction			`json:"reaction" bson:"reaction"`
+	Reaction						[]Reaction			`json:"reaction" bson:"reaction"`
 	Comment_at						uint64				`json:"commente_at" bson:"commente_at"`
 }
 
@@ -61,6 +61,6 @@ type Reply struct {
 	Comment_ID  						primitive.ObjectID 		`json:"comment_id" bson:"comment_id"`
 	Reply_to						*string				`json:"reply_to" bson:"reply_to" validate:"required,len=42,alphanum"`
 	Content							*string				`json:"content" bson:"content" validate:"required,max=1000"`
-	Reaction						*[]Reaction			`json:"reaction" bson:"reaction"`
+	Reaction						[]Reaction			`json:"reaction" bson:"reaction"`
 	Reply_at						uint64				`json:"reply_at" bson:"reply_at"`
 }
