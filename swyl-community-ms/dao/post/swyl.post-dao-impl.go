@@ -335,7 +335,25 @@ func (pi *PostDaoImpl) GetAllCommentsAt(postId *string) (*[]models.Comment, erro
 // @param comment *models.Comment
 // 
 // @return error
-func (pi *PostDaoImpl) UpdateCommentContent(comment *models.Comment) error {return nil}
+func (pi *PostDaoImpl) UpdateCommentContent(comment *models.Comment) error {
+	// prepare filter query
+	filter := bson.M{
+		"_id": comment.Comment_ID,
+		"post_id": comment.Post_ID,
+		"commenter": comment.Commenter,
+	}
+
+	// prepare update query
+	update := bson.D{{Key: "$set", Value: bson.M{"content": comment.Content}}}
+
+	// update comment
+	dbRes, err := pi.commentCollection.UpdateOne(pi.ctx, filter, update)
+	if err != nil {return err}
+	if dbRes.MatchedCount == 0 {return errors.New("!MONGO - No matched document found with filter")}
+	
+	// return OK
+	return nil
+}
 
 
 // @notice Method of UserDaoImpl struct

@@ -309,7 +309,34 @@ func (pc *PostController) GetAllCommentsAt(gc *gin.Context) {
 // @dev Lets a user to update own comment - only comment.Content is allowed
 // 
 // @param gc *gin.Context
-func (pc *PostController) UpdateCommentContent(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) UpdateCommentContent(gc *gin.Context) {
+	// declare param holder
+	param := &models.Comment{}
+
+	// bind json post data to param holder
+	if err := gc.ShouldBindJSON(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
+
+	// sanitize param.comment_id
+	idMatched, idErr := regexp.MatchString(`^[a-fA-f0-9]{24}$`, param.Comment_ID.Hex())
+	if idErr != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test param.comment_id using regex"}); return;}
+	if !idMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - param.comment_id is not valid"}); return;}
+	
+	// sanitize param.post_id
+	pidMatched, pidErr := regexp.MatchString(`^[a-fA-f0-9]{24}$`, param.Post_ID.Hex())
+	if pidErr != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test param.post_id using regex"}); return;}
+	if !pidMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - param.post_id is not valid"}); return;}
+	
+	// validate param.Commenter to match ETH Crypto wallet address convention
+	commenterMatched, commenterErr := utils.TestEthAddress(param.Commenter)
+	if commenterErr != nil{gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test commenter using regex"}); return;}
+	if !commenterMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!ETH_ADDRESS - commenter is not an ETH crypto wallet address"}); return;}
+	
+	// invoke PostDao.UpdateCommentContent()
+	if err := pc.PostDao.UpdateCommentContent(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(200, "Post successfully updated")
+}
 
 
 // @notice Method of PostController struct
