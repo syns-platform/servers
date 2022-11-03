@@ -441,7 +441,21 @@ func (pi *PostDaoImpl) ReactComment(reaction *models.Reaction) error {
 // @param commentId *string
 // 
 // @return error
-func (pi *PostDaoImpl) DeleteCommentAt(commentId *string) error {return nil}
+func (pi *PostDaoImpl) DeleteCommentAt(commentId *string) error {
+	// prepare objectId
+	objectId, err := primitive.ObjectIDFromHex(*commentId); if err != nil {return nil}
+	
+	// prepare filter query
+	filter := bson.M{"_id": objectId}
+
+	// delete the comment
+	dbRes, err := pi.commentCollection.DeleteOne(pi.ctx, filter);
+	if err != nil {return nil}
+	if dbRes.DeletedCount == 0 {return errors.New("!MONGO - No matched document found with filter")}
+	
+	// return OK
+	return nil
+}
 
 
 // #############################################

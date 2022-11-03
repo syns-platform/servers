@@ -390,7 +390,21 @@ func (pc *PostController) ReactComment(gc *gin.Context) {
 // @dev Lets a user delete own comment at commentId
 // 
 // @param gc *gin.Context
-func (pc *PostController) DeleteCommentAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) DeleteCommentAt(gc *gin.Context) {
+	// Handle param
+	commentId := gc.Param("comment_id")
+
+	// sanitizing commentId
+	idMatched, idErr := regexp.MatchString(`^[a-fA-f0-9]{24}$`, commentId)
+	if idErr != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test commentId using regex"}); return;}
+	if !idMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - commentId is not valid"}); return;}
+
+	// invoke PostDao.DeleteCommentAt()
+	if err := pc.PostDao.DeleteCommentAt(&commentId); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+	
+	// http response
+	gc.JSON(200, "Comment successfully deleted")
+}
 
 
 // #############################################
