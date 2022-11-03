@@ -31,6 +31,9 @@ func PostDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 }
 
 
+// #############################################
+// 			 		Post APIs 
+// #############################################
 
 // @notice Method of UserDaoImpl struct
 // 
@@ -90,6 +93,20 @@ func (pi *PostDaoImpl) ReactPost(reaction *models.Reaction) error {return nil}
 
 // @notice Method of UserDaoImpl struct
 // 
+// @dev Lets a commOwner delete own post at
+// 
+// @param postId *string
+// 
+// @return error
+func (pi *PostDaoImpl) DeletePostAt(postId *string) error {return nil}
+
+
+// #############################################
+// 			 		Comment APIs 
+// #############################################
+
+// @notice Method of UserDaoImpl struct
+// 
 // @dev Lets a user comment on a post
 // 
 // @param comment *models.Comment
@@ -100,12 +117,36 @@ func (pi *PostDaoImpl) Comment(comment *models.Comment) error {return nil}
 
 // @notice Method of UserDaoImpl struct
 // 
+// @dev Gets a comment at commentId
+// 
+// @param commentId *string
+// 
+// @return *models.Comment
+// 
+// @return error
+func (pi *PostDaoImpl) GetCommentAt(commentId *string) (*models.Comment, error) {return nil, nil}
+
+
+// @notice Method of UserDaoImpl struct
+// 
+// @dev Gets all comments at postId
+// 
+// @param postId *string
+// 
+// @return *[]models.Comment
+// 
+// @return error
+func (pi *PostDaoImpl) GetAllCommentsAt(postId *string) (*[]models.Comment, error) {return nil, nil}
+
+
+// @notice Method of UserDaoImpl struct
+// 
 // @dev Lets a user to update own comment - only comment.Content is allowed
 // 
 // @param comment *models.Comment
 // 
 // @return error
-func (pi *PostDaoImpl) UpdateComment(comment *models.Comment) error {return nil}
+func (pi *PostDaoImpl) UpdateCommentContent(comment *models.Comment) error {return nil}
 
 
 // @notice Method of UserDaoImpl struct
@@ -134,6 +175,10 @@ func (pi *PostDaoImpl) ReactComment(reaction *models.Reaction) error {return nil
 func (pi *PostDaoImpl) DeleteCommentAt(commentId *string) error {return nil}
 
 
+// #############################################
+// 			 		Reply APIs 
+// #############################################
+
 // @notice Method of UserDaoImpl struct
 // 
 // @dev Lets a user reply to a comment
@@ -142,6 +187,30 @@ func (pi *PostDaoImpl) DeleteCommentAt(commentId *string) error {return nil}
 // 
 // @return error
 func (pi *PostDaoImpl) Reply(reply *models.Reply) error {return nil}
+
+
+// @notice Method of UserDaoImpl struct
+// 
+// @dev Gets a reply at replyId
+// 
+// @param replyId *string
+// 
+// @return *model.Reply
+// 
+// @return error
+func (pi *PostDaoImpl) GetReplyAt(replyId *string) (*models.Reply, error) {return nil, nil}
+
+
+// @notice Method of UserDaoImpl struct
+// 
+// @dev Gets all replies at commentId
+// 
+// @param commentId *string
+// 
+// @return *[]models.Reply
+// 
+// @return error
+func (pi *PostDaoImpl) GetAllRepliesAt(commentId *string) (*[]models.Reply, error) {return nil, nil}
 
 
 // @notice Method of UserDaoImpl struct
