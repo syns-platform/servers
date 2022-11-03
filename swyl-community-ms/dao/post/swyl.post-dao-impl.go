@@ -280,7 +280,22 @@ func (pi *PostDaoImpl) Comment(comment *models.Comment) error {
 // @return *models.Comment
 // 
 // @return error
-func (pi *PostDaoImpl) GetCommentAt(commentId *string) (*models.Comment, error) {return nil, nil}
+func (pi *PostDaoImpl) GetCommentAt(commentId *string) (*models.Comment, error) {
+	// decalre post placeholder
+	post := &models.Comment{}
+
+	// prepare objectId
+	objectId, err := primitive.ObjectIDFromHex(*commentId); if err != nil {return nil, err}
+
+	// prepare filter query
+	filter := bson.M{"_id": objectId}
+
+	// find the comment in database
+	if err := pi.commentCollection.FindOne(pi.ctx, filter).Decode(post); err != nil {return nil, err}
+	
+	// return OK
+	return post, nil
+}
 
 
 // @notice Method of UserDaoImpl struct

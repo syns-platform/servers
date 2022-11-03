@@ -46,7 +46,7 @@ func PostControllerConstructor(postDao dao.PostDao) *PostController {
 // @dev Lets a commOwner create a post
 // 
 // @param gc *gin.Context
-func (pi *PostController) CreatePost(gc *gin.Context) {
+func (pc *PostController) CreatePost(gc *gin.Context) {
 	// decalre param holder
 	param := &models.Post{}
 
@@ -62,7 +62,7 @@ func (pi *PostController) CreatePost(gc *gin.Context) {
 	if !matched {gc.AbortWithStatusJSON(400, gin.H{"error": "!ETH_ADDRESS - Community_owner is not an ETH crypto wallet address"}); return;}
 
 	// invokde PostDao.CreatePost()
-	if err := pi.PostDao.CreatePost(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return}
+	if err := pc.PostDao.CreatePost(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return}
 
 	// http response
 	gc.JSON(200, "Post successfully created")
@@ -76,7 +76,7 @@ func (pi *PostController) CreatePost(gc *gin.Context) {
 // @dev Gets a post at postId
 // 
 // @param gc *gin.Context
-func (pi *PostController) GetPostAt(gc *gin.Context) {
+func (pc *PostController) GetPostAt(gc *gin.Context) {
 	// Handle postId param
 	postId := gc.Param("post_id")
 
@@ -86,7 +86,7 @@ func (pi *PostController) GetPostAt(gc *gin.Context) {
 	if !matched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - postId is not valid"}); return;}
 	
 	// invokde PostDao.GetPostAt()
-	post, err := pi.PostDao.GetPostAt(&postId)
+	post, err := pc.PostDao.GetPostAt(&postId)
 	if err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return}
 
 	// http response
@@ -101,7 +101,7 @@ func (pi *PostController) GetPostAt(gc *gin.Context) {
 // @dev Gets all posts created by commOwner
 // 
 // @param gc *gin.Context
-func (pi *PostController) GetPostsBy(gc *gin.Context) {
+func (pc *PostController) GetPostsBy(gc *gin.Context) {
 	// Handle commOwner param
 	commOwner := gc.Param("community_owner")
 
@@ -111,7 +111,7 @@ func (pi *PostController) GetPostsBy(gc *gin.Context) {
 	if !matched {gc.AbortWithStatusJSON(400, gin.H{"error": "!ETH_ADDRESS - commOwner is not an ETH crypto wallet address"}); return;}
 	
 	// invokde PostDao.GetPostsBy()
-	posts, err := pi.PostDao.GetPostsBy(&commOwner); 
+	posts, err := pc.PostDao.GetPostsBy(&commOwner); 
 	if err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()})}
 
 	// http response
@@ -126,7 +126,7 @@ func (pi *PostController) GetPostsBy(gc *gin.Context) {
 // @dev Lets a commOwner update a post - only post.Title and post.Content are allowed
 // 
 // @param gc *gin.Context
-func (pi *PostController) UpdatePostContent(gc *gin.Context) {
+func (pc *PostController) UpdatePostContent(gc *gin.Context) {
 	// declare param placeholder
 	param := &models.Post{}
 	
@@ -143,7 +143,7 @@ func (pi *PostController) UpdatePostContent(gc *gin.Context) {
 	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
 
 	// invokde PostDao.UpdatePostContent
-	if err := pi.PostDao.UpdatePostContent(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+	if err := pc.PostDao.UpdatePostContent(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
 
 	// http response
 	gc.JSON(200, "Post successfully updated")
@@ -163,7 +163,7 @@ func (pi *PostController) UpdatePostContent(gc *gin.Context) {
 // @logic if the post has different `reaction.React_type` by reacter, update `reaction.React_type` in post.Reaction
 // 
 // @param gc *gin.Context
-func (pi *PostController) ReactPost(gc *gin.Context) {
+func (pc *PostController) ReactPost(gc *gin.Context) {
 	// declare param placeholder
 	param := &models.Reaction{}
 
@@ -184,7 +184,7 @@ func (pi *PostController) ReactPost(gc *gin.Context) {
 	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
 
 	// validate PostDao.ReactPost
-	if err := pi.PostDao.ReactPost(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+	if err := pc.PostDao.ReactPost(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
 
 	// http response
 	gc.JSON(200, "Reaction successfully updated")
@@ -198,7 +198,7 @@ func (pi *PostController) ReactPost(gc *gin.Context) {
 // @dev Lets a commOwner delete own post
 // 
 // @param gc *gin.Context
-func (pi *PostController) DeletePostAt(gc *gin.Context) {
+func (pc *PostController) DeletePostAt(gc *gin.Context) {
 	// handle postId param
 	postId := gc.Param("post_id")
 
@@ -208,7 +208,7 @@ func (pi *PostController) DeletePostAt(gc *gin.Context) {
 	if !idMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - postId is not valid"}); return;}
 
 	// invoke PostDao.DeletePostAt()
-	if err := pi.PostDao.DeletePostAt(&postId); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return}
+	if err := pc.PostDao.DeletePostAt(&postId); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return}
 	
 	// http response
 	gc.JSON(200, "Post successfully updated")
@@ -226,7 +226,7 @@ func (pi *PostController) DeletePostAt(gc *gin.Context) {
 // @dev Lets a user comment on a post
 // 
 // @param gc *gin.Context
-func (pi *PostController) Comment(gc *gin.Context) {
+func (pc *PostController) Comment(gc *gin.Context) {
 	// declare param placeholder
 	param := &models.Comment{}
 
@@ -247,7 +247,7 @@ func (pi *PostController) Comment(gc *gin.Context) {
 	if err := validate.Struct(param); err != nil {gc.Copy().AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
 
 	// invokde PostDao.Comment()
-	if err := pi.PostDao.Comment(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+	if err := pc.PostDao.Comment(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
 
 	// http response
 	gc.JSON(200, "Comment successfully created")
@@ -261,7 +261,21 @@ func (pi *PostController) Comment(gc *gin.Context) {
 // @dev Gets a comment at commentId
 // 
 // @param gc *gin.Context
-func (pi *PostController) GetCommentAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) GetCommentAt(gc *gin.Context) {
+	// handle commentId param
+	commentId := gc.Param("comment_id")
+
+	// sanitize commentId
+	idMatched, idErr := regexp.MatchString(`^[a-fA-f0-9]{24}$`, commentId)
+	if idErr != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test commentId using regex"}); return;}
+	if !idMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - commentId is not valid"}); return;}
+
+	// invoke PostDao.GetCommentAt()
+	comment, err := pc.PostDao.GetCommentAt(&commentId); if err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+	
+	// http response
+	gc.JSON(200, comment)
+}
 
 
 // @notice Method of PostController struct
@@ -271,7 +285,7 @@ func (pi *PostController) GetCommentAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")
 // @dev Gets all comments at postId
 // 
 // @param gc *gin.Context
-func (pi *PostController) GetAllCommentsAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) GetAllCommentsAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // @notice Method of PostController struct
@@ -281,7 +295,7 @@ func (pi *PostController) GetAllCommentsAt(gc *gin.Context) {gc.JSON(200, "Swyl-
 // @dev Lets a user to update own comment - only comment.Content is allowed
 // 
 // @param gc *gin.Context
-func (pi *PostController) UpdateCommentContent(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) UpdateCommentContent(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // @notice Method of PostController struct
@@ -297,7 +311,7 @@ func (pi *PostController) UpdateCommentContent(gc *gin.Context) {gc.JSON(200, "S
 // @logic if the post has different `reaction.React_type` by reacter, update `reaction.React_type` in comment.Reaction
 // 
 // @param gc *gin.Context
-func (pi *PostController) ReactComment(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) ReactComment(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // @notice Method of PostController struct
@@ -307,7 +321,7 @@ func (pi *PostController) ReactComment(gc *gin.Context) {gc.JSON(200, "Swyl-v1")
 // @dev Lets a user delete own comment at commentId
 // 
 // @param gc *gin.Context
-func (pi *PostController) DeleteCommentAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) DeleteCommentAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // #############################################
@@ -321,7 +335,7 @@ func (pi *PostController) DeleteCommentAt(gc *gin.Context) {gc.JSON(200, "Swyl-v
 // @dev Lets a user reply to a comment
 // 
 // @param gc *gin.Context
-func (pi *PostController) Reply(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) Reply(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // @notice Method of PostController struct
@@ -331,7 +345,7 @@ func (pi *PostController) Reply(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 // @dev Gets a reply at replyId
 // 
 // @param gc *gin.Context
-func (pi *PostController) GetReplyAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) GetReplyAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // @notice Method of PostController struct
@@ -341,7 +355,7 @@ func (pi *PostController) GetReplyAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 // @dev Gets all replies at commentId
 // 
 // @param gc *gin.Context
-func (pi *PostController) GetAllRepliesAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) GetAllRepliesAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // @notice Method of PostController struct
@@ -351,7 +365,7 @@ func (pi *PostController) GetAllRepliesAt(gc *gin.Context) {gc.JSON(200, "Swyl-v
 // @dev Lets a user update own reply - only reply.Content is allowed
 // 
 // @param gc *gin.Context
-func (pi *PostController) UpdateReplyContent(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) UpdateReplyContent(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // @notice Method of PostController struct
@@ -367,7 +381,7 @@ func (pi *PostController) UpdateReplyContent(gc *gin.Context) {gc.JSON(200, "Swy
 // @logic if the post has different `reaction.React_type` by reacter, update `reaction.React_type` in comment.Reaction
 // 
 // @param gc *gin.Context
-func (pi *PostController) ReactReply(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) ReactReply(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // @notice Method of PostController struct
@@ -377,4 +391,4 @@ func (pi *PostController) ReactReply(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 // @dev Lets a user delete own reply at replyId
 // 
 // @param gc *gin.Context
-func (pi *PostController) DeleteReplyAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) DeleteReplyAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
