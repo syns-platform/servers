@@ -69,7 +69,7 @@ func (pi *PostDaoImpl) GetPostsBy(commOnwer *string) (*[]models.Post, error) {re
 // @param *model.Post
 // 
 // @return error
-func (pi *PostDaoImpl) UpdatePost(post *models.Post) error {return nil}
+func (pi *PostDaoImpl) UpdatePostContent(post *models.Post) error {return nil}
 
 
 // @notice Method of UserDaoImpl struct
@@ -126,6 +126,16 @@ func (pi *PostDaoImpl) ReactComment(reaction *models.Reaction) error {return nil
 
 // @notice Method of UserDaoImpl struct
 // 
+// @dev Lets a user to delete own comment at commentId
+// 
+// @param commentId *string
+// 
+// @return error
+func (pi *PostDaoImpl) DeleteCommentAt(commentId *string) error {return nil}
+
+
+// @notice Method of UserDaoImpl struct
+// 
 // @dev Lets a user reply to a comment
 // 
 // @param reply *models.Reply
@@ -158,3 +168,13 @@ func (pi *PostDaoImpl) UpdateReply(reply *models.Reply) error {return nil}
 // 
 // @return error
 func (pi *PostDaoImpl) ReactReply(reaction *models.Reply) error {return nil}
+
+
+// @notice Method of UserDaoImpl struct
+// 
+// @dev Lets a user delete own reply at replyId
+// 
+// @param replyId *string
+// 
+// @return error
+func (pi *PostDaoImpl) DeleteReplyAt(replyId *string) error {return nil}

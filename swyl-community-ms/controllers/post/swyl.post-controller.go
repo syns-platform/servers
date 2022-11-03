@@ -64,7 +64,7 @@ func (pi *PostController) GetPostsBy(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 // @dev Lets a commOwner update a post - only post.Title and post.Content are allowed
 // 
 // @param gc *gin.Context
-func (pi *PostController) UpdatePost(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pi *PostController) UpdatePostContent(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 
 
 // @notice Method of PostController struct
@@ -121,6 +121,16 @@ func (pi *PostController) ReactComment(gc *gin.Context) {gc.JSON(200, "Swyl-v1")
 
 // @notice Method of PostController struct
 // 
+// @route `DELETE/delete-comment-at/:comment_id`
+// 
+// @dev Lets a user delete own comment at commentId
+// 
+// @param gc *gin.Context
+func (pi *PostController) DeleteCommentAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+
+
+// @notice Method of PostController struct
+// 
 // @route `POST/create-reply`
 // 
 // @dev Lets a user reply to a comment
@@ -153,3 +163,13 @@ func (pi *PostController) UpdateReply(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
 // 
 // @param gc *gin.Context
 func (pi *PostController) ReactReply(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+
+
+// @notice Method of PostController struct
+// 
+// @route `DELETE/delete-reply-at`
+// 
+// @dev Lets a user delete own reply at replyId
+// 
+// @param gc *gin.Context
+func (pi *PostController) DeleteReplyAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}

@@ -15,7 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @notice Root struct for other methods in comm- router
+// @notice Root struct for other methods in comm-router
 type CommRouter struct {
 	CommController *controllers.CommController
 }

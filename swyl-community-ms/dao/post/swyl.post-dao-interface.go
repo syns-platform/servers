@@ -39,7 +39,7 @@ type PostDao interface {
 	// @param *model.Post
 	// 
 	// @return error
-	UpdatePost(post *models.Post) error
+	UpdatePostContent(post *models.Post) error
 
 	// @notice Lets a user react to a post
 	// 
@@ -81,6 +81,13 @@ type PostDao interface {
 	// @return error
 	ReactComment(reaction *models.Reaction) error
 
+	// @notice Lets a user to delete own comment at comment_id
+	// 
+	// @param commentId *string
+	// 
+	// @return error
+	DeleteCommentAt(commentId *string) error
+
 	// @notice Lets a user reply to a comment
 	// 
 	// @param reply *models.Reply
@@ -107,4 +114,11 @@ type PostDao interface {
 	// 
 	// @return error
 	ReactReply(reaction *models.Reply) error
+
+	// @notice Lets a user delete own reply at replyId
+	// 
+	// @param replyId *string
+	// 
+	// @return error
+	DeleteReplyAt(replyId *string) error
 }
