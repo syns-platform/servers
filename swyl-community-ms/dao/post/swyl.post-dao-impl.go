@@ -369,7 +369,69 @@ func (pi *PostDaoImpl) UpdateCommentContent(comment *models.Comment) error {
 // @param reaction *models.Reaction
 // 
 // @return error
-func (pi *PostDaoImpl) ReactComment(reaction *models.Reaction) error {return nil}
+func (pi *PostDaoImpl) ReactComment(reaction *models.Reaction) error {
+	// @notice reaction.Post_ID = _id (a.k.a Comment_ID in this case)
+
+	// prepare filter query
+	filter := bson.M{"_id": reaction.Post_ID}
+
+	// declare comment holder
+	targetComment := &models.Comment{}
+
+	// find targetComment
+	if err := pi.commentCollection.FindOne(pi.ctx, filter).Decode(targetComment); err != nil {return err}
+
+	// get the Reaction field in targetComment
+	reactions := targetComment.Reaction
+
+	// logic-a: if reactions is an empty slice, simply add the new passed in `reaction` to reactions slice
+	if len(reactions) == 0 {
+		reactions = append(reactions, *reaction)
+	} else {
+		// logic-b: if reaction.Reacter is NOT found in reactions slice => simply add the new passed in `reaction` to reaction slice
+		// logic-c: if reaction.Reacter is found in reactions slice => the request is either to update the reaction or unreact the reaction
+		// logic-c.1 if reaction.React_type != reactionItem.React_type => update reaction
+		// logic-c.2 if reaction.Reaction_type == reactionItem.React_type => unreact reaction
+
+		shouldUpdateReact := false
+		shouldUnreact := false
+		targetIndex := 0
+
+		for index, reactionItem := range reactions {
+			if *reaction.Reacter == *reactionItem.Reacter && *reaction.React_type != *reactionItem.React_type { //logic-c.1
+				reactions[index].React_type = reaction.React_type
+				shouldUpdateReact = true
+			} else if *reaction.Reacter == *reactionItem.Reacter && *reaction.React_type == *reactionItem.React_type { //logic-c.2
+				targetIndex = index
+				shouldUnreact = true
+			}
+		}
+
+		if shouldUnreact { // logic-c.2
+			// swap the targetItem with the lastItem
+			reactions[targetIndex] = reactions[len(reactions) - 1] 
+			
+			// exclude last item
+			reactions = reactions[:len(reactions) - 1] 
+		} else if !shouldUnreact && !shouldUpdateReact { // logic-b
+			reactions = append(reactions, *reaction)
+		}
+	}
+
+	// prepare update query
+	update := bson.D{
+		{Key: "$set", Value: bson.M{"reaction": reactions}},
+	}
+
+	// update the comment
+	dbRes, err := pi.commentCollection.UpdateOne(pi.ctx, filter, update)
+	if err != nil {return err}
+	if dbRes.MatchedCount == 0 {return errors.New("!MONGO - No matched document found with filter")}
+	
+	
+	// return OK
+	return nil
+}
 
 
 // @notice Method of UserDaoImpl struct
