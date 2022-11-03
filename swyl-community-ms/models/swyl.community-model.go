@@ -33,7 +33,6 @@ type Post struct {
 	Title 							*string				`json:"title" bson:"title" validate:"required,min=2,max=100"`
 	Content							*string				`json:"content" bson:"content" validate:"required,max=10000"`
 	Reaction						[]Reaction			`json:"reaction" bson:"reaction"`
-	Comments						[]Comment			`json:"comments" bson:"comments"`
 	Created_at						uint64				`json:"created_at" bson:"created_at"`
 }
 
@@ -48,9 +47,9 @@ type Reaction struct {
 // @notice The information related to a Swyl Comment
 type Comment struct {
 	Comment_ID  						primitive.ObjectID 		`json:"comment_id" bson:"_id"`
-	Post_ID							primitive.ObjectID 		`json:"post_id" bson:"post_id"`
+	Post_ID							primitive.ObjectID 		`json:"post_id" bson:"post_id" validate:"required"`
 	Commenter 						*string 			`json:"commenter" bson:"commenter" validate:"required,len=42,alphanum"`
-	Content							*string				`json:"content" bson:"content" validate:"required,max=1000"`
+	Content							*string				`json:"content" bson:"content" validate:"required,max=700"`
 	Reaction						[]Reaction			`json:"reaction" bson:"reaction"`
 	Comment_at						uint64				`json:"commente_at" bson:"commente_at"`
 }

@@ -258,7 +258,17 @@ func (pi *PostDaoImpl) DeletePostAt(postId *string) error {
 // @param comment *models.Comment
 // 
 // @return error
-func (pi *PostDaoImpl) Comment(comment *models.Comment) error {return nil}
+func (pi *PostDaoImpl) Comment(comment *models.Comment) error {
+	// prepare comment
+	comment.Comment_ID = primitive.NewObjectID()
+	comment.Comment_at = uint64(time.Now().Unix())
+
+	// insert comment to commentCollection
+	_, err := pi.commentCollection.InsertOne(pi.ctx, comment)
+	
+	// return OK
+	return err
+}
 
 
 // @notice Method of UserDaoImpl struct
