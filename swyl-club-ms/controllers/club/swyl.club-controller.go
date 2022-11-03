@@ -56,7 +56,7 @@ func (cc *ClubController) CreateClub(gc *gin.Context) {
 
 	// extra validatation on param.Club_owner to match ETH Crypto wallet address convention
 	matched, err := utils.TestEthAddress(param.Club_owner)
-	if err != nil{gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
+	if err != nil{gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!REGEX - cannot test club_owner using regex"}); return;}
 	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - club_owner is not an ETH crypto wallet address"}); return;}
 
 	// invoke ClubDao.CreateClub() api

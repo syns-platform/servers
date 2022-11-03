@@ -12,7 +12,9 @@ package dao
 import (
 	"Swyl/servers/swyl-community-ms/models"
 	"context"
+	"time"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -51,7 +53,17 @@ func PostDaoConstructor(
 // @param post *models.Post
 // 
 // @return error
-func (pi *PostDaoImpl) CreatePost(post *models.Post) error {return nil}
+func (pi *PostDaoImpl) CreatePost(post *models.Post) error {
+	// set up post's objectId
+	post.Post_ID = primitive.NewObjectID()
+
+	// set up post.Created_at
+	post.Created_at = uint64(time.Now().Unix())
+
+	// insert post to internal database
+	_, err := pi.postCollection.InsertOne(pi.ctx, post)
+	return err
+}
 
 
 // @notice Method of UserDaoImpl struct

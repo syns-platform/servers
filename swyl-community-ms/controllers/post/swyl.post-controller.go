@@ -11,9 +11,15 @@ package controllers
 // @import
 import (
 	dao "Swyl/servers/swyl-community-ms/dao/post"
+	"Swyl/servers/swyl-community-ms/models"
+	"Swyl/servers/swyl-community-ms/utils"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator"
 )
+
+//@notice global vars
+var validate = validator.New()
 
 // @notice Root struct for other methods in post-controller
 type PostController struct {
@@ -39,7 +45,27 @@ func PostControllerConstructor(postDao dao.PostDao) *PostController {
 // @dev Lets a commOwner create a post
 // 
 // @param gc *gin.Context
-func (pi *PostController) CreatePost(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pi *PostController) CreatePost(gc *gin.Context) {
+	// decalre param holder
+	param := &models.Post{}
+
+	// bin json post data to param holder
+	if err := gc.ShouldBindJSON(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
+
+	// validate struct param
+	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
+
+	// extra validation on param.Community_owner to match ETH Crypto wallet address convention
+	matched, err := utils.TestEthAddress(param.Community_owner)
+	if err != nil{gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test Community_owner using regex"}); return;}
+	if !matched {gc.AbortWithStatusJSON(400, gin.H{"error": "!ETH_ADDRESS - Community_owner is not an ETH crypto wallet address"}); return;}
+
+	// invokde PostDao.CreatePost
+	if err := pi.PostDao.CreatePost(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return}
+
+	// http response
+	gc.JSON(200, "Post successfully created")
+}
 
 
 // @notice Method of PostController struct
