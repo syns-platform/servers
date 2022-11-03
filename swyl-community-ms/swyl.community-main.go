@@ -28,8 +28,8 @@ import (
 var (
 	server			*gin.Engine
 	ctx 			context.Context
-	cr 				*commRouters.CommRouter
-	pr 				*postRouters.PostRouter
+	cr 			*commRouters.CommRouter
+	pr 			*postRouters.PostRouter
 )
 
 // @dev Runs before main()
@@ -59,8 +59,8 @@ func init() {
 	commentCollection := db.GetMongoCollection(mongoClient, "comments") //init comments collection
 	replyCollection := db.GetMongoCollection(mongoClient, "replies") //init replies collection
 	pd := postDao.PostDaoConstructor(ctx, postCollection, commentCollection, replyCollection) // init PostDao
-	pc := postControllers.PostControllerConstructor(pd)
-	pr = postRouters.PostRouterConstructor(pc)
+	pc := postControllers.PostControllerConstructor(pd) // init PostController
+	pr = postRouters.PostRouterConstructor(pc) //init PostRouter
 }
 
 
