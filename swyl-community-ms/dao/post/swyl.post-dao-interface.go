@@ -157,7 +157,7 @@ type PostDao interface {
 	// @param reply *models.Reply
 	// 
 	// @return error
-	UpdateReply(reply *models.Reply) error
+	UpdateReplyContent(reply *models.Reply) error
 
 	// @notice Lets a user react a reply
 	// 

@@ -51,7 +51,7 @@ func (pr *PostRouter) PostRoutes(rg *gin.RouterGroup) {
 	rg.POST("/reply", pr.PostController.Reply)
 	rg.GET("/get-reply-at/:reply_id", pr.PostController.GetReplyAt)
 	rg.GET("/get-all-replies-at/:comment_id", pr.PostController.GetAllRepliesAt)
-	rg.PATCH("/update-reply", pr.PostController.UpdateReply)
+	rg.PATCH("/update-reply-content", pr.PostController.UpdateReplyContent)
 	rg.PATCH("/react-reply", pr.PostController.ReactReply)
 	rg.DELETE("/delete-reply-at/:reply_id", pr.PostController.ReactReply)
 
