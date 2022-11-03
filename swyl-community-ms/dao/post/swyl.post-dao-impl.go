@@ -307,7 +307,25 @@ func (pi *PostDaoImpl) GetCommentAt(commentId *string) (*models.Comment, error) 
 // @return *[]models.Comment
 // 
 // @return error
-func (pi *PostDaoImpl) GetAllCommentsAt(postId *string) (*[]models.Comment, error) {return nil, nil}
+func (pi *PostDaoImpl) GetAllCommentsAt(postId *string) (*[]models.Comment, error) {
+	// declare posts placeholder
+	posts := &[]models.Comment{}
+
+	// prepare objectId
+	objectId, err := primitive.ObjectIDFromHex(*postId); if err != nil {return nil, err}
+
+	// prepare filter query
+	filter := bson.M{"post_id": objectId}
+
+	// find posts in database
+	cursor, err := pi.commentCollection.Find(pi.ctx, filter); if err != nil {return nil, err}
+	
+	// decode cursor to posts placeholder
+	if err := cursor.All(pi.ctx, posts); err != nil {return nil, err}
+
+	// return OK
+	return posts, nil
+}
 
 
 // @notice Method of UserDaoImpl struct

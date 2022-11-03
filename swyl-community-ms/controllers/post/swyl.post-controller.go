@@ -285,7 +285,21 @@ func (pc *PostController) GetCommentAt(gc *gin.Context) {
 // @dev Gets all comments at postId
 // 
 // @param gc *gin.Context
-func (pc *PostController) GetAllCommentsAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) GetAllCommentsAt(gc *gin.Context) {
+	// handle postId param
+	postId := gc.Param("post_id")
+	
+	// sanitize postId
+	idMatched, idErr := regexp.MatchString(`^[a-fA-f0-9]{24}$`, postId)
+	if idErr != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test postId using regex"}); return;}
+	if !idMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - postId is not valid"}); return;}
+	
+	// invoke PostDao.GetAllCommentsAt
+	comments, err := pc.PostDao.GetAllCommentsAt(&postId); if err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()});return;}
+
+	// http response
+	gc.JSON(200, comments)
+}
 
 
 // @notice Method of PostController struct
