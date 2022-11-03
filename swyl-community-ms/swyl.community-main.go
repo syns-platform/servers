@@ -11,24 +11,25 @@ package main
 // @improt
 import (
 	commControllers "Swyl/servers/swyl-community-ms/controllers/community"
+	postControllers "Swyl/servers/swyl-community-ms/controllers/post"
 	commDao "Swyl/servers/swyl-community-ms/dao/community"
+	postDao "Swyl/servers/swyl-community-ms/dao/post"
 	"Swyl/servers/swyl-community-ms/db"
 	commRouters "Swyl/servers/swyl-community-ms/routers/community"
+	postRouters "Swyl/servers/swyl-community-ms/routers/post"
 	"Swyl/servers/swyl-community-ms/utils"
 	"context"
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // @notice global variables
 var (
 	server			*gin.Engine
 	ctx 			context.Context
-	mongoClient		*mongo.Client
-	commCollection	*mongo.Collection
 	cr 				*commRouters.CommRouter
+	pr 				*postRouters.PostRouter
 )
 
 // @dev Runs before main()
@@ -43,14 +44,23 @@ func init() {
 	server.SetTrustedProxies([]string{os.Getenv("HOME_ROUTER")})
 
 	// init mongo client
-	mongoClient = db.EstablishMongoClient(ctx)
+	mongoClient := db.EstablishMongoClient(ctx)
 
-	// ############ init club router ############
+	// ############ init community router ############
 	commCollection := db.GetMongoCollection(mongoClient, "communities") //init communities collection
 	followerCollection := db.GetMongoCollection(mongoClient, "followers") //init follower collection
 	cd := commDao.CommDaoConstructor(ctx, commCollection, followerCollection) // init CommDao
 	cc := commControllers.CommControllerConstructor(cd) // init CommController
 	cr = commRouters.CommRouterConstructor(cc) // init CommRouter
+
+
+	// ############ init post router ############
+	postCollection := db.GetMongoCollection(mongoClient, "posts") //init posts collection
+	commentCollection := db.GetMongoCollection(mongoClient, "comments") //init comments collection
+	replyCollection := db.GetMongoCollection(mongoClient, "replies") //init replies collection
+	pd := postDao.PostDaoConstructor(ctx, postCollection, commentCollection, replyCollection) // init PostDao
+	pc := postControllers.PostControllerConstructor(pd)
+	pr = postRouters.PostRouterConstructor(pc)
 }
 
 
@@ -61,9 +71,11 @@ func main() {
 
 	// init basePath
 	commBasePath := server.Group("v1/swyl/community") // community base path
+	postBasePath := server.Group("v1/swyl/community/post") // post base path
 
 	// init handlers
-	cr.CommRoutes(commBasePath)
+	cr.CommRoutes(commBasePath) // community router
+	pr.PostRoutes(postBasePath) // post routers
 
 	// run server 
 	if (os.Getenv("GIN_MODE") != "release") {
