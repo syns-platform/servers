@@ -13,6 +13,10 @@ import "Swyl/servers/swyl-community-ms/models"
 // @notice Dao interface
 type PostDao interface {
 
+	// #############################################
+	// 			 		Post APIs 
+	// #############################################
+
 	// @notice Lets a commOwner create a post
 	// 
 	// @param post *models.Post
@@ -54,6 +58,18 @@ type PostDao interface {
 	// @return error
 	ReactPost(reaction *models.Reaction) error
 
+	// @notice Lets a commOwner delete own post at postId
+	// 
+	// @param postId *string
+	// 
+	// @return error
+	DeletePostAt(postId *string) error
+
+
+	// #############################################
+	// 			 		Comment APIs 
+	// #############################################
+
 	// @notice Lets a user comment on a post
 	// 
 	// @param comment *models.Comment
@@ -61,12 +77,30 @@ type PostDao interface {
 	// @return error
 	Comment(comment *models.Comment) error
 
+	// @notice Gets a comment at commentId
+	// 
+	// @param commentId *string
+	// 
+	// @return *models.Comment
+	// 
+	// @return error
+	GetCommentAt(commentId *string) (*models.Comment, error)
+
+	// @notice Gets all comments at postId
+	// 
+	// @param postId *string
+	// 
+	// @return *[]models.Comment
+	// 
+	// @return error
+	GetAllCommentsAt(postId *string) (*[]models.Comment, error)
+
 	// @notice Lets a user to update own comment - only comment.Content is allowed
 	// 
 	// @param comment *models.Comment
 	// 
 	// @return error
-	UpdateComment(comment *models.Comment) error
+	UpdateCommentContent(comment *models.Comment) (error)
 
 	// @notice Lets a user react to a comment
 	// 
@@ -88,12 +122,35 @@ type PostDao interface {
 	// @return error
 	DeleteCommentAt(commentId *string) error
 
+
+	// #############################################
+	// 			 		Reply APIs 
+	// #############################################
+
 	// @notice Lets a user reply to a comment
 	// 
 	// @param reply *models.Reply
 	// 
 	// @return error
 	Reply(reply *models.Reply) error
+
+	// @notice Gets a reply at replyId
+	// 
+	// @param replyId *string
+	// 
+	// @return *model.Reply
+	// 
+	// @return error
+	GetReplyAt(replyId *string) (*models.Reply, error)
+
+	// @notice Gets all replies at commentId
+	// 
+	// @param commentId *string
+	// 
+	// @return *[]models.Reply
+	// 
+	// @return error
+	GetAllRepliesAt(commentId *string) (*[]models.Reply, error)
 
 	// @notice Lets a user update own reply - only reply.Content is allowed
 	// 
