@@ -1,7 +1,7 @@
 <p align="center">
 <br />
 <h1 align="center">SWYL - Support Who You Love - v1.0</h1>
-<h4 align="center">Users Microservice</h4>
+<h4 align="center">User Microservice</h4>
 
 ## Folder structure 
 
