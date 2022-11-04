@@ -16,7 +16,7 @@ type User struct {
 	Display_name 			*string					`json:"display_name" bson:"display_name" validate:"omitempty,min=3,max=40"`
 	Email 				*string					`json:"email" bson:"email" validate:"omitempty,min=3,max=40,email"`
 	Bio 				*string					`json:"bio" bson:"bio" validate:"omitempty,max=200"`
-	Website 			*string					`json:"website" bson:"website" validate:"url"`
+	Website 			*string					`json:"website" bson:"website" validate:"omitempty,url"`
 	Joined_at			int64					`json:"joined_at" bson:"joined_at"`
 	Social_media 			[]SocialMedia				`json:"social_media" bson:"social_media"`
 }
@@ -25,5 +25,5 @@ type User struct {
 // @notice The information related to the links to a user's social media
 type SocialMedia struct {
 	Media 				string 					`json:"media" bson:"media"`
-	Url				string					`json:"url" bson:"url" validate:"url"`
+	Url				string					`json:"url" bson:"url" validate:"omitempty,url"`
 }
