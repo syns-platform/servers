@@ -59,7 +59,7 @@
 
 ```bash
 git clone https://github.com/SWYLy/servers.git
-cd swyl-users-ms
+cd swyl-club-ms
 ```
 
 ### Set up environment variables
@@ -68,7 +68,7 @@ At the root of the directory, create a .env file using .env.example as the templ
 
 ### Running the project
 
-Build and run `swyl-users-ms` locally using `Make` scripts
+Build and run `swyl-club-ms` locally using `Make` scripts
 
 ```bash
 make dev-mode
