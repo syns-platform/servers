@@ -1,6 +1,6 @@
 <p align="center">
 <br />
-<h1 align="center">SWYL - Support Who You Love - V1.0</h1>
+<h1 align="center">SWYL - Support Who You Love - v1.0</h1>
 </p>
 
 ## Overview
