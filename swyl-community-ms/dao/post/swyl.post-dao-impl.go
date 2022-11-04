@@ -259,6 +259,10 @@ func (pi *PostDaoImpl) DeletePostAt(postId *string) error {
 // 
 // @return error
 func (pi *PostDaoImpl) Comment(comment *models.Comment) error {
+	// make sure comment.Post_id is a valid post
+	filter := bson.M{"_id": comment.Post_ID}
+	if dbRes := pi.postCollection.FindOne(pi.ctx, filter); dbRes.Err() != nil {return errors.New("!MONGO - no post document found with post_id")}
+
 	// prepare comment
 	comment.Comment_ID = primitive.NewObjectID()
 	comment.Comment_at = uint64(time.Now().Unix())
@@ -469,7 +473,21 @@ func (pi *PostDaoImpl) DeleteCommentAt(commentId *string) error {
 // @param reply *models.Reply
 // 
 // @return error
-func (pi *PostDaoImpl) Reply(reply *models.Reply) error {return nil}
+func (pi *PostDaoImpl) Reply(reply *models.Reply) error {
+	// make sure reply is for a valid comment
+	filter := bson.M{"_id": reply.Comment_ID,"commenter": reply.Reply_to,}
+	if dbRes := pi.commentCollection.FindOne(pi.ctx, filter); dbRes.Err() != nil {return errors.New("!MONGO - No comment is found with comment_id and reply_to")}
+
+	// prepare reply
+	reply.Reply_ID = primitive.NewObjectID()
+	reply.Reply_at = uint64(time.Now().Unix())
+
+	// insert new reply to database
+	_, err := pi.replyCollection.InsertOne(pi.ctx, reply)
+
+	// return OK
+	return err
+}
 
 
 // @notice Method of UserDaoImpl struct

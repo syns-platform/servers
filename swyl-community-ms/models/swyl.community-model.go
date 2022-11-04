@@ -56,7 +56,7 @@ type Comment struct {
 
 // @notice The information related to a Swyl Reply
 type Reply struct {
-	Reply_id						primitive.ObjectID 		`json:"reply_id" bson:"_id"`
+	Reply_ID						primitive.ObjectID 		`json:"reply_id" bson:"_id"`
 	Comment_ID  						primitive.ObjectID 		`json:"comment_id" bson:"comment_id"`
 	Reply_to						*string				`json:"reply_to" bson:"reply_to" validate:"required,len=42,alphanum"`
 	Content							*string				`json:"content" bson:"content" validate:"required,max=1000"`

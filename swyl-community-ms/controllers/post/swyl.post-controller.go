@@ -418,7 +418,32 @@ func (pc *PostController) DeleteCommentAt(gc *gin.Context) {
 // @dev Lets a user reply to a comment
 // 
 // @param gc *gin.Context
-func (pc *PostController) Reply(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) Reply(gc *gin.Context) {
+	// declare param holder
+	param := &models.Reply{}
+
+	// bind json post data to param holder
+	if err := gc.ShouldBindJSON(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
+
+	// sanitizing param.Comment_ID
+	idMatched, idErr := regexp.MatchString(`^[a-fA-f0-9]{24}$`, param.Comment_ID.Hex())
+	if idErr != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test param.comment_id using regex"}); return;}
+	if !idMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - param.comment_id is not valid"}); return;}
+
+	// validate param.replyTo to match ETH Crypto wallet address convention
+	replyToMatched, replyToErr := utils.TestEthAddress(param.Reply_to)
+	if replyToErr != nil{gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test replyTo using regex"}); return;}
+	if !replyToMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!ETH_ADDRESS - replyTo is not an ETH crypto wallet address"}); return;}
+
+	// extra validation on struct param
+	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;}
+
+	// invoke PostDao.Reply()
+	if err := pc.PostDao.Reply(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(200, "Swyl-v1")
+}
 
 
 // @notice Method of PostController struct
