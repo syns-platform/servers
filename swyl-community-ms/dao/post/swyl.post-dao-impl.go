@@ -639,7 +639,6 @@ func (pi *PostDaoImpl) ReactReply(reaction *models.Reaction) error {
 		} else if !shouldUpdateReact && !shouldUnreact { // logic-b
 			reactions = append(reactions, *reaction)
 		}
-
 	}
 
 	// preapre update query
@@ -662,4 +661,18 @@ func (pi *PostDaoImpl) ReactReply(reaction *models.Reaction) error {
 // @param replyId *string
 // 
 // @return error
-func (pi *PostDaoImpl) DeleteReplyAt(replyId *string) error {return nil}
+func (pi *PostDaoImpl) DeleteReplyAt(replyId *string) error {
+	// prepare objetId
+	objectId, err := primitive.ObjectIDFromHex(*replyId); if err != nil {return err}
+
+	// prepare filter
+	filter := bson.M{"_id": objectId}
+
+	// delete the reply
+	dbRes, err := pi.replyCollection.DeleteOne(pi.ctx, filter)
+	if err != nil {return err}
+	if dbRes.DeletedCount == 0 {return errors.New("!MONGO - No matched document found")}
+
+	// return OK
+	return nil
+}

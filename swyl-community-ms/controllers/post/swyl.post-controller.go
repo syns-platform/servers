@@ -574,9 +574,23 @@ func (pc *PostController) ReactReply(gc *gin.Context) {
 
 // @notice Method of PostController struct
 // 
-// @route `DELETE/delete-reply-at`
+// @route `DELETE/delete-reply-at/:reply_id`
 // 
 // @dev Lets a user delete own reply at replyId
 // 
 // @param gc *gin.Context
-func (pc *PostController) DeleteReplyAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) DeleteReplyAt(gc *gin.Context) {
+	// handle param 
+	replyId := gc.Param("reply_id")
+
+	// sanitizing replyId
+	idMatched, idErr := regexp.MatchString(`^[a-fA-f0-9]{24}$`, replyId)
+	if idErr != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test replyId using regex"}); return;}
+	if !idMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - replyId is not valid"}); return;}
+	
+	// invoke PostDao.GetReplyAt
+	if err := pc.PostDao.DeleteReplyAt(&replyId); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+	
+	// http response
+	gc.JSON(200, "Reply successfully deleted")
+}
