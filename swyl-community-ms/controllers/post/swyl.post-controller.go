@@ -477,7 +477,21 @@ func (pc *PostController) GetReplyAt(gc *gin.Context) {
 // @dev Gets all replies at commentId
 // 
 // @param gc *gin.Context
-func (pc *PostController) GetAllRepliesAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) GetAllRepliesAt(gc *gin.Context) {
+	// handle param
+	commentId := gc.Param("comment_id")
+
+	// sannitize replyId
+	idMatched, idErr := regexp.MatchString(`^[a-fA-f0-9]{24}$`, commentId)
+	if idErr != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test commentId using regex"}); return;}
+	if !idMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - commentId is not valid"}); return;}
+	
+	// invoke PostDao.GetReplyAt
+	replies, err := pc.PostDao.GetAllRepliesAt(&commentId); if err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+	
+	// http response
+	gc.JSON(200, replies)
+}
 
 
 // @notice Method of PostController struct

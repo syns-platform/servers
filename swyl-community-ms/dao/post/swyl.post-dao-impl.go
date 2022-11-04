@@ -526,7 +526,27 @@ func (pi *PostDaoImpl) GetReplyAt(replyId *string) (*models.Reply, error) {
 // @return *[]models.Reply
 // 
 // @return error
-func (pi *PostDaoImpl) GetAllRepliesAt(commentId *string) (*[]models.Reply, error) {return nil, nil}
+func (pi *PostDaoImpl) GetAllRepliesAt(commentId *string) (*[]models.Reply, error) {
+	// prepare objectId
+	objectId, err := primitive.ObjectIDFromHex(*commentId); if err != nil {return nil, err}
+
+	// prepare filter
+	commentFilter := bson.M{"_id": objectId}
+	repliesFilter := bson.M{"comment_id": objectId}
+
+	// make sure commentId points at a valid comment
+	if dbRes := pi.commentCollection.FindOne(pi.ctx, commentFilter); dbRes.Err() != nil {return nil, errors.New("!MONGO - No comment is found with comment_id")}
+
+	// find the replies
+	replies := &[]models.Reply{}
+	cursor, err := pi.replyCollection.Find(pi.ctx, repliesFilter); if err != nil {return nil, err}
+
+	// decode cursor into repleis holder
+	if err := cursor.All(pi.ctx, replies); err != nil {return nil, err}
+	
+	// return OK
+	return replies, nil
+}
 
 
 // @notice Method of UserDaoImpl struct
