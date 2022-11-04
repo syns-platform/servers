@@ -11,9 +11,9 @@ Collection of Golang MVC Microservices that power the complex backend and engine
 
 - [Swyl Club Microservice](https://github.com/SWYLy/servers/tree/master/swyl-club-ms) mimics the logic of the [SwylClub smart contract](https://github.com/SWYLy/contracts/blob/main/contracts/v1/SwylClub.sol) and keeps track of the off-chain data about `SwylClub`.
 
-- [Swyl Community Microservice](https://github.com/SWYLy/servers/tree/master/swyl-community-ms) is the most honored out of the three microservices. Holding many complex endpoints, ****Swyl Community Microservice**** was developed with the vision of being a full-fledged social media platform which is able to:
+- [Swyl Community Microservice](https://github.com/SWYLy/servers/tree/master/swyl-community-ms) is the ****`most honored`**** out of the three microservices. Holding many complex endpoints, ****Swyl Community Microservice**** was developed with the vision of being a full-fledged social media platform which is able to:
   - allows a potential Swyl community owner to start an online community where potential followers can follow the community for free to keep getting updated by the community owner
-  - allows Swyl community owner to create posts or blogs which then can be interacted by the followers. With that said, followers can react to the posts with the four `Swyl emotions`-SUPPORT, BRAVO, LAUGH, FIRE, leave comment on the posts which is then can be editted and/or deleted if desired.
+  - allows Swyl community owner to create posts or blogs which then can be interacted by the followers. With that said, followers can react to the posts with the four `Swyl emotions` (SUPPORT, BRAVO, LAUGH, FIRE), leave comment on the posts which is then can be editted and/or deleted if desired.
   - allows other users to reply to comments and also react to comments with the `Swyl emotions`
   
   
