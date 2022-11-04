@@ -499,7 +499,22 @@ func (pi *PostDaoImpl) Reply(reply *models.Reply) error {
 // @return *model.Reply
 // 
 // @return error
-func (pi *PostDaoImpl) GetReplyAt(replyId *string) (*models.Reply, error) {return nil, nil}
+func (pi *PostDaoImpl) GetReplyAt(replyId *string) (*models.Reply, error) {
+	// declare reply holder
+	reply := &models.Reply{}
+
+	// prepare objectId
+	objectId, err := primitive.ObjectIDFromHex(*replyId); if err != nil {return nil, err}
+
+	// prepare filter query
+	filter := bson.M{"_id": objectId}
+
+	// find the reply in database
+	if err := pi.replyCollection.FindOne(pi.ctx, filter).Decode(reply); err != nil {return nil, err}
+	
+	// return OK
+	return reply, nil
+}
 
 
 // @notice Method of UserDaoImpl struct

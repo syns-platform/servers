@@ -453,7 +453,21 @@ func (pc *PostController) Reply(gc *gin.Context) {
 // @dev Gets a reply at replyId
 // 
 // @param gc *gin.Context
-func (pc *PostController) GetReplyAt(gc *gin.Context) {gc.JSON(200, "Swyl-v1")}
+func (pc *PostController) GetReplyAt(gc *gin.Context) {
+	// handle param
+	replyId := gc.Param("reply_id")
+
+	// sannitize replyId
+	idMatched, idErr := regexp.MatchString(`^[a-fA-f0-9]{24}$`, replyId)
+	if idErr != nil {gc.AbortWithStatusJSON(400, gin.H{"error": "!REGEX - cannot test replyId using regex"}); return;}
+	if !idMatched {gc.AbortWithStatusJSON(400, gin.H{"error": "!TIERID - replyId is not valid"}); return;}
+	
+	// invoke PostDao.GetReplyAt
+	reply, err := pc.PostDao.GetReplyAt(&replyId); if err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+	
+	// http response
+	gc.JSON(200, reply)
+}
 
 
 // @notice Method of PostController struct
