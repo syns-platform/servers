@@ -4,7 +4,7 @@
 </p>
 
 ## Overview
-Collection of Golang MVC Microservices that power the complex backend and engine of the ***Swyl platform***. `Swyl/Servers` is a restful server that hosts almost 50 endpoints that let `Swyl users` store their information on the platform in an instance of [mongoDB-atlas](https://www.mongodb.com/atlas).
+Collection of Golang MVC Microservices that power the complex backend and engine of the ***Swyl platform***. `Swyl/Servers` is a restful server which hosts almost 50 endpoints that let `Swyl users` interact with the platform with ease and store their platform information in an instance of [mongoDB-atlas](https://www.mongodb.com/atlas).
 
 ## Highlighted Features:
 - [Swyl User Microservice](https://github.com/SWYLy/servers/tree/master/swyl-users-ms) allows users to connect their crypto wallet to the platform and sign up a record in `mongoDB` on the first connect. It also allows users to configure and/or deactivate (i.e. delete) own accounts if desired.
