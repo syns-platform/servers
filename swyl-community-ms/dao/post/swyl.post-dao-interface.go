@@ -170,7 +170,7 @@ type PostDao interface {
 	// @param reaction *models.Reaction
 	// 
 	// @return error
-	ReactReply(reaction *models.Reply) error
+	ReactReply(reaction *models.Reaction) error
 
 	// @notice Lets a user delete own reply at replyId
 	// 

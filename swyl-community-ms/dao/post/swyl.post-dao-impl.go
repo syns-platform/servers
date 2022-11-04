@@ -594,7 +594,65 @@ func (pi *PostDaoImpl) UpdateReplyContent(reply *models.Reply) error {
 // @param reaction *models.Reaction
 // 
 // @return error
-func (pi *PostDaoImpl) ReactReply(reaction *models.Reply) error {return nil}
+func (pi *PostDaoImpl) ReactReply(reaction *models.Reaction) error {
+	// @notice reaction.Post_ID = reply.Reply_ID in this case
+	
+	// prepare filter
+	filter := bson.M{"_id": reaction.Post_ID}
+
+	// find the reply document
+	reply := &models.Reply{}
+	if err := pi.replyCollection.FindOne(pi.ctx, filter).Decode(reply); err != nil {return err}
+
+	// get the slice of reactions
+	reactions := reply.Reaction
+
+	// @logic-a: if the reactions is an empty slice => simply add the new reaction to the slice
+	if len(reactions) == 0 {
+		reactions = append(reactions, *reaction)
+	} else {
+		// @logic-b: if reaction.Reacter is NOT found in reactions slice => simply add the reaction to the slice
+		// @logic-c: if reaction.Reacter is found in reactions slice => this request is to either update the reaction.React_type or unreact the reaction
+		// @logic-c.1 if reaction.React_type != reactionItem.React_type => update the react_type
+		// @logic-c.2 if the reaction.React_type == reactionItem.React_type => unreact the reaction
+
+		shouldUpdateReact := false
+		shouldUnreact := false
+		targetIndex := 0
+
+		for index, reactionItem := range reactions {
+			if *reaction.Reacter == *reactionItem.Reacter && *reaction.React_type != *reactionItem.React_type { // logic-c.1
+				reactions[index].React_type = reaction.React_type
+				shouldUpdateReact = true
+			} else if *reaction.Reacter == *reactionItem.Reacter && *reaction.React_type == *reactionItem.React_type { //logic-c.2
+				targetIndex = index
+				shouldUnreact = true
+			}
+		}
+
+		if shouldUnreact { // logic-c.2
+			// swap the targetItem with the lastItem
+			reactions[targetIndex] = reactions[len(reactions) - 1] 
+
+			// exclude the last element
+			reactions = reactions[:len(reactions) - 1] 
+		} else if !shouldUpdateReact && !shouldUnreact { // logic-b
+			reactions = append(reactions, *reaction)
+		}
+
+	}
+
+	// preapre update query
+	update := bson.D{{Key: "$set", Value: bson.M{"reaction": reactions}}}
+
+	// update reply
+	dbRes, err := pi.replyCollection.UpdateOne(pi.ctx, filter, update)
+	if err != nil {return nil}
+	if dbRes.MatchedCount == 0 {return errors.New("!MONGO - No matched document found")}
+
+	// return OK 
+	return nil
+}
 
 
 // @notice Method of UserDaoImpl struct
