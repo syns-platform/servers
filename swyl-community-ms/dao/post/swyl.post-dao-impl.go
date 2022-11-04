@@ -556,7 +556,29 @@ func (pi *PostDaoImpl) GetAllRepliesAt(commentId *string) (*[]models.Reply, erro
 // @param reply *models.Reply
 // 
 // @return error
-func (pi *PostDaoImpl) UpdateReplyContent(reply *models.Reply) error {return nil}
+func (pi *PostDaoImpl) UpdateReplyContent(reply *models.Reply) error {
+	// prepare filter query
+	commentFilter := bson.M{"_id": reply.Comment_ID}
+	replyFilter := bson.M{
+		"_id": reply.Reply_ID, 
+		"comment_id": reply.Comment_ID,
+		"reply_to": reply.Reply_to,
+	}
+
+	// check if reply.Comment_ID points at a valid comment
+	if dbRes := pi.commentCollection.FindOne(pi.ctx, commentFilter); dbRes.Err() != nil {return errors.New("!MONGO - No comment is found with comment_id") }
+
+	// prepare update query
+	update := bson.D{{Key: "$set", Value: bson.M{"content": reply.Content}}}
+	
+	// update reply
+	dbRes, err := pi.replyCollection.UpdateOne(pi.ctx, replyFilter, update)
+	if err != nil {return nil}
+	if dbRes.MatchedCount == 0 {return errors.New("!MONGO - No matched document found")}
+
+	// return OK
+	return nil
+}
 
 
 // @notice Method of UserDaoImpl struct
