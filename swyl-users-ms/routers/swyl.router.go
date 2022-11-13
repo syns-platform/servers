@@ -11,6 +11,7 @@ package routers
 // @import
 import (
 	"Swyl/servers/swyl-users-ms/controllers"
+	"Swyl/servers/swyl-users-ms/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,7 +33,7 @@ func UserRouterConstructor(userController *controllers.UserController) *UserRout
 // 
 // @dev Declares a list of endpoints
 func (ur * UserRouter) UserRoutes(rg *gin.RouterGroup) {
-   rg.POST("/connect", ur.UserController.Connect)
+   rg.POST("/connect", middleware.Authenticate(), ur.UserController.Connect)
    rg.GET("/get-user-at/:wallet-address", ur.UserController.GetUserAt)
    rg.GET("/get-all-user", ur.UserController.GetAllUsers)
    rg.PATCH("/update-user", ur.UserController.UpdateUser)
