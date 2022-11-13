@@ -8,8 +8,8 @@ SERVER=swyl-users-ms
 ############### LOCAL BUILD ###############
 
 # dev-mode
-.phony: dev-mode
-dev-mode: 
+.phony: dev
+dev: 
 	@$(COMPILEDAEMON_PATH) -command="./$(SERVER)"
 
 # local run
