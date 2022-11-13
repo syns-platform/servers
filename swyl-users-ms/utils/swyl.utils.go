@@ -33,7 +33,21 @@ func HandleException(e error) {if (e != nil) {log.Panic(e)}}
 // @param wallet_address *string
 // 
 // @return bool
+// 
+// @return error
 func TestEthAddress(wallet_address *string) (bool, error) {
 	pattern := os.Getenv("ETH_ADDRESS_REGEX")
 	return regexp.MatchString(pattern, *wallet_address)
+}
+
+// @dev Handle testing `signature` to match ETH signed signature
+// 
+// @param signature *string
+// 
+// @return bool
+// 
+// @return error
+func TestSignature(signature *string) (bool, error) {
+	pattern := os.Getenv("SIGNATURE_REGEX")
+	return regexp.MatchString(pattern, *signature)
 }
