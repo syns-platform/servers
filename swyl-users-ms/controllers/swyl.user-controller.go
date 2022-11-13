@@ -46,7 +46,7 @@ func (uc *UserController) Connect(gc *gin.Context){
 	// declare param
 	var param *models.User
 
-	// bind json post data to user
+	// bind json post data to param
 	if err := gc.ShouldBindJSON(&param); err != nil {
 		gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;
 	}
