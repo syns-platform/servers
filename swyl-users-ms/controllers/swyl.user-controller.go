@@ -14,6 +14,7 @@ import (
 	"Swyl/servers/swyl-users-ms/models"
 	"Swyl/servers/swyl-users-ms/utils"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -43,6 +44,29 @@ func UserControllerConstructor(userDao dao.UserDao) *UserController{
 // 
 // @param gc *gin.Context
 func (uc *UserController) Connect(gc *gin.Context){
+	// get verifiedSigner from auth middleware
+	verifiedSigner := gc.GetString("verifiedSigner")
+
+	// invoke UserDao.Connect() api
+	foundUser, err := uc.UserDao.Connect(&verifiedSigner)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+
+	// http response
+	gc.JSON(200, gin.H{"user": &foundUser})
+}
+
+
+// @notice Method of UserController struct
+// 
+// @route `POST/connect`
+// 
+// @dev Connects to an account stored in the internal database using wallet address. Create a new account on first connect.
+// 
+// @param gc *gin.Context
+func (uc *UserController) ClaimPage(gc *gin.Context){
+	// get verifiedSigner from auth middleware
+	verifiedSigner := gc.GetString("verifiedSigner")
+
 	// declare param
 	var param *models.User
 
@@ -51,20 +75,34 @@ func (uc *UserController) Connect(gc *gin.Context){
 		gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;
 	}
 
-	// vaidate struct param
+	// test param.wallet_address to match ETH Crypto wallet address convention
+	walletMatched, err := utils.TestEthAddress(param.Wallet_address)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
+	if !walletMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - wallet_address is not an ETH crypto wallet address"}); return;}
+
+	// test if param.wallet_address matched verifiedSigner
+	if signerMatched := strings.EqualFold(verifiedSigner, *param.Wallet_address); !signerMatched {
+		gc.AbortWithStatusJSON(401, gin.H{"error": "!SIGNER - request.body.wallet_address do not match verified signer"}); return;
+	}
+
+	// test if param.username is a valid username
+	validUsername, err := utils.SanitizeUsername(param.Username)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX"}); return;}
+
+	// update param.Username to new validUsername
+	param.Username = validUsername;
+
+	// extra vaidatation on struct param
 	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
 
-	// test param.wallet_address to match ETH Crypto wallet address convention
-	matched, err := utils.TestEthAddress(param.Wallet_address)
-	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test wallet_address against regex"}); return;}
-	if !matched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - wallet_address is not an ETH crypto wallet address"}); return;}
 
 	// invoke UserDao.Connect() api
-	foundUser, err := uc.UserDao.Connect(param.Wallet_address)
-	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+	_, claimErr := uc.UserDao.ClaimPage(param)
+	if claimErr != nil && claimErr.Error() == "!USERNAME_TAKEN" {gc.AbortWithStatusJSON(400, gin.H{"error": "!USERNAME - username has already been taken"}); return;}
+	if claimErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
 
 	// http response
-	gc.JSON(200, gin.H{"user": &foundUser})
+	gc.JSON(200, gin.H{"user": "Successfully claim a page"})
 }
 
 
