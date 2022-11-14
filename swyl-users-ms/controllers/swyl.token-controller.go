@@ -10,6 +10,7 @@ package controllers
 
 import (
 	"Swyl/servers/swyl-users-ms/utils"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -29,9 +30,9 @@ import (
 func GenerateAccessToken(gc *gin.Context) {
 	// prepare payloadParamHolder
 	type payloadParamHolder struct {
-		PubKey string `json:"pubKey" validate:"required,len=42,alphanum"`
+		Signer string `json:"signer" validate:"required,len=42,alphanum"`
 		Signature string `json:"signature" validate:"required,len=132,alphanum"`
-		MessageToSign string `json:"messageToSign" validate:"required"`
+		LoginMessage string `json:"loginMessage" validate:"required"`
 	}
 
 	// declare param
@@ -42,10 +43,12 @@ func GenerateAccessToken(gc *gin.Context) {
 		gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;
 	}
 
-	// test param.pubKey to match ETH Crypto wallet address convention
-	pubKeyMatched, err := utils.TestEthAddress(&param.PubKey)
-	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test param.pubKey against regex"}); return;}
-	if !pubKeyMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - param.pubKey is not an ETH crypto wallet address"}); return;}
+	log.Println(param.Signer)
+	
+	// test param.Signer to match ETH Crypto wallet address convention
+	SignerMatched, err := utils.TestEthAddress(&param.Signer)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test param.Signer against regex"}); return;}
+	if !SignerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - param.Signer is not an ETH crypto wallet address"}); return;}
 
 	// test param.Signature to see if it's a valid ethereum signed signature
 	signedMsgMatched, err := utils.TestSignature(&param.Signature)
@@ -59,9 +62,9 @@ func GenerateAccessToken(gc *gin.Context) {
 	// Create a new token object
 	
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"pubKey": param.PubKey,
+		"signer": param.Signer,
 		"signature": param.Signature,
-		"messageToSign": param.MessageToSign,
+		"loginMessage": param.LoginMessage,
 		"exp": time.Now().Add(time.Hour).Unix(),
 	})
 
@@ -77,5 +80,5 @@ func GenerateAccessToken(gc *gin.Context) {
 	gc.SetCookie("Authorization", accessToken, 3600*24, "", "", false, true)
 
 	// gc.JSON(200, gin.H{"msg": "JWT successfully generated"})
-	gc.JSON(200, gin.H{"token": accessToken})
+	gc.JSON(200, gin.H{"accessToken": accessToken})
 }
