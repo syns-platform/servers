@@ -13,6 +13,8 @@ import (
 	"Swyl/servers/swyl-users-ms/models"
 	"context"
 	"errors"
+	"log"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -40,14 +42,15 @@ func UserDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 // @dev Connects to an account stored in the internal database using wallet address.
 // 		Create a new account on first connect.
 // 
-// @param user	*models.User
+// @param walletAddress *string
 // 
 // @return *models.User
 // 
 // @return error
-// 
-// @TODO should return JWT token
 func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
+	// lower case walletAddress
+	*walletAddress = strings.ToLower(*walletAddress)
+
 	// declare user placeholder
 	user:= &models.User{}
 
@@ -78,6 +81,60 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 	} else {
 		// return nil, and other error result from mongoDB
 		return nil, dbRes
+	}
+}
+
+// @notice Method of UserDaoImpl struct
+// 
+// @dev Lets a wallet owner claim a Swyl page with passed-in username
+// 
+// @param userParam	*models.User
+// 
+// @return *mdoels.User
+// 
+// @return error
+func (ui *UserDaoImpl) ClaimPage(userParam *models.User) (*models.User, error) {
+	// lower case walletAddress
+	*userParam.Wallet_address = strings.ToLower(*userParam.Wallet_address)
+
+	// declare user placeholder
+	user:= &models.User{}
+
+	// set up find query
+	walletQuery := bson.D{{Key: "wallet_address", Value: userParam.Wallet_address}}
+	usernameQuery := bson.D{{Key: "username", Value: userParam.Username}}
+	
+	// find the user in database using user.wallet_address
+	walletDbRes := ui.mongoCollection.FindOne(ui.ctx, walletQuery).Decode(user)
+	log.Println(*userParam.Username)
+
+	// check if any user has already registered with the same userParam.Username
+	// logic: if walletDbRes error == nil => a user with `username` has already registered before => return nil, error
+	if userDbRes := ui.mongoCollection.FindOne(ui.ctx, usernameQuery).Decode(user); userDbRes == nil {
+		return nil, errors.New("!USERNAME_TAKEN")
+	}
+
+	// logic: if walletDbRes error == nil => user with `walletAddress` has already connected before => return user
+	// logic: if walletDbRes error != nil => user with `walletAddress` has never connected before
+	if walletDbRes == nil {
+		// return OK
+		return user, nil
+	} else if walletDbRes.Error() == "mongo: no documents in result" {
+		// prepare user
+		newUser := &models.User{
+			Wallet_address: userParam.Wallet_address,
+			Username: userParam.Username,
+			Joined_at: time.Now().Unix(),
+		}
+
+		// insert new user to internal database
+		_, err := ui.mongoCollection.InsertOne(ui.ctx, newUser)
+
+		// return user and err
+		return newUser, err
+	} else {
+		// return nil, and other error result from mongoDB
+		return nil, walletDbRes
 	}
 }
 
