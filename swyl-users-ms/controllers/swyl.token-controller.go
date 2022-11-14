@@ -72,8 +72,10 @@ func GenerateAccessToken(gc *gin.Context) {
 	}
 
 	// send the JWT back in form of httpOnly cookie
-	gc.SetSameSite(http.SameSiteLaxMode)
+	// @TODO: Figure out how to access httpOnly from other microservices
+	gc.SetSameSite(http.SameSiteNoneMode)
 	gc.SetCookie("Authorization", accessToken, 3600*24, "", "", false, true)
 
-	gc.JSON(200, gin.H{"msg": "JWT successfully generated"})
+	// gc.JSON(200, gin.H{"msg": "JWT successfully generated"})
+	gc.JSON(200, gin.H{"token": accessToken})
 }
