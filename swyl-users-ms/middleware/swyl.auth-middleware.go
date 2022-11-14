@@ -70,7 +70,7 @@ func Authenticate() gin.HandlerFunc {
                   
                   // compare pubKeyAddress to claims.Signer, if matched => pass authentication and vice verca
                   if matched := strings.EqualFold(claims.Signer, pubKeyAddress.Hex()); !matched {
-                        gc.AbortWithStatusJSON(401, gin.H{"error": "!PUBLIC_KEY - jwt.payload.Signer do not match the public key address recovered from verifying jwt.payload.Signature & jwt.payload.LoginMessage "}); 
+                        gc.AbortWithStatusJSON(401, gin.H{"error": "!PUBLIC_KEY - jwt.payload.Signer do not match the public key address recovered from verifying jwt.payload.Signature & jwt.payload.LoginMessage"}); 
                         return;
                   }
 
