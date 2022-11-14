@@ -31,6 +31,13 @@ type UserDao interface {
 	// @return error
 	ClaimPage(userParam *models.User) (*models.User, error)
 
+	// @notice Checks if a username has been taken
+	// 
+	// @param username *string
+	// 
+	// @return bool
+	CheckUsernameAvailability(username *string) (bool, error)
+
 	// @notice Gets a user at wallet address.
 	// 
 	// @param walletAddress *string

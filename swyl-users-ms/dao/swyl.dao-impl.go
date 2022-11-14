@@ -138,6 +138,32 @@ func (ui *UserDaoImpl) ClaimPage(userParam *models.User) (*models.User, error) {
 	}
 }
 
+// @notice Method of UserDaoImpl struct
+// 
+// @dev Checks if a username has been taken
+// 
+// @param username *string
+// 
+// @return bool
+func (ui *UserDaoImpl) CheckUsernameAvailability(username *string) (bool, error) {
+	// prepare filter
+	filter := bson.D{{Key: "username", Value: username}}
+
+	// find the user with username in database
+	dbRes := ui.mongoCollection.FindOne(ui.ctx, filter)
+
+	// logic: if dbRes.Err() == nil => username IS NOT available
+	// logic: if dbRes.Err() == "mongo: no documents in result" => username IS available
+	// logic: else => return unknown error
+	if dbRes.Err() == nil {
+		return false, nil
+	} else if dbRes.Err().Error() == "mongo: no documents in result"{ 
+		return true, nil
+	} else {
+		return false, errors.New("UKNOWN ERROR")
+	}
+}
+
 
 // @notice Method of UserDaoImpl struct
 // 
