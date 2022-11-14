@@ -62,6 +62,8 @@ func init() {
 
 // @dev Root function
 func main() {
+	// setup CORS
+	server.Use(utils.SetupCorsConfig())
 
 	// defer a call to `Disconnect()` after instantiating client
 	defer func() {if err := mongoClient.Disconnect(ctx); err != nil {panic(err)}}()
