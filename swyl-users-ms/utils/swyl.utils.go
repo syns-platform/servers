@@ -62,7 +62,7 @@ func SetupCorsConfig() gin.HandlerFunc {
 	return cors.New(cors.Config{
 		AllowOrigins: 		[]string{os.Getenv("CORS_ALLOW_ORIGIN")},
 		AllowMethods:		[]string{"POST", "PATCH", "PUT", "DELETE", "GET"},
-		AllowHeaders: 		[]string{"Origin"},	
+		AllowHeaders: 		[]string{"Origin", "Authorization"},	
 		AllowCredentials: 	true,
 		MaxAge: 			12*time.Hour,
 	})
