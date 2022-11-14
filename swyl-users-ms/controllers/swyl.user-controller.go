@@ -58,9 +58,9 @@ func (uc *UserController) Connect(gc *gin.Context){
 
 // @notice Method of UserController struct
 // 
-// @route `POST/connect`
+// @route `POST/claim-page`
 // 
-// @dev Connects to an account stored in the internal database using wallet address. Create a new account on first connect.
+// @dev Lets a wallet owner claim a Swyl page with passed-in username
 // 
 // @param gc *gin.Context
 func (uc *UserController) ClaimPage(gc *gin.Context){
@@ -85,7 +85,7 @@ func (uc *UserController) ClaimPage(gc *gin.Context){
 		gc.AbortWithStatusJSON(401, gin.H{"error": "!SIGNER - request.body.wallet_address do not match verified signer"}); return;
 	}
 
-	// test if param.username is a valid username
+	// strip all special characters off from param.username
 	validUsername, err := utils.SanitizeUsername(param.Username)
 	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX"}); return;}
 
@@ -96,13 +96,36 @@ func (uc *UserController) ClaimPage(gc *gin.Context){
 	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
 
 
-	// invoke UserDao.Connect() api
+	// invoke UserDao.ClaimPage() api
 	_, claimErr := uc.UserDao.ClaimPage(param)
 	if claimErr != nil && claimErr.Error() == "!USERNAME_TAKEN" {gc.AbortWithStatusJSON(400, gin.H{"error": "!USERNAME - username has already been taken"}); return;}
 	if claimErr != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
 
 	// http response
 	gc.JSON(200, gin.H{"user": "Successfully claim a page"})
+}
+
+
+// @notice Method of UserController struct
+// 
+// @route `GET/check-username-availability/:username`
+// 
+// @dev Checks if a username has been taken
+// 
+// @param gc *gin.Context
+func (uc *UserController) CheckUsernameAvailability (gc *gin.Context) {
+	// get username from param query
+	username := gc.Query("username")
+
+	// strip all special characters off from param.username
+	validUsername, err := utils.SanitizeUsername(&username)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX"}); return;}
+
+	// invoke UserDao.CheckUsernameAvailability()
+	bool, err := uc.UserDao.CheckUsernameAvailability(validUsername)
+	if err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
+
+	gc.JSON(200, bool)
 }
 
 
