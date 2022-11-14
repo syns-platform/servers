@@ -11,7 +11,7 @@ package models
 // @notice The information related to a Swyl user
 type User struct {
 	Wallet_address 			*string					`json:"wallet_address" bson:"wallet_address" validate:"required,len=42,alphanum"`
-	Username 			*string					`json:"username" bson:"username" validate:"omitempty,min=3,max=20"`
+	Username 			*string					`json:"username" bson:"username" validate:"omitempty,min=2,max=30"`
 	Avatar				*string					`json:"avatar" bson:"avatar"`	
 	Display_name 			*string					`json:"display_name" bson:"display_name" validate:"omitempty,min=3,max=40"`
 	Email 				*string					`json:"email" bson:"email" validate:"omitempty,min=3,max=40,email"`
