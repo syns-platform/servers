@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -26,10 +27,24 @@ func LoadEnvVars() {
 	HandleException(err);
 }
 
+
 // @dev Handdle error exception
 //
 // @param e error - the passed in error
 func HandleException(e error) {if (e != nil) {log.Panic(e)}}
+
+// @dev Sets up config for cors
+// 
+// @return gin.HandlerFunc
+func SetupCorsConfig() gin.HandlerFunc {
+	return cors.New(cors.Config{
+		AllowOrigins: 		[]string{os.Getenv("CORS_ALLOW_ORIGIN")},
+		AllowMethods:		[]string{"POST", "PATCH", "PUT", "DELETE", "GET"},
+		AllowHeaders: 		[]string{"Origin", "Authorization"},	
+		AllowCredentials: 	true,
+		MaxAge: 			12*time.Hour,
+	})
+}
 
 // @dev Handle testing `wallet_address` to match ETH crypto wallet address
 // 
@@ -55,15 +70,16 @@ func TestSignature(signature *string) (bool, error) {
 	return regexp.MatchString(pattern, *signature)
 }
 
-// @dev Sets up config for cors
+// @dev Handle striping off all special characters in `username` passed in from http request in replace them with "-"
 // 
-// @return gin.HandlerFunc
-func SetupCorsConfig() gin.HandlerFunc {
-	return cors.New(cors.Config{
-		AllowOrigins: 		[]string{os.Getenv("CORS_ALLOW_ORIGIN")},
-		AllowMethods:		[]string{"POST", "PATCH", "PUT", "DELETE", "GET"},
-		AllowHeaders: 		[]string{"Origin", "Authorization"},	
-		AllowCredentials: 	true,
-		MaxAge: 			12*time.Hour,
-	})
+// @param username *string
+// 
+// @return string
+// 
+// @return error
+func SanitizeUsername(username *string) (*string, error) {
+	pattern := os.Getenv("USERNAME_REGEX")
+	reg, err := regexp.Compile(pattern)
+	validUsername :=strings.ToLower(strings.Trim(reg.ReplaceAllString(*username, "-"), "-"))
+	return &validUsername, err
 }
