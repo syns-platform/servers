@@ -75,7 +75,7 @@ func Authenticate() gin.HandlerFunc {
                   }
 
                   // pass the signer to the controller handler function
-                  gc.Set("Signer", claims.Signer)
+                  gc.Set("verifiedSigner", claims.Signer)
 
                   // move on
                   gc.Next()
