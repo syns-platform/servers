@@ -188,6 +188,29 @@ func (ui *UserDaoImpl) GetUserAt(walletAddress *string) (*models.User, error) {
 	return user, nil
 }
 
+// @notice Method of UserDaoImpl struct
+// 
+// @dev Gets a user by username.
+// 
+// @param username *string
+// 
+// @return *models.User
+// 
+// @return error
+func (ui *UserDaoImpl) GetUserBy(username *string) (*models.User, error) {
+	// declare user placeholder
+	user := &models.User{}
+
+	// set up find query
+	query := bson.D{{Key: "username", Value: username}}
+
+	// find the user in database using walletAddress
+	if dbRes := ui.mongoCollection.FindOne(ui.ctx, query).Decode(user); dbRes != nil {return nil, dbRes}
+
+	// return OK
+	return user, nil
+}
+
 
 // @notice Method of UserDaoImpl struct
 // 

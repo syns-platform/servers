@@ -47,6 +47,15 @@ type UserDao interface {
 	// @return error
 	GetUserAt(walletAddress *string) (*models.User, error)
 
+	// @notice Gets a user by username.
+	// 
+	// @param username *string
+	// 
+	// @return *models.User
+	// 
+	// @return error
+	GetUserBy(username *string) (*models.User, error)
+
 	// @notice Gets all user.
 	// 
 	// @NOTE might not be necessary
