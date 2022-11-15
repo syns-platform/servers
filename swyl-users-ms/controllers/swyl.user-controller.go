@@ -108,7 +108,7 @@ func (uc *UserController) ClaimPage(gc *gin.Context){
 
 // @notice Method of UserController struct
 // 
-// @route `GET/check-username-availability/:username`
+// @route `GET/check-username-availability?username=`
 // 
 // @dev Checks if a username has been taken
 // 
@@ -147,7 +147,42 @@ func (uc *UserController) GetUserAt(gc *gin.Context) {
 
 	// invoke UserDao.GetUserAt
 	foundUser, err := uc.UserDao.GetUserAt(&param)
-	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
+	if err != nil {
+		// return 200 with error message says no documents found
+		if (err.Error() == "mongo: no documents in result") {gc.AbortWithStatusJSON(200, gin.H{"error": err.Error()}); return;}
+
+		// return 500 if other errors
+		gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;
+	}
+
+	// http response
+	gc.JSON(http.StatusOK, &foundUser)
+}
+
+// @notice Method of UserController struct
+// 
+// @route `GET/get-user-by?username=`
+// 
+// @dev Respond with a user by param `username`
+// 
+// @param gc *gin.Context
+func (uc *UserController) GetUserBy(gc *gin.Context) {
+	// declare param
+	username := gc.Query("username")
+
+	// strip all special characters off from param.username
+	validUsername, err := utils.SanitizeUsername(&username)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX"}); return;}
+
+	// invoke UserDao.CheckUsernameAvailability()
+	foundUser, err := uc.UserDao.GetUserBy(validUsername)
+	if err != nil {
+		// return 200 with error message says no documents found
+		if (err.Error() == "mongo: no documents in result") {gc.AbortWithStatusJSON(200, gin.H{"error": err.Error()}); return;}
+
+		// return 500 if other errors
+		gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;
+	}
 
 	// http response
 	gc.JSON(http.StatusOK, &foundUser)
