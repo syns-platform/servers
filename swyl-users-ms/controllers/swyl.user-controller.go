@@ -52,7 +52,7 @@ func (uc *UserController) Connect(gc *gin.Context){
 	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
 
 	// http response
-	gc.JSON(200, gin.H{"user": &foundUser})
+	gc.JSON(200, &foundUser)
 }
 
 
