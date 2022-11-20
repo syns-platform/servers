@@ -30,7 +30,7 @@ import (
 func GenerateAccessToken(gc *gin.Context) {
 	// prepare payloadParamHolder
 	type payloadParamHolder struct {
-		Signer string `json:"signer" validate:"required,len=42,alphanum"`
+		UserWalletAddress string `json:"userWalletAddress" validate:"required,len=42,alphanum"`
 		Signature string `json:"signature" validate:"required,len=132,alphanum"`
 		LoginMessage string `json:"loginMessage" validate:"required"`
 	}
@@ -43,12 +43,12 @@ func GenerateAccessToken(gc *gin.Context) {
 		gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;
 	}
 
-	log.Println(param.Signer)
+	log.Println(param.UserWalletAddress)
 	
-	// test param.Signer to match ETH Crypto wallet address convention
-	SignerMatched, err := utils.TestEthAddress(&param.Signer)
-	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test param.Signer against regex"}); return;}
-	if !SignerMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - param.Signer is not an ETH crypto wallet address"}); return;}
+	// test param.UserWalletAddress to match ETH Crypto wallet address convention
+	UserWalletAddressMatched, err := utils.TestEthAddress(&param.UserWalletAddress)
+	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test param.UserWalletAddress against regex"}); return;}
+	if !UserWalletAddressMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - param.UserWalletAddress is not an ETH crypto wallet address"}); return;}
 
 	// test param.Signature to see if it's a valid ethereum signed signature
 	signedMsgMatched, err := utils.TestSignature(&param.Signature)
@@ -62,7 +62,7 @@ func GenerateAccessToken(gc *gin.Context) {
 	// Create a new token object
 	
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"signer": param.Signer,
+		"UserWalletAddress": param.UserWalletAddress,
 		"signature": param.Signature,
 		"loginMessage": param.LoginMessage,
 		"exp": time.Now().Add(time.Hour).Unix(),

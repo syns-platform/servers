@@ -27,7 +27,7 @@ func Authenticate() gin.HandlerFunc {
 	return func (gc *gin.Context) {
             // prepare custome claim for decoding
             type SwylClaims struct {
-                  Signer                  string `json:"signer"`
+                  UserWalletAddress                  string `json:"userWalletAddress"`
                   Signature               string `json:"signature"`
                   LoginMessage            string `json:"loginMessage"`
                   jwt.StandardClaims
@@ -68,14 +68,14 @@ func Authenticate() gin.HandlerFunc {
                   // convert edcsa pubKey to common eth pubKey
                   pubKeyAddress := crypto.PubkeyToAddress(*ecdsaPubKey)
                   
-                  // compare pubKeyAddress to claims.Signer, if matched => pass authentication and vice verca
-                  if matched := strings.EqualFold(claims.Signer, pubKeyAddress.Hex()); !matched {
-                        gc.AbortWithStatusJSON(401, gin.H{"error": "!PUBLIC_KEY - jwt.payload.Signer do not match the public key address recovered from verifying jwt.payload.Signature & jwt.payload.LoginMessage"}); 
+                  // compare pubKeyAddress to claims.UserWalletAddress, if matched => pass authentication and vice verca
+                  if matched := strings.EqualFold(claims.UserWalletAddress, pubKeyAddress.Hex()); !matched {
+                        gc.AbortWithStatusJSON(401, gin.H{"error": "!PUBLIC_KEY - jwt.payload.UserWalletAddress do not match the public key address recovered from verifying jwt.payload.Signature & jwt.payload.LoginMessage"}); 
                         return;
                   }
 
-                  // pass the signer to the controller handler function
-                  gc.Set("verifiedSigner", claims.Signer)
+                  // pass the UserWalletAddress to the controller handler function
+                  gc.Set("UerifieduserWalletAddress", claims.UserWalletAddress)
 
                   // move on
                   gc.Next()
