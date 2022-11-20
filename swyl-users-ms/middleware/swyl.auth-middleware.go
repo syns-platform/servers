@@ -27,7 +27,7 @@ func Authenticate() gin.HandlerFunc {
 	return func (gc *gin.Context) {
             // prepare custome claim for decoding
             type SwylClaims struct {
-                  UserWalletAddress                  string `json:"userWalletAddress"`
+                  UserWalletAddress       string `json:"userWalletAddress"`
                   Signature               string `json:"signature"`
                   LoginMessage            string `json:"loginMessage"`
                   jwt.StandardClaims
@@ -47,6 +47,8 @@ func Authenticate() gin.HandlerFunc {
             token, err := jwt.ParseWithClaims(accessToken, &SwylClaims{}, func(token *jwt.Token) (interface{}, error) {
                return []byte(os.Getenv("JWT_SECRET_KEY")), nil
             })
+
+            
             
             // Implement authenticating logic
             if claims, ok := token.Claims.(*SwylClaims); ok && token.Valid {
@@ -75,7 +77,7 @@ func Authenticate() gin.HandlerFunc {
                   }
 
                   // pass the UserWalletAddress to the controller handler function
-                  gc.Set("UerifieduserWalletAddress", claims.UserWalletAddress)
+                  gc.Set("verifiedUserWalletAddress", claims.UserWalletAddress)
 
                   // move on
                   gc.Next()
