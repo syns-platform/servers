@@ -64,8 +64,10 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 	// logic: if dbRes error != nil => user with `walletAddress` has never connected before
 	if dbRes == nil {
 		// return OK
+		log.Println("CONNECTED BEFORE")
 		return user, nil
-	} else if dbRes.Error() == "mongo: no documents in result" {
+		} else if dbRes.Error() == "mongo: no documents in result" {
+		log.Println("NEVER")
 		// prepare user
 		newUser := &models.User{
 			Wallet_address: walletAddress,
@@ -106,7 +108,6 @@ func (ui *UserDaoImpl) ClaimPage(userParam *models.User) (*models.User, error) {
 	
 	// find the user in database using user.wallet_address
 	walletDbRes := ui.mongoCollection.FindOne(ui.ctx, walletQuery).Decode(user)
-	log.Println(*userParam.Username)
 
 	// check if any user has already registered with the same userParam.Username
 	// logic: if walletDbRes error == nil => a user with `username` has already registered before => return nil, error
@@ -179,7 +180,7 @@ func (ui *UserDaoImpl) GetUserAt(walletAddress *string) (*models.User, error) {
 	user := &models.User{}
 
 	// set up find query
-	query := bson.D{{Key: "wallet_address", Value: walletAddress}}
+	query := bson.D{{Key: "wallet_address", Value: strings.ToLower(*walletAddress)}}
 
 	// find the user in database using walletAddress
 	if dbRes := ui.mongoCollection.FindOne(ui.ctx, query).Decode(user); dbRes != nil {return nil, dbRes}
@@ -200,6 +201,7 @@ func (ui *UserDaoImpl) GetUserAt(walletAddress *string) (*models.User, error) {
 func (ui *UserDaoImpl) GetUserBy(username *string) (*models.User, error) {
 	// declare user placeholder
 	user := &models.User{}
+	log.Println(*username)
 
 	// set up find query
 	query := bson.D{{Key: "username", Value: username}}

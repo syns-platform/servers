@@ -65,7 +65,7 @@ func GenerateAccessToken(gc *gin.Context) {
 		"UserWalletAddress": param.UserWalletAddress,
 		"signature": param.Signature,
 		"loginMessage": param.LoginMessage,
-		"exp": time.Now().Add(time.Hour).Unix(),
+		"exp": time.Now().Add(24*time.Hour).Unix(),
 	})
 
 	// Sign and get the complete encoded token as a string using the secret
