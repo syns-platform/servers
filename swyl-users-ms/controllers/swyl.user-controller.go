@@ -216,7 +216,7 @@ func (uc *UserController) GetAllUsers(gc *gin.Context) {
 // @param gc *gin.Context
 func (uc *UserController) UpdateUser(gc *gin.Context) {
 	// get verifiedUserWalletAddress from auth middleware
-	verifiedUserWalletAddress := gc.GetString("verifiedUserWalletAddress")
+	// verifiedUserWalletAddress := gc.GetString("verifiedUserWalletAddress")
 	// declare param as models.User
 	var param models.User
 
