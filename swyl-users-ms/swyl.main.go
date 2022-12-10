@@ -62,6 +62,9 @@ func init() {
 
 // @dev Root function
 func main() {
+	// setup CORS
+	server.Use(utils.SetupCorsConfig())
+
 	// defer a call to `Disconnect()` after instantiating client
 	defer func() {if err := mongoClient.Disconnect(ctx); err != nil {panic(err)}}()
 	
@@ -69,10 +72,14 @@ func main() {
 	server.HandleMethodNotAllowed = true
 
 	// init basePath
-	basePath := server.Group("/v1/swyl/user")
+	userBasePath := server.Group("/v1/swyl/user")
+	tokenBasePath := server.Group("/v1/swyl/token")
 
-	// init Handler
-	ur.UserRoutes(basePath)
+	// init UserHandler
+	ur.UserRoutes(userBasePath)
+
+	// init TokenHandler
+	routers.TokenRoutes(tokenBasePath);
 
 	// run server
 	if (os.Getenv("GIN_MODE") != "release") {

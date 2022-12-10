@@ -17,10 +17,26 @@ type UserDao interface {
 	// @notice Connects to an account stored in the internal database using wallet address.
 	// 		   Create a new account on first connect.
 	// 
-	// @param user	*models.User
+	// @param walletAddress
 	// 
 	// @return error
 	Connect(walletAddress *string) (*models.User, error)
+
+	// @notice Lets a wallet owner claim a Swyl page with passed-in username
+	// 
+	// @param userParam	*models.User
+	// 
+	// @return *mdoels.User
+	// 
+	// @return error
+	ClaimPage(userParam *models.User) (*models.User, error)
+
+	// @notice Checks if a username has been taken
+	// 
+	// @param username *string
+	// 
+	// @return bool
+	CheckUsernameAvailability(username *string) (bool, error)
 
 	// @notice Gets a user at wallet address.
 	// 
@@ -30,6 +46,15 @@ type UserDao interface {
 	// 
 	// @return error
 	GetUserAt(walletAddress *string) (*models.User, error)
+
+	// @notice Gets a user by username.
+	// 
+	// @param username *string
+	// 
+	// @return *models.User
+	// 
+	// @return error
+	GetUserBy(username *string) (*models.User, error)
 
 	// @notice Gets all user.
 	// 

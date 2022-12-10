@@ -13,6 +13,8 @@ import (
 	"Swyl/servers/swyl-users-ms/models"
 	"context"
 	"errors"
+	"log"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -40,14 +42,15 @@ func UserDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 // @dev Connects to an account stored in the internal database using wallet address.
 // 		Create a new account on first connect.
 // 
-// @param user	*models.User
+// @param walletAddress *string
 // 
 // @return *models.User
 // 
 // @return error
-// 
-// @TODO should return JWT token
 func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
+	// lower case walletAddress
+	*walletAddress = strings.ToLower(*walletAddress)
+
 	// declare user placeholder
 	user:= &models.User{}
 
@@ -61,8 +64,10 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 	// logic: if dbRes error != nil => user with `walletAddress` has never connected before
 	if dbRes == nil {
 		// return OK
+		log.Println("CONNECTED BEFORE")
 		return user, nil
-	} else if dbRes.Error() == "mongo: no documents in result" {
+		} else if dbRes.Error() == "mongo: no documents in result" {
+		log.Println("NEVER")
 		// prepare user
 		newUser := &models.User{
 			Wallet_address: walletAddress,
@@ -81,6 +86,85 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 	}
 }
 
+// @notice Method of UserDaoImpl struct
+// 
+// @dev Lets a wallet owner claim a Swyl page with passed-in username
+// 
+// @param userParam	*models.User
+// 
+// @return *mdoels.User
+// 
+// @return error
+func (ui *UserDaoImpl) ClaimPage(userParam *models.User) (*models.User, error) {
+	// lower case walletAddress
+	*userParam.Wallet_address = strings.ToLower(*userParam.Wallet_address)
+
+	// declare user placeholder
+	user:= &models.User{}
+
+	// set up find query
+	walletQuery := bson.D{{Key: "wallet_address", Value: userParam.Wallet_address}}
+	usernameQuery := bson.D{{Key: "username", Value: userParam.Username}}
+	
+	// find the user in database using user.wallet_address
+	walletDbRes := ui.mongoCollection.FindOne(ui.ctx, walletQuery).Decode(user)
+
+	// check if any user has already registered with the same userParam.Username
+	// logic: if walletDbRes error == nil => a user with `username` has already registered before => return nil, error
+	if userDbRes := ui.mongoCollection.FindOne(ui.ctx, usernameQuery).Decode(user); userDbRes == nil {
+		return nil, errors.New("!USERNAME_TAKEN")
+	}
+
+	// logic: if walletDbRes error == nil => user with `walletAddress` has already connected before => return user
+	// logic: if walletDbRes error != nil => user with `walletAddress` has never connected before
+	if walletDbRes == nil {
+		// return OK
+		return user, nil
+	} else if walletDbRes.Error() == "mongo: no documents in result" {
+		// prepare user
+		newUser := &models.User{
+			Wallet_address: userParam.Wallet_address,
+			Username: userParam.Username,
+			Joined_at: time.Now().Unix(),
+		}
+
+		// insert new user to internal database
+		_, err := ui.mongoCollection.InsertOne(ui.ctx, newUser)
+
+		// return user and err
+		return newUser, err
+	} else {
+		// return nil, and other error result from mongoDB
+		return nil, walletDbRes
+	}
+}
+
+// @notice Method of UserDaoImpl struct
+// 
+// @dev Checks if a username has been taken
+// 
+// @param username *string
+// 
+// @return bool
+func (ui *UserDaoImpl) CheckUsernameAvailability(username *string) (bool, error) {
+	// prepare filter
+	filter := bson.D{{Key: "username", Value: username}}
+
+	// find the user with username in database
+	dbRes := ui.mongoCollection.FindOne(ui.ctx, filter)
+
+	// logic: if dbRes.Err() == nil => username IS NOT available
+	// logic: if dbRes.Err() == "mongo: no documents in result" => username IS available
+	// logic: else => return unknown error
+	if dbRes.Err() == nil {
+		return false, nil
+	} else if dbRes.Err().Error() == "mongo: no documents in result"{ 
+		return true, nil
+	} else {
+		return false, errors.New("UKNOWN ERROR")
+	}
+}
+
 
 // @notice Method of UserDaoImpl struct
 // 
@@ -96,7 +180,31 @@ func (ui *UserDaoImpl) GetUserAt(walletAddress *string) (*models.User, error) {
 	user := &models.User{}
 
 	// set up find query
-	query := bson.D{{Key: "wallet_address", Value: walletAddress}}
+	query := bson.D{{Key: "wallet_address", Value: strings.ToLower(*walletAddress)}}
+
+	// find the user in database using walletAddress
+	if dbRes := ui.mongoCollection.FindOne(ui.ctx, query).Decode(user); dbRes != nil {return nil, dbRes}
+
+	// return OK
+	return user, nil
+}
+
+// @notice Method of UserDaoImpl struct
+// 
+// @dev Gets a user by username.
+// 
+// @param username *string
+// 
+// @return *models.User
+// 
+// @return error
+func (ui *UserDaoImpl) GetUserBy(username *string) (*models.User, error) {
+	// declare user placeholder
+	user := &models.User{}
+	log.Println(*username)
+
+	// set up find query
+	query := bson.D{{Key: "username", Value: username}}
 
 	// find the user in database using walletAddress
 	if dbRes := ui.mongoCollection.FindOne(ui.ctx, query).Decode(user); dbRes != nil {return nil, dbRes}
