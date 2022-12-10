@@ -1,13 +1,13 @@
 <p align="center">
 <br />
 <a href="https://github.com/SWYLy/servers"><img src="https://github.com/SWYLy/materials/blob/master/logo.svg?raw=true" width="150" alt=""/></a>
-<h1 align="center">SWYL - Support Who You Love - v1.0</h1>
+<h1 align="center">SWYL - Support Who You Love - v2.0</h1>
 <h4 align="center">User Microservice</h4>
 
-## Folder structure 
+## Folder structure
 
     .
-    ├── controllers             
+    ├── controllers
     │   └── swyl.user-controller.go
     ├── dao
     │   ├── swyl.dao-impl.go
@@ -22,14 +22,13 @@
     │   └── swyl.router.go
     ├── utils
     │   └── swyl.dao-impl.go
-    ├── .example.env         
-    ├── .gitignore      
+    ├── .example.env
+    ├── .gitignore
     ├── Makefile
     ├── README.md
     ├── go.mod
     ├── go.sum
     └── swyl.user-main.go
-    
 
 ## Getting Started
 

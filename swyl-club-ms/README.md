@@ -1,27 +1,27 @@
 <p align="center">
 <br />
 <a href="https://github.com/SWYLy/servers"><img src="https://github.com/SWYLy/materials/blob/master/logo.svg?raw=true" width="150" alt=""/></a>
-<h1 align="center">SWYL - Support Who You Love - v1.0</h1>
+<h1 align="center">SWYL - Support Who You Love - v2.0</h1>
 <h4 align="center">Club Microservice</h4>
 
-## Folder structure 
+## Folder structure
 
     .
-    ├── controllers             
-    │   ├──club  
+    ├── controllers
+    │   ├──club
     │   │  └── swyl.club-controller.go
-    │   ├──subscription  
+    │   ├──subscription
     │   │  └── swyl.sub-controller.go
-    │   └──tier  
+    │   └──tier
     │      └── swyl.tier-controller.go
     ├── dao
-    │   ├──club     
+    │   ├──club
     │   │  ├── swyl.club-dao-impl.go
     │   │  └── swyl.club-dao-interface.go
-    │   ├──subscription     
+    │   ├──subscription
     │   │  ├── swyl.sub-dao-impl.go
     │   │  └── swyl.sub-dao-interface.go
-    │   └──tier     
+    │   └──tier
     │      ├── swyl.tier-dao-impl.go
     │      └── swyl.tier-dao-interface.go
     ├── db
@@ -30,23 +30,22 @@
     │   └── swyl.auth-middleware.go
     ├── models
     │   └── swyl.models.go
-    ├── routers             
-    │   ├──club  
+    ├── routers
+    │   ├──club
     │   │  └── swyl.club-router.go
-    │   ├──subscription  
+    │   ├──subscription
     │   │  └── swyl.sub-router.go
-    │   └──tier  
+    │   └──tier
     │      └── swyl.tier-router.go
     ├── utils
     │   └── swyl.dao-impl.go
-    ├── .example.env         
-    ├── .gitignore      
+    ├── .example.env
+    ├── .gitignore
     ├── Makefile
     ├── README.md
     ├── go.mod
     ├── go.sum
     └── swyl.club-main.go
-    
 
 ## Getting Started
 

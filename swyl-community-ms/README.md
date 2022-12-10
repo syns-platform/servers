@@ -1,22 +1,22 @@
 <p align="center">
 <br />
 <a href="https://github.com/SWYLy/servers"><img src="https://github.com/SWYLy/materials/blob/master/logo.svg?raw=true" width="150" alt=""/></a>
-<h1 align="center">SWYL - Support Who You Love - v1.0</h1>
+<h1 align="center">SWYL - Support Who You Love - v2.0</h1>
 <h4 align="center">Community Microservice</h4>
 
-## Folder structure 
+## Folder structure
 
     .
-    ├── controllers             
-    │   ├──community  
+    ├── controllers
+    │   ├──community
     │   │  └── swyl.comm-controller.go
-    │   └──post  
+    │   └──post
     │      └── swyl.post-controller.go
     ├── dao
-    │   ├──community     
+    │   ├──community
     │   │  ├── swyl.comm-dao-impl.go
     │   │  └── swyl.comm-dao-interface.go
-    │   └──post     
+    │   └──post
     │      ├── swyl.post-dao-impl.go
     │      └── swyl.post-dao-interface.go
     ├── db
@@ -25,21 +25,20 @@
     │   └── swyl.auth-middleware.go
     ├── models
     │   └── swyl.community-models.go
-    ├── routers             
-    │   ├──community  
+    ├── routers
+    │   ├──community
     │   │  └── swyl.comm-router.go
-    │   └──post  
+    │   └──post
     │      └── swyl.post-router.go
     ├── utils
     │   └── swyl.dao-impl.go
-    ├── .example.env         
-    ├── .gitignore      
+    ├── .example.env
+    ├── .gitignore
     ├── Makefile
     ├── README.md
     ├── go.mod
     ├── go.sum
     └── swyl.community-main.go
-    
 
 ## Getting Started
 
