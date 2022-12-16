@@ -10,7 +10,6 @@ package controllers
 
 import (
 	"Swyl/servers/swyl-users-ms/utils"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -42,8 +41,6 @@ func GenerateAccessToken(gc *gin.Context) {
 	if err := gc.ShouldBindJSON(&param); err != nil {
 		gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;
 	}
-
-	log.Println(param.UserWalletAddress)
 	
 	// test param.UserWalletAddress to match ETH Crypto wallet address convention
 	UserWalletAddressMatched, err := utils.TestEthAddress(&param.UserWalletAddress)

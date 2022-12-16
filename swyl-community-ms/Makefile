@@ -9,7 +9,7 @@ SERVER=swyl-community-ms
 
 # dev-mode
 .phony: dev-mode
-dev-mode: 
+dev: 
 	@$(COMPILEDAEMON_PATH) -command="./$(SERVER)"
 
 # local run
