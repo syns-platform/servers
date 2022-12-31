@@ -18,9 +18,6 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-// @notice global var
-// var validate = validator.New()
-
 // @route `POST/generate-access-token`
 //
 // @dev Generate a new JWT from the payload passed in from http.body
@@ -57,7 +54,6 @@ func GenerateAccessToken(gc *gin.Context) {
 
 
 	// Create a new token object
-	
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"UserWalletAddress": param.UserWalletAddress,
 		"signature": param.Signature,
