@@ -64,10 +64,8 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 	// logic: if dbRes error != nil => user with `walletAddress` has never connected before
 	if dbRes == nil {
 		// return OK
-		log.Println("CONNECTED BEFORE")
 		return user, nil
-		} else if dbRes.Error() == "mongo: no documents in result" {
-		log.Println("NEVER")
+	} else if dbRes.Error() == "mongo: no documents in result" {
 		// prepare user
 		newUser := &models.User{
 			Wallet_address: walletAddress,
