@@ -70,7 +70,9 @@ func Authenticate() gin.HandlerFunc {
                   // convert edcsa pubKey to common eth pubKey
                   pubKeyAddress := crypto.PubkeyToAddress(*ecdsaPubKey)
                   
-                  // compare pubKeyAddress to claims.UserWalletAddress, if matched => pass authentication and vice verca
+                  // compare pubKeyAddress to claims.UserWalletAddress, 
+                  // if matched => authentication passed, 
+                  // if not matched => authentication failed
                   if matched := strings.EqualFold(claims.UserWalletAddress, pubKeyAddress.Hex()); !matched {
                         gc.AbortWithStatusJSON(401, gin.H{"error": "!PUBLIC_KEY - jwt.payload.UserWalletAddress do not match the public key address recovered from verifying jwt.payload.Signature & jwt.payload.LoginMessage"}); 
                         return;
