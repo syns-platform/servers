@@ -6,7 +6,7 @@
 
 ## Overview
 
-Collection of Golang MVC Microservices that power the complex backend and engine of the **_Swyl platform_**. `Swyl/Servers` is a restful server which hosts almost 50 endpoints that let `Swyl users` interact with the platform with ease and store their platform information in an instance of [mongoDB-atlas](https://www.mongodb.com/atlas).
+The SWYL platform's backend and engine is powered by a collection of Golang MVC microservices known as **_SWYL/Servers_**. This restful server hosts plenty endpoints that enable SWYL users to easily interact with the platform and store their platform information in a MongoDB Atlas client.
 
 ## Highlighted Features:
 
