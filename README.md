@@ -12,7 +12,7 @@ The SWYL platform's backend and engine is powered by a collection of Golang MVC 
 
 - [Swyl User Microservice](https://github.com/SWYLy/servers/tree/master/swyl-users-ms) allows users to connect their cryptocurrency wallet and sign up for a record in the MongoDB database on their first connection. It also allows users to configure their account or deactivate (delete) it if desired.
 
-- [Swyl Club Microservice](https://github.com/SWYLy/servers/tree/master/swyl-club-ms) mimics the logic of the [SwylClub smart contract](https://github.com/SWYLy/contracts/blob/main/contracts/v1/SwylClub.sol) and keeps track of the off-chain data about `SwylClub`.
+- [Swyl Club Microservice](https://github.com/SWYLy/servers/tree/master/swyl-club-ms) mimics the logic of the [SwylClub smart contract](https://github.com/SWYLy/contracts/blob/main/contracts/v1/SwylClub.sol) and maintains off-chain records about `SWYL Clubs`.
 
 - [Swyl Community Microservice](https://github.com/SWYLy/servers/tree/master/swyl-community-ms) is the \***\*`most honored`\*\*** out of the three microservices. Holding many complex endpoints, \***\*Swyl Community Microservice\*\*** was developed with the vision of being a full-fledged social media platform which is able to:
   - allows a potential Swyl community owner to start an online community where potential followers can follow the community for free to keep getting updated by the community owner
