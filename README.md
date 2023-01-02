@@ -6,18 +6,21 @@
 
 ## Overview
 
-Collection of Golang MVC Microservices that power the complex backend and engine of the **_Swyl platform_**. `Swyl/Servers` is a restful server which hosts almost 50 endpoints that let `Swyl users` interact with the platform with ease and store their platform information in an instance of [mongoDB-atlas](https://www.mongodb.com/atlas).
+The SWYL platform's backend and engine is powered by a collection of Golang MVC microservices known as **_SWYL/Servers_**. This restful server hosts plenty endpoints that enable SWYL users to easily interact with the platform and store their platform information in a MongoDB Atlas client.
 
 ## Highlighted Features:
 
-- [Swyl User Microservice](https://github.com/SWYLy/servers/tree/master/swyl-users-ms) allows users to connect their crypto wallet to the platform and sign up a record in `mongoDB` on the first connect. It also allows users to configure and/or deactivate (i.e. delete) own accounts if desired.
+- [Swyl User Microservice](https://github.com/SWYLy/servers/tree/master/swyl-users-ms) allows users to connect their cryptocurrency wallet and sign up for a record in the MongoDB database on their first connection. It also allows users to configure their account or deactivate (delete) it if desired.
 
-- [Swyl Club Microservice](https://github.com/SWYLy/servers/tree/master/swyl-club-ms) mimics the logic of the [SwylClub smart contract](https://github.com/SWYLy/contracts/blob/main/contracts/v1/SwylClub.sol) and keeps track of the off-chain data about `SwylClub`.
+- [Swyl Club Microservice](https://github.com/SWYLy/servers/tree/master/swyl-club-ms) mimics the logic of the [SwylClub smart contract](https://github.com/SWYLy/contracts/blob/main/contracts/v1/SwylClub.sol) and maintains off-chain records about `SWYL Clubs`.
 
 - [Swyl Community Microservice](https://github.com/SWYLy/servers/tree/master/swyl-community-ms) is the \***\*`most honored`\*\*** out of the three microservices. Holding many complex endpoints, \***\*Swyl Community Microservice\*\*** was developed with the vision of being a full-fledged social media platform which is able to:
-  - allows a potential Swyl community owner to start an online community where potential followers can follow the community for free to keep getting updated by the community owner
-  - allows Swyl community owner to create posts or blogs which then can be interacted by the followers. With that said, followers can react to the posts with the four `Swyl emotions` (SUPPORT, BRAVO, LAUGH, FIRE), leave comment on the posts which is then can be editted and/or deleted if desired.
-  - allows other users to reply to comments and also react to comments with the `Swyl emotions`
+
+  - Allow potential community owners to create an online community where followers can follow for free to receive updates from the owner.
+
+  - Enable community owners to create posts or blogs that followers can interact with by reacting with one of the four `SWYL emotions` (SUPPORT, BRAVO, LAUGH, FIRE), leaving comments, and editing or deleting them as desired.
+
+  - Allow other users to reply to comments and react to them with the `SWYL emotions`.
 
 ## Resources
 
