@@ -2,10 +2,11 @@ include .env
 
 ############### GLOBAL VARS ###############
 COMPILEDAEMON_PATH=~/go/bin/CompileDaemon # CompileDaemon for hot reload
-SWYL_SERVER=swyl-users-ms
-SWYL_USER_MS_IMAGE=logann131/swyl-users-ms:$(SWYL_USER_MS_TAG)
+SWYL_USER_MS_SERVER=swyl-users-ms
 SWYL_USERS_PORT=41105
 SWYL_USER_MS_TAG=1.0
+SWYL_USER_MS_IMAGE=$(DOCKER_USERNAME)/$(SWYL_USER_MS_SERVER):$(SWYL_USER_MS_TAG)
+DOCKER_USERNAME=logann131
 DOCKER_RMI=docker rmi -f
 DOCKER_RM=docker rm -f
 DOCKER_PULL=docker pull
@@ -14,7 +15,7 @@ DOCKER_IMAGE_LIST_ID=docker images -q
 DOCKER_CONTAINER_LIST_ID=docker ps -aq
 DOCKER_BUILD_SCRIPT = docker build --no-cache -t $(SWYL_USER_MS_IMAGE) .
 DOCKER_RUN_SCRIPT = docker run -d --rm $\
-					--name $(SWYL_SERVER) $\
+					--name $(SWYL_USER_MS_SERVER) $\
 					--env-file .env $\
 					-e GIN_MODE=release $\
 					-p $(SWYL_USERS_PORT):$(PRODUCTION_PORT) $\
@@ -28,7 +29,7 @@ DOCKER_RUN_SCRIPT = docker run -d --rm $\
 # dev-mode
 .phony: dev
 dev: 
-	@$(COMPILEDAEMON_PATH) -command="./$(SWYL_SERVER)"
+	@$(COMPILEDAEMON_PATH) -command="./$(SWYL_USER_MS_SERVER)"
 
 # local run
 .phony: go-run
@@ -59,5 +60,5 @@ docker-dev-swyl-users: docker-pull-swyl-users docker-run-swyl-users
 
 .PHONY: docker-clean
 docker-clean:
-	$(DOCKER_RM) $$($(DOCKER_CONTAINER_LIST_ID)) $&
-	$(DOCKER_RMI) $$($(DOCKER_IMAGE_LIST_ID))
+	$(DOCKER_RM) $(SWYL_USER_MS_SERVER) $&
+	$(DOCKER_RMI) $(SWYL_USER_MS_IMAGE):$(SWYL_USER_MS_TAG)
