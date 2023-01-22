@@ -36,7 +36,7 @@ func (ur * UserRouter) UserRoutes(rg *gin.RouterGroup) {
    rg.GET("/get-user-by", ur.UserController.GetUserBy)
    rg.GET("/get-all-user", ur.UserController.GetAllUsers)
    rg.GET("/get-user-at/:wallet-address", ur.UserController.GetUserAt)
-   rg.GET("/get-server-status", ur.UserController.SwylServerHealthCheck)
+   rg.GET("/swyl-health-check", ur.UserController.SwylServerHealthCheck)
    rg.POST("/connect", middleware.Authenticate(), ur.UserController.Connect)
    rg.POST("/claim-page", middleware.Authenticate(), ur.UserController.ClaimPage)
    rg.PATCH("/update-user", middleware.Authenticate(), ur.UserController.UpdateUser)

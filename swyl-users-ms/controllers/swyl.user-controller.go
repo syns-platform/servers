@@ -43,7 +43,7 @@ func UserControllerConstructor(userDao dao.UserDao) *UserController{
 // 
 // @param gc *gin.Context
 func (uc *UserController) SwylServerHealthCheck(gc *gin.Context) {
-	gc.JSON(200, "")
+	gc.JSON(200, gin.H{"swyl-user": "Status OK"})
 }
 
 
