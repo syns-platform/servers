@@ -35,6 +35,17 @@ func UserControllerConstructor(userDao dao.UserDao) *UserController{
 	}
 }
 
+// @notice Method of UserController struct
+// 
+// @route `GET/get-server-status`
+// 
+// @dev Health Check Path - monitors the server and for zero downtime deploys.
+// 
+// @param gc *gin.Context
+func (uc *UserController) SwylServerHealthCheck(gc *gin.Context) {
+	gc.JSON(200, gin.H{"swyl-user": "Status OK"})
+}
+
 
 // @notice Method of UserController struct
 // 
