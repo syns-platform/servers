@@ -6,7 +6,8 @@
 
 ## Overview
 
-The SWYL platform's backend and engine is powered by a collection of Golang MVC microservices known as **_SWYL/Servers_**. This restful server hosts plenty endpoints that enable SWYL users to easily interact with the platform and store their platform information in a MongoDB Atlas client.
+**_SWYL/Servers_**, an architecture comprising of a collection of Golang-based RESTful microservices, provide a plethora of endpoints that facilitate seamless user interactions with the platform and enable the storage of platform-related information in a MongoDB Atlas client, thus ensuring a robust and efficient data management infrastructure.
+
 
 ## Highlighted Features:
 
