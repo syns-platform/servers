@@ -4,6 +4,8 @@
 <h1 align="center">SWYL - Support Who You Love - v2.0</h1>
 </p>
 
+<h5 align="center"> 🏵️ The platform is currently open for beta testing at https://swyl.vercel.app </h5>
+
 ## Overview
 
 **_SWYL/Servers_**, an architecture comprising of a collection of Golang-based RESTful microservices, provide a plethora of endpoints that facilitate seamless user interactions with the platform and enable the storage of platform-related information in a MongoDB Atlas client, thus ensuring a robust and efficient data management infrastructure.
