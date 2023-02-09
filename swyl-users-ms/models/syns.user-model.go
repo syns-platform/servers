@@ -8,7 +8,7 @@
 // @package
 package models
 
-// @notice The information related to a Swyl user
+// @notice The information related to a Syns user
 type User struct {
 	Wallet_address 			*string					`json:"wallet_address" bson:"wallet_address" validate:"required,len=42,alphanum"`
 	Username 			*string					`json:"username" bson:"username" validate:"omitempty,min=2,max=30"`

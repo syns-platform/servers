@@ -26,7 +26,7 @@ import (
 func Authenticate() gin.HandlerFunc {
 	return func (gc *gin.Context) {
             // prepare custome claim for decoding
-            type SwylClaims struct {
+            type SynsClaims struct {
                   UserWalletAddress       string `json:"userWalletAddress"`
                   Signature               string `json:"signature"`
                   LoginMessage            string `json:"loginMessage"`
@@ -44,14 +44,14 @@ func Authenticate() gin.HandlerFunc {
             if accessToken == "" {gc.AbortWithStatusJSON(401, gin.H{"error": "!ACCESS_TOKEN - empty authorization token"})}
 
             // Decode/validate accessToken
-            token, err := jwt.ParseWithClaims(accessToken, &SwylClaims{}, func(token *jwt.Token) (interface{}, error) {
+            token, err := jwt.ParseWithClaims(accessToken, &SynsClaims{}, func(token *jwt.Token) (interface{}, error) {
                return []byte(os.Getenv("JWT_SECRET_KEY")), nil
             })
 
             
             
             // Implement authenticating logic
-            if claims, ok := token.Claims.(*SwylClaims); ok && token.Valid {
+            if claims, ok := token.Claims.(*SynsClaims); ok && token.Valid {
                   // prepare signature & loginMessage as bytes
                   byteSignature := hexutil.MustDecode(claims.Signature) // decode signature from ahex string with 0x prefix to []byte
                   byteLoginMessage := []byte(claims.LoginMessage)

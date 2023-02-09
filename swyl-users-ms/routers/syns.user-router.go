@@ -10,8 +10,8 @@ package routers
 
 // @import
 import (
-	"Swyl/servers/swyl-users-ms/controllers"
-	"Swyl/servers/swyl-users-ms/middleware"
+	"Syns/servers/syns-users-ms/controllers"
+	"Syns/servers/syns-users-ms/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -36,7 +36,7 @@ func (ur * UserRouter) UserRoutes(rg *gin.RouterGroup) {
    rg.GET("/get-user-by", ur.UserController.GetUserBy)
    rg.GET("/get-all-user", ur.UserController.GetAllUsers)
    rg.GET("/get-user-at/:wallet-address", ur.UserController.GetUserAt)
-   rg.GET("/swyl-health-check", ur.UserController.SwylServerHealthCheck)
+   rg.GET("/syns-health-check", ur.UserController.SynsServerHealthCheck)
    rg.POST("/connect", middleware.Authenticate(), ur.UserController.Connect)
    rg.POST("/claim-page", middleware.Authenticate(), ur.UserController.ClaimPage)
    rg.PATCH("/update-user", middleware.Authenticate(), ur.UserController.UpdateUser)

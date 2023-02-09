@@ -1,4 +1,4 @@
-module Swyl/servers/swyl-users-ms
+module Syns/servers/syns-users-ms
 
 go 1.19
 

@@ -8,23 +8,23 @@ ENV CGO_ENABLED=0 \
     GOARCH=amd64
 
 ## Choose work directory
-WORKDIR /swyl-users-ms
+WORKDIR /syns-users-ms
 
 ## Copy local project to docker container
 COPY . .
 
 ## Run build command
-RUN go build -o swyl-users .
+RUN go build -o syns-users .
 
 # Run stage
 ## alpine:latest image is a light linux image
 FROM alpine:latest AS runner
 
 ## Choose work directory
-WORKDIR /swyl-users-ms
+WORKDIR /syns-users-ms
 
 ## Copy the executable binary file and .env file from the last stage to the new stage
-COPY --from=builder /swyl-users-ms/swyl-users .
+COPY --from=builder /syns-users-ms/syns-users .
 
 # Execute the build
-CMD ["./swyl-users"]
+CMD ["./syns-users"]

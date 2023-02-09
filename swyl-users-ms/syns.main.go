@@ -9,11 +9,11 @@
 package main
 
 import (
-	"Swyl/servers/swyl-users-ms/controllers"
-	"Swyl/servers/swyl-users-ms/dao"
-	"Swyl/servers/swyl-users-ms/db"
-	"Swyl/servers/swyl-users-ms/routers"
-	"Swyl/servers/swyl-users-ms/utils"
+	"Syns/servers/syns-users-ms/controllers"
+	"Syns/servers/syns-users-ms/dao"
+	"Syns/servers/syns-users-ms/db"
+	"Syns/servers/syns-users-ms/routers"
+	"Syns/servers/syns-users-ms/utils"
 	"context"
 	"os"
 
@@ -72,8 +72,8 @@ func main() {
 	server.HandleMethodNotAllowed = true
 
 	// init basePath
-	userBasePath := server.Group("/v1/swyl/user")
-	tokenBasePath := server.Group("/v1/swyl/token")
+	userBasePath := server.Group("/v1/syns/user")
+	tokenBasePath := server.Group("/v1/syns/token")
 
 	// init UserHandler
 	ur.UserRoutes(userBasePath)
