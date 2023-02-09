@@ -4,7 +4,7 @@
 <h1 align="center">SYNS - Spart Your Noble Story - v2.0</h1>
 </p>
 
-<h5 align="center"> 🏵️ The platform is currently open for beta testing at https://swyl.vercel.app </h5>
+<h5 align="center"> 🏵️ The platform is currently open for beta testing at https://syns.vercel.app </h5>
 
 ## Overview
 
