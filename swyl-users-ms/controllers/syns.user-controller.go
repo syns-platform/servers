@@ -10,9 +10,9 @@ package controllers
 
 // @import
 import (
-	"Swyl/servers/swyl-users-ms/dao"
-	"Swyl/servers/swyl-users-ms/models"
-	"Swyl/servers/swyl-users-ms/utils"
+	"Syns/servers/syns-users-ms/dao"
+	"Syns/servers/syns-users-ms/models"
+	"Syns/servers/syns-users-ms/utils"
 	"net/http"
 	"strings"
 
@@ -42,8 +42,8 @@ func UserControllerConstructor(userDao dao.UserDao) *UserController{
 // @dev Health Check Path - monitors the server and for zero downtime deploys.
 // 
 // @param gc *gin.Context
-func (uc *UserController) SwylServerHealthCheck(gc *gin.Context) {
-	gc.JSON(200, gin.H{"swyl-user": "Status OK"})
+func (uc *UserController) SynsServerHealthCheck(gc *gin.Context) {
+	gc.JSON(200, gin.H{"syns-user": "Status OK"})
 }
 
 
@@ -71,7 +71,7 @@ func (uc *UserController) Connect(gc *gin.Context){
 // 
 // @route `POST/claim-page`
 // 
-// @dev Lets a wallet owner claim a Swyl page with passed-in username
+// @dev Lets a wallet owner claim a Syns page with passed-in username
 // 
 // @param gc *gin.Context
 func (uc *UserController) ClaimPage(gc *gin.Context){

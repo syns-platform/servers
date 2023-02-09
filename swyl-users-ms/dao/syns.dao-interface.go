@@ -9,7 +9,7 @@
 package dao
 
 // @import
-import "Swyl/servers/swyl-users-ms/models"
+import "Syns/servers/syns-users-ms/models"
 
 // @notice Dao interface
 type UserDao interface {
@@ -22,7 +22,7 @@ type UserDao interface {
 	// @return error
 	Connect(walletAddress *string) (*models.User, error)
 
-	// @notice Lets a wallet owner claim a Swyl page with passed-in username
+	// @notice Lets a wallet owner claim a Syns page with passed-in username
 	// 
 	// @param userParam	*models.User
 	// 

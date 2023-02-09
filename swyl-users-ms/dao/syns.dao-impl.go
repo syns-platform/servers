@@ -10,7 +10,7 @@ package dao
 
 // @import
 import (
-	"Swyl/servers/swyl-users-ms/models"
+	"Syns/servers/syns-users-ms/models"
 	"context"
 	"errors"
 	"log"
@@ -86,7 +86,7 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 
 // @notice Method of UserDaoImpl struct
 // 
-// @dev Lets a wallet owner claim a Swyl page with passed-in username
+// @dev Lets a wallet owner claim a Syns page with passed-in username
 // 
 // @param userParam	*models.User
 // 

@@ -9,7 +9,7 @@
 package controllers
 
 import (
-	"Swyl/servers/swyl-users-ms/utils"
+	"Syns/servers/syns-users-ms/utils"
 	"net/http"
 	"os"
 	"time"
