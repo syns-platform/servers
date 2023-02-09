@@ -1,29 +1,29 @@
 <p align="center">
 <br />
-<a href="https://github.com/SWYLy/servers"><img src="https://github.com/SWYLy/materials/blob/master/logo.svg?raw=true" width="150" alt=""/></a>
-<h1 align="center">SWYL - Support Who You Love - v2.0</h1>
+<a href="https://github.com/syns-platform/servers"><img src="https://github.com/syns-platform/materials/blob/master/logo.svg?raw=true" width="150" alt=""/></a>
+<h1 align="center">SYNS - Spart Your Noble Story - v2.0</h1>
 </p>
 
 <h5 align="center"> 🏵️ The platform is currently open for beta testing at https://swyl.vercel.app </h5>
 
 ## Overview
 
-**_SWYL/Servers_**, an architecture comprising of a collection of Golang-based RESTful microservices, provide a plethora of endpoints that facilitate seamless user interactions with the platform and enable the storage of platform-related information in a MongoDB Atlas client, thus ensuring a robust and efficient data management infrastructure.
+**_SYNS/Servers_**, an architecture comprising of a collection of Golang-based RESTful microservices, provide a plethora of endpoints that facilitate seamless user interactions with the platform and enable the storage of platform-related information in a MongoDB Atlas client, thus ensuring a robust and efficient data management infrastructure.
 
 
 ## Highlighted Features:
 
-- [Swyl User Microservice](https://github.com/SWYLy/servers/tree/master/swyl-users-ms) allows users to connect their cryptocurrency wallet and sign up for a record in the MongoDB database on their first connection. It also allows users to configure their account or deactivate (delete) it if desired.
+- [SYNS User Microservice](https://github.com/syns-platform/servers/tree/master/swyl-users-ms) allows users to connect their cryptocurrency wallet and sign up for a record in the MongoDB database on their first connection. It also allows users to configure their account or deactivate (delete) it if desired.
 
-- [Swyl Club Microservice](https://github.com/SWYLy/servers/tree/master/swyl-club-ms) mimics the logic of the [SwylClub smart contract](https://github.com/SWYLy/contracts/blob/main/contracts/v1/SwylClub.sol) and maintains off-chain records about `SWYL Clubs`.
+- [SYNS Club Microservice](https://github.com/syns-platform/servers/tree/master/swyl-club-ms) mimics the logic of the [SynsClub smart contract](https://github.com/syns-platform/contracts/blob/main/contracts/v1/SwylClub.sol) and maintains off-chain records about `SYNS Clubs`.
 
-- [Swyl Community Microservice](https://github.com/SWYLy/servers/tree/master/swyl-community-ms) is the \***\*`most honored`\*\*** out of the three microservices. Holding many complex endpoints, \***\*Swyl Community Microservice\*\*** was developed with the vision of being a full-fledged social media platform which is able to:
+- [Syns Community Microservice](https://github.com/syns-platform/servers/tree/master/swyl-community-ms) is the \***\*`most honored`\*\*** out of the three microservices. Holding many complex endpoints, \***\*Syns Community Microservice\*\*** was developed with the vision of being a full-fledged social media platform which is able to:
 
   - Allow potential community owners to create an online community where followers can follow for free to receive updates from the owner.
 
-  - Enable community owners to create posts or blogs that followers can interact with by reacting with one of the four `SWYL emotions` (SUPPORT, BRAVO, LAUGH, FIRE), leaving comments, and editing or deleting them as desired.
+  - Enable community owners to create posts or blogs that followers can interact with by reacting with one of the four `SYNS emotions` (SUPPORT, BRAVO, LAUGH, FIRE), leaving comments, and editing or deleting them as desired.
 
-  - Allow other users to reply to comments and react to them with the `SWYL emotions`.
+  - Allow other users to reply to comments and react to them with the `SYNS emotions`.
 
 ## Resources
 
