@@ -1,7 +1,7 @@
 <p align="center">
 <br />
-<a href="https://github.com/SWYLy/servers"><img src="https://github.com/SWYLy/materials/blob/master/logo.svg?raw=true" width="150" alt=""/></a>
-<h1 align="center">SWYL - Support Who You Love - v2.0</h1>
+<a href="https://github.com/syns-platform/servers"><img src="https://github.com/syns-platform/materials/blob/master/logo.svg?raw=true" width="150" alt=""/></a>
+<h1 align="center">SYNS - Spark Your Noble Story - v2.0</h1>
 <h4 align="center">Community Microservice</h4>
 
 ## Folder structure
@@ -9,36 +9,36 @@
     .
     ├── controllers
     │   ├──community
-    │   │  └── swyl.comm-controller.go
+    │   │  └── syns.comm-controller.go
     │   └──post
-    │      └── swyl.post-controller.go
+    │      └── syns.post-controller.go
     ├── dao
     │   ├──community
-    │   │  ├── swyl.comm-dao-impl.go
-    │   │  └── swyl.comm-dao-interface.go
+    │   │  ├── syns.comm-dao-impl.go
+    │   │  └── syns.comm-dao-interface.go
     │   └──post
-    │      ├── swyl.post-dao-impl.go
-    │      └── swyl.post-dao-interface.go
+    │      ├── syns.post-dao-impl.go
+    │      └── syns.post-dao-interface.go
     ├── db
-    │   └── swyl.community-db.go
+    │   └── syns.community-db.go
     ├── middleware
-    │   └── swyl.auth-middleware.go
+    │   └── syns.auth-middleware.go
     ├── models
-    │   └── swyl.community-models.go
+    │   └── syns.community-models.go
     ├── routers
     │   ├──community
-    │   │  └── swyl.comm-router.go
+    │   │  └── syns.comm-router.go
     │   └──post
-    │      └── swyl.post-router.go
+    │      └── syns.post-router.go
     ├── utils
-    │   └── swyl.dao-impl.go
+    │   └── syns.dao-impl.go
     ├── .example.env
     ├── .gitignore
     ├── Makefile
     ├── README.md
     ├── go.mod
     ├── go.sum
-    └── swyl.community-main.go
+    └── syns.community-main.go
 
 ## Getting Started
 
@@ -51,8 +51,8 @@
 ### Clone the repo
 
 ```bash
-git clone https://github.com/SWYLy/servers.git
-cd swyl-community-ms
+git clone https://github.com/syns-platform/servers.git
+cd syns-community-ms
 ```
 
 ### Set up environment variables
@@ -61,7 +61,7 @@ At the root of the directory, create a .env file using .env.example as the templ
 
 ### Running the project
 
-Build and run `swyl-community-ms` locally using `Make` scripts
+Build and run `syns-community-ms` locally using `Make` scripts
 
 ```bash
 make dev-mode
