@@ -1,34 +1,34 @@
 <p align="center">
 <br />
-<a href="https://github.com/SWYLy/servers"><img src="https://github.com/SWYLy/materials/blob/master/logo.svg?raw=true" width="150" alt=""/></a>
-<h1 align="center">SWYL - Support Who You Love - v2.0</h1>
+<a href="https://github.com/syns-platform/servers"><img src="https://github.com/syns-platform/materials/blob/master/logo.svg?raw=true" width="150" alt=""/></a>
+<h1 align="center">SYNS - Spark Your Noble Story - v2.0</h1>
 <h4 align="center">User Microservice</h4>
 
 ## Folder structure
 
     .
     ├── controllers
-    │   └── swyl.user-controller.go
+    │   └── syns.user-controller.go
     ├── dao
-    │   ├── swyl.dao-impl.go
-    │   └── swyl.dao-interface.go
+    │   ├── syns.dao-impl.go
+    │   └── syns.dao-interface.go
     ├── db
-    │   └── swyl.user-db.go
+    │   └── syns.user-db.go
     ├── middleware
-    │   └── swyl.auth-middleware.go
+    │   └── syns.auth-middleware.go
     ├── models
-    │   └── swyl.user-model.go
+    │   └── syns.user-model.go
     ├── routers
-    │   └── swyl.router.go
+    │   └── syns.router.go
     ├── utils
-    │   └── swyl.dao-impl.go
+    │   └── syns.dao-impl.go
     ├── .example.env
     ├── .gitignore
     ├── Makefile
     ├── README.md
     ├── go.mod
     ├── go.sum
-    └── swyl.user-main.go
+    └── syns.user-main.go
 
 ## Getting Started
 
@@ -41,8 +41,8 @@
 ### Clone the repo
 
 ```bash
-git clone https://github.com/SWYLy/servers.git
-cd swyl-users-ms
+git clone https://github.com/syns-platform/servers.git
+cd syns-users-ms
 ```
 
 ### Set up environment variables
@@ -51,7 +51,7 @@ At the root of the directory, create a .env file using .env.example as the templ
 
 ### Running the project
 
-Build and run `swyl-users-ms` locally using `Make` scripts
+Build and run `syns-users-ms` locally using `Make` scripts
 
 ```bash
 make dev-mode
