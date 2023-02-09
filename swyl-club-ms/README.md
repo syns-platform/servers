@@ -9,43 +9,43 @@
     .
     ├── controllers
     │   ├──club
-    │   │  └── swyl.club-controller.go
+    │   │  └── syns.club-controller.go
     │   ├──subscription
-    │   │  └── swyl.sub-controller.go
+    │   │  └── syns.sub-controller.go
     │   └──tier
-    │      └── swyl.tier-controller.go
+    │      └── syns.tier-controller.go
     ├── dao
     │   ├──club
-    │   │  ├── swyl.club-dao-impl.go
-    │   │  └── swyl.club-dao-interface.go
+    │   │  ├── syns.club-dao-impl.go
+    │   │  └── syns.club-dao-interface.go
     │   ├──subscription
-    │   │  ├── swyl.sub-dao-impl.go
-    │   │  └── swyl.sub-dao-interface.go
+    │   │  ├── syns.sub-dao-impl.go
+    │   │  └── syns.sub-dao-interface.go
     │   └──tier
-    │      ├── swyl.tier-dao-impl.go
-    │      └── swyl.tier-dao-interface.go
+    │      ├── syns.tier-dao-impl.go
+    │      └── syns.tier-dao-interface.go
     ├── db
-    │   └── swyl.db.go
+    │   └── syns.db.go
     ├── middleware
-    │   └── swyl.auth-middleware.go
+    │   └── syns.auth-middleware.go
     ├── models
-    │   └── swyl.models.go
+    │   └── syns.models.go
     ├── routers
     │   ├──club
-    │   │  └── swyl.club-router.go
+    │   │  └── syns.club-router.go
     │   ├──subscription
-    │   │  └── swyl.sub-router.go
+    │   │  └── syns.sub-router.go
     │   └──tier
-    │      └── swyl.tier-router.go
+    │      └── syns.tier-router.go
     ├── utils
-    │   └── swyl.dao-impl.go
+    │   └── syns.dao-impl.go
     ├── .example.env
     ├── .gitignore
     ├── Makefile
     ├── README.md
     ├── go.mod
     ├── go.sum
-    └── swyl.club-main.go
+    └── syns.club-main.go
 
 ## Getting Started
 
@@ -59,7 +59,7 @@
 
 ```bash
 git clone https://github.com/syns-platform/servers.git
-cd swyl-club-ms
+cd syns-club-ms
 ```
 
 ### Set up environment variables
@@ -68,7 +68,7 @@ At the root of the directory, create a .env file using .env.example as the templ
 
 ### Running the project
 
-Build and run `swyl-club-ms` locally using `Make` scripts
+Build and run `syns-club-ms` locally using `Make` scripts
 
 ```bash
 make dev-mode
