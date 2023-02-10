@@ -10,17 +10,17 @@ package main
 
 // @import
 import (
-	clubControllers "Swyl/servers/swyl-club-ms/controllers/club"
-	subControllers "Swyl/servers/swyl-club-ms/controllers/subscription"
-	tierControllers "Swyl/servers/swyl-club-ms/controllers/tier"
-	clubDao "Swyl/servers/swyl-club-ms/dao/club"
-	subDao "Swyl/servers/swyl-club-ms/dao/subscription"
-	tierDao "Swyl/servers/swyl-club-ms/dao/tier"
-	"Swyl/servers/swyl-club-ms/db"
-	clubRouters "Swyl/servers/swyl-club-ms/routers/club"
-	subRouters "Swyl/servers/swyl-club-ms/routers/subscription"
-	tierRouters "Swyl/servers/swyl-club-ms/routers/tier"
-	"Swyl/servers/swyl-club-ms/utils"
+	clubControllers "Syns/servers/syns-club-ms/controllers/club"
+	subControllers "Syns/servers/syns-club-ms/controllers/subscription"
+	tierControllers "Syns/servers/syns-club-ms/controllers/tier"
+	clubDao "Syns/servers/syns-club-ms/dao/club"
+	subDao "Syns/servers/syns-club-ms/dao/subscription"
+	tierDao "Syns/servers/syns-club-ms/dao/tier"
+	"Syns/servers/syns-club-ms/db"
+	clubRouters "Syns/servers/syns-club-ms/routers/club"
+	subRouters "Syns/servers/syns-club-ms/routers/subscription"
+	tierRouters "Syns/servers/syns-club-ms/routers/tier"
+	"Syns/servers/syns-club-ms/utils"
 	"context"
 	"os"
 
@@ -90,9 +90,9 @@ func main() {
 	server.HandleMethodNotAllowed = true
 
 	// init basePath
-	clubBasePath := server.Group("/v1/swyl/club") // club bash path
-	tierBashPath := server.Group("/v1/swyl/tier") // tier base path
-	subBashPath := server.Group("/v1/swyl/sub") // subs base path
+	clubBasePath := server.Group("/v1/syns/club") // club bash path
+	tierBashPath := server.Group("/v1/syns/tier") // tier base path
+	subBashPath := server.Group("/v1/syns/sub") // subs base path
 
 
 	// init Handler

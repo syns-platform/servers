@@ -10,7 +10,7 @@ package models
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-// @notice The information related to a Swyl club
+// @notice The information related to a Syns club
 type Club struct {
 	Club_owner					*string		`json:"club_owner" bson:"club_owner" validate:"required,len=42,alphanum"`
 	Created_at					uint64		`json:"created_at" bson:"created_at" validate:"required"`
@@ -18,7 +18,7 @@ type Club struct {
 }
 
 
-// @notice The information related to a Swyl Tier
+// @notice The information related to a Syns Tier
 type Tier struct {
 	Tier_ID						primitive.ObjectID		`json:"tier_id" bson:"_id, omitempty"`
 	Club_owner					*string 			`json:"club_owner" bson:"club_owner" validate:"required,len=42,alphanum"`
@@ -32,7 +32,7 @@ type Tier struct {
 }
 
 
-// @notice The information related to a Swyl Subscription
+// @notice The information related to a Syns Subscription
 // @TODO: add username, email, displayname
 type Subscription struct {
 	Subscription_ID					primitive.ObjectID 		`json:"subscription_id" bason:"_id"`

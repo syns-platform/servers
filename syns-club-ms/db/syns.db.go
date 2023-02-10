@@ -9,7 +9,7 @@
 package db
 
 import (
-	"Swyl/servers/swyl-club-ms/utils"
+	"Syns/servers/syns-club-ms/utils"
 	"context"
 	"log"
 	"os"

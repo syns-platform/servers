@@ -10,7 +10,7 @@ package dao
 
 // @import
 import (
-	"Swyl/servers/swyl-club-ms/models"
+	"Syns/servers/syns-club-ms/models"
 	"context"
 	"errors"
 

@@ -10,9 +10,9 @@ package controllers
 
 // @import
 import (
-	dao "Swyl/servers/swyl-club-ms/dao/tier"
-	"Swyl/servers/swyl-club-ms/models"
-	"Swyl/servers/swyl-club-ms/utils"
+	dao "Syns/servers/syns-club-ms/dao/tier"
+	"Syns/servers/syns-club-ms/models"
+	"Syns/servers/syns-club-ms/utils"
 	"net/http"
 	"regexp"
 

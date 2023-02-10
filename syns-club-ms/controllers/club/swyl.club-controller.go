@@ -10,9 +10,9 @@ package controllers
 
 // @import
 import (
-	dao "Swyl/servers/swyl-club-ms/dao/club"
-	"Swyl/servers/swyl-club-ms/models"
-	"Swyl/servers/swyl-club-ms/utils"
+	dao "Syns/servers/syns-club-ms/dao/club"
+	"Syns/servers/syns-club-ms/models"
+	"Syns/servers/syns-club-ms/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

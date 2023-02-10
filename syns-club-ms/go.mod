@@ -1,4 +1,4 @@
-module Swyl/servers/swyl-club-ms
+module Syns/servers/syns-club-ms
 
 go 1.19
 

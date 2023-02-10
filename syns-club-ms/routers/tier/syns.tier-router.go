@@ -10,7 +10,7 @@ package routers
 
 // @import
 import (
-	controllers "Swyl/servers/swyl-club-ms/controllers/tier"
+	controllers "Syns/servers/syns-club-ms/controllers/tier"
 
 	"github.com/gin-gonic/gin"
 )

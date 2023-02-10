@@ -9,7 +9,7 @@
 package dao
 
 // @import
-import "Swyl/servers/swyl-club-ms/models"
+import "Syns/servers/syns-club-ms/models"
 
 // @notice ClubDao interface
 type ClubDao interface {

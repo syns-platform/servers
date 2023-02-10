@@ -9,7 +9,7 @@
 package routers
 
 import (
-	controllers "Swyl/servers/swyl-club-ms/controllers/subscription"
+	controllers "Syns/servers/syns-club-ms/controllers/subscription"
 
 	"github.com/gin-gonic/gin"
 )

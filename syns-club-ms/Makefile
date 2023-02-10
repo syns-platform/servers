@@ -2,7 +2,7 @@ include .env
 
 ############### GLOBAL VARS ###############
 COMPILEDAEMON_PATH=~/go/bin/CompileDaemon # CompileDaemon for hot reload
-SERVER=swyl-club-ms
+SERVER=syns-club-ms
 
 
 ############### LOCAL BUILD ###############
