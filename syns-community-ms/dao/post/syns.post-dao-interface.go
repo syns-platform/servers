@@ -8,7 +8,7 @@
 // @package
 package dao
 
-import "Swyl/servers/swyl-community-ms/models"
+import "Syns/servers/syns-community-ms/models"
 
 // @notice Dao interface
 type PostDao interface {

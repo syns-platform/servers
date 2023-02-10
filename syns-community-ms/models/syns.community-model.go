@@ -10,7 +10,7 @@ package models
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-// @notice The information related to a Swyl Community
+// @notice The information related to a Syns Community
 type Community struct {
 	Community_owner 					*string 			`json:"community_owner" bson:"community_owner" validate:"required,len=42,alphanum"`
 	Bio							*string				`json:"bio" bson:"bio" validate:"omitempty"`
@@ -18,7 +18,7 @@ type Community struct {
 	Total_posts						uint64				`json:"total_posts" bson:"total_posts" validate:"omitempty"`
 }
 
-// @notice The information related to a Swyl Follower
+// @notice The information related to a Syns Follower
 type Follower struct {
 	Follower_ID 						primitive.ObjectID 		`json:"follower_Id" bson:"_id"`
 	Community_owner 					*string 			`json:"community_owner" bson:"community_owner" validate:"required,len=42,alphanum"`
@@ -26,7 +26,7 @@ type Follower struct {
 	Follow_at						uint64				`json:"follow_at" bson:"follow_at"`
 }
 
-// @notice The information related to a Swyl POST
+// @notice The information related to a Syns POST
 type Post struct {
 	Post_ID 						primitive.ObjectID 		`json:"post_id" bson:"_id"`
 	Community_owner 					*string 			`json:"community_owner" bson:"community_owner" validate:"required,len=42,alphanum"`
@@ -36,7 +36,7 @@ type Post struct {
 	Created_at						uint64				`json:"created_at" bson:"created_at"`
 }
 
-// @notice The information related to a Swyl Reaction
+// @notice The information related to a Syns Reaction
 type Reaction struct {
 	Reacter 						*string				`json:"reacter" bson:"reacter" validate:"required,len=42,alphanum"`
 	Post_ID							primitive.ObjectID 		`json:"post_id" bson:"post_id" validate:"required"`
@@ -44,7 +44,7 @@ type Reaction struct {
 	React_at						uint64				`json:"react_at" bson:"react_at"`
 }
 
-// @notice The information related to a Swyl Comment
+// @notice The information related to a Syns Comment
 type Comment struct {
 	Comment_ID  						primitive.ObjectID 		`json:"comment_id" bson:"_id"`
 	Post_ID							primitive.ObjectID 		`json:"post_id" bson:"post_id" validate:"required"`
@@ -54,7 +54,7 @@ type Comment struct {
 	Comment_at						uint64				`json:"commente_at" bson:"commente_at"`
 }
 
-// @notice The information related to a Swyl Reply
+// @notice The information related to a Syns Reply
 type Reply struct {
 	Reply_ID						primitive.ObjectID 		`json:"reply_id" bson:"_id"`
 	Comment_ID  						primitive.ObjectID 		`json:"comment_id" bson:"comment_id"`

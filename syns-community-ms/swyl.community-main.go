@@ -10,14 +10,14 @@ package main
 
 // @improt
 import (
-	commControllers "Swyl/servers/swyl-community-ms/controllers/community"
-	postControllers "Swyl/servers/swyl-community-ms/controllers/post"
-	commDao "Swyl/servers/swyl-community-ms/dao/community"
-	postDao "Swyl/servers/swyl-community-ms/dao/post"
-	"Swyl/servers/swyl-community-ms/db"
-	commRouters "Swyl/servers/swyl-community-ms/routers/community"
-	postRouters "Swyl/servers/swyl-community-ms/routers/post"
-	"Swyl/servers/swyl-community-ms/utils"
+	commControllers "Syns/servers/syns-community-ms/controllers/community"
+	postControllers "Syns/servers/syns-community-ms/controllers/post"
+	commDao "Syns/servers/syns-community-ms/dao/community"
+	postDao "Syns/servers/syns-community-ms/dao/post"
+	"Syns/servers/syns-community-ms/db"
+	commRouters "Syns/servers/syns-community-ms/routers/community"
+	postRouters "Syns/servers/syns-community-ms/routers/post"
+	"Syns/servers/syns-community-ms/utils"
 	"context"
 	"os"
 
@@ -70,8 +70,8 @@ func main() {
 	server.HandleMethodNotAllowed = true
 
 	// init basePath
-	commBasePath := server.Group("v1/swyl/community") // community base path
-	postBasePath := server.Group("v1/swyl/community/post") // post base path
+	commBasePath := server.Group("v1/syns/community") // community base path
+	postBasePath := server.Group("v1/syns/community/post") // post base path
 
 	// init handlers
 	cr.CommRoutes(commBasePath) // community router

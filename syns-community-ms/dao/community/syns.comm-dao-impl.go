@@ -10,7 +10,7 @@ package dao
 
 // @import
 import (
-	"Swyl/servers/swyl-community-ms/models"
+	"Syns/servers/syns-community-ms/models"
 	"context"
 	"errors"
 	"time"
@@ -39,7 +39,7 @@ func CommDaoConstructor(ctx context.Context, commCollection *mongo.Collection, f
 
 // @notice Method of CommDaoImpl struct
 // 
-// @dev Lets a Swyl user create a community
+// @dev Lets a Syns user create a community
 // 
 // @NOTE Should be fired off when #user/connect api is called
 // 
@@ -182,7 +182,7 @@ func (ci *CommDaoImpl) UpdateCommTotalOwnedBy(commOwner *string, followerContext
 // 
 // @logic if a user does NOT followed the community => follow
 // 
-// @dev Lets a Swyl user start following a community
+// @dev Lets a Syns user start following a community
 // 
 // @param follower *models.Follower
 func (ci *CommDaoImpl) ToggleFollow(follower *models.Follower) (int16, error) {
@@ -222,7 +222,7 @@ func (ci *CommDaoImpl) ToggleFollow(follower *models.Follower) (int16, error) {
 
 // @notice Method of CommDaoImpl struct
 // 
-// @dev Gets a Swyl follower at followerId
+// @dev Gets a Syns follower at followerId
 // 
 // @param followerId *string
 // 
@@ -248,7 +248,7 @@ func (ci *CommDaoImpl) GetFollowerAt(followerId *string) (*models.Follower, erro
 
 // @notice Method of CommDaoImpl struct
 // 
-// @dev Gets all Swyl followers in a community own by commOwner
+// @dev Gets all Syns followers in a community own by commOwner
 // 
 // @param commOwner *string
 // 

@@ -10,9 +10,9 @@ package controllers
 
 // @import
 import (
-	dao "Swyl/servers/swyl-community-ms/dao/post"
-	"Swyl/servers/swyl-community-ms/models"
-	"Swyl/servers/swyl-community-ms/utils"
+	dao "Syns/servers/syns-community-ms/dao/post"
+	"Syns/servers/syns-community-ms/models"
+	"Syns/servers/syns-community-ms/utils"
 	"regexp"
 
 	"github.com/gin-gonic/gin"
@@ -442,7 +442,7 @@ func (pc *PostController) Reply(gc *gin.Context) {
 	if err := pc.PostDao.Reply(param); err != nil {gc.AbortWithStatusJSON(500, gin.H{"error": err.Error()}); return;}
 
 	// http response
-	gc.JSON(200, "Swyl-v1")
+	gc.JSON(200, "Syns-v1")
 }
 
 

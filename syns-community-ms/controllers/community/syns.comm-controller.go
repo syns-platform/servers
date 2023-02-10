@@ -10,9 +10,9 @@ package controllers
 
 // @import
 import (
-	dao "Swyl/servers/swyl-community-ms/dao/community"
-	"Swyl/servers/swyl-community-ms/models"
-	"Swyl/servers/swyl-community-ms/utils"
+	dao "Syns/servers/syns-community-ms/dao/community"
+	"Syns/servers/syns-community-ms/models"
+	"Syns/servers/syns-community-ms/utils"
 	"net/http"
 	"regexp"
 
@@ -40,7 +40,7 @@ func CommControllerConstructor(commDao dao.CommDao) *CommController {
 // 
 // @route `POST/create-community`
 // 
-// @dev Lets a Swyl user create a community
+// @dev Lets a Syns user create a community
 // 
 // @NOTE Should be fired off when #user/connect api is called
 func (cc *CommController) CreateComm(gc *gin.Context) {
@@ -175,7 +175,7 @@ func (cc *CommController) UpdateCommTotalOwnedBy(gc *gin.Context) {
 // 
 // @route `POST/follow`
 // 
-// @dev Lets a Swyl user start following a community
+// @dev Lets a Syns user start following a community
 func (cc *CommController) ToggleFollow(gc *gin.Context) {
    // declare param holder
    param := &models.Follower{}
@@ -212,7 +212,7 @@ func (cc *CommController) ToggleFollow(gc *gin.Context) {
 // 
 // @route `GET/get-follower-at/:follower_id`
 // 
-// @dev Gets a Swyl follower at followerId
+// @dev Gets a Syns follower at followerId
 func (cc *CommController) GetFollowerAt(gc *gin.Context) {
    // Handle param
    followerId := gc.Param("follower_id")
@@ -235,7 +235,7 @@ func (cc *CommController) GetFollowerAt(gc *gin.Context) {
 // 
 // @route `GET/get-all-followers/:community_owner`
 // 
-// @dev Gets all Swyl followers in a community own by commOwner
+// @dev Gets all Syns followers in a community own by commOwner
 func (cc *CommController) GetAllFollowersInCommOwnedBy(gc *gin.Context) {
    // handle param
    commOwner := gc.Param("community_owner")

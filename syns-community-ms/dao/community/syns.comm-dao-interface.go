@@ -9,13 +9,13 @@
 package dao
 
 import (
-	"Swyl/servers/swyl-community-ms/models"
+	"Syns/servers/syns-community-ms/models"
 )
 
 // @notice Dao interface
 type CommDao interface {
 
-	// @notice Lets a Swyl user create a community
+	// @notice Lets a Syns user create a community
 	// 
 	// @NOTE Should be fired off when #user/connect api is called
 	// 
@@ -65,7 +65,7 @@ type CommDao interface {
 	UpdateCommTotalOwnedBy(commOwner *string, followerContext int16, postContext int16) error
 
 	
-	// @notice Lets a Swyl user follow and unfollow a community
+	// @notice Lets a Syns user follow and unfollow a community
 	// 
 	// @logic if a user has already followed the community => unfollow
 	// 
@@ -77,7 +77,7 @@ type CommDao interface {
 	ToggleFollow(follower *models.Follower) (int16, error)
 
 	
-	// @notice Gets a Swyl follower at followerId
+	// @notice Gets a Syns follower at followerId
 	// 
 	// @param followerId *string
 	// 
@@ -85,7 +85,7 @@ type CommDao interface {
 	GetFollowerAt(followerId *string) (*models.Follower, error)
 
 
-	// @notice Gets all Swyl followers in a community own by commOwner
+	// @notice Gets all Syns followers in a community own by commOwner
 	// 
 	// @param commOwner *string
 	// 

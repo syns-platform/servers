@@ -10,7 +10,7 @@ package db
 
 // @import
 import (
-	"Swyl/servers/swyl-community-ms/utils"
+	"Syns/servers/syns-community-ms/utils"
 	"context"
 	"log"
 	"os"
