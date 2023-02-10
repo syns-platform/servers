@@ -13,11 +13,11 @@
 
 ## Highlighted Features:
 
-- [SYNS User Microservice](https://github.com/syns-platform/servers/tree/master/swyl-users-ms) allows users to connect their cryptocurrency wallet and sign up for a record in the MongoDB database on their first connection. It also allows users to configure their account or deactivate (delete) it if desired.
+- [SYNS User Microservice](https://github.com/syns-platform/servers/tree/master/syns-users-ms) allows users to connect their cryptocurrency wallet and sign up for a record in the MongoDB database on their first connection. It also allows users to configure their account or deactivate (delete) it if desired.
 
-- [SYNS Club Microservice](https://github.com/syns-platform/servers/tree/master/swyl-club-ms) mimics the logic of the [SynsClub smart contract](https://github.com/syns-platform/contracts/blob/main/contracts/v1/SwylClub.sol) and maintains off-chain records about `SYNS Clubs`.
+- [SYNS Club Microservice](https://github.com/syns-platform/servers/tree/master/syns-club-ms) mimics the logic of the [SynsClub smart contract](https://github.com/syns-platform/contracts/blob/main/contracts/v1/SynsClub.sol) and maintains off-chain records about `SYNS Clubs`.
 
-- [Syns Community Microservice](https://github.com/syns-platform/servers/tree/master/swyl-community-ms) is the \***\*`most honored`\*\*** out of the three microservices. Holding many complex endpoints, \***\*Syns Community Microservice\*\*** was developed with the vision of being a full-fledged social media platform which is able to:
+- [Syns Community Microservice](https://github.com/syns-platform/servers/tree/master/syns-community-ms) is the \***\*`most honored`\*\*** out of the three microservices. Holding many complex endpoints, \***\*Syns Community Microservice\*\*** was developed with the vision of being a full-fledged social media platform which is able to:
 
   - Allow potential community owners to create an online community where followers can follow for free to receive updates from the owner.
 
