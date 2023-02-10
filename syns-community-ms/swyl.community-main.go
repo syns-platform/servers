@@ -70,8 +70,8 @@ func main() {
 	server.HandleMethodNotAllowed = true
 
 	// init basePath
-	commBasePath := server.Group("v1/syns/community") // community base path
-	postBasePath := server.Group("v1/syns/community/post") // post base path
+	commBasePath := server.Group("v2/syns/community") // community base path
+	postBasePath := server.Group("v2/syns/community/post") // post base path
 
 	// init handlers
 	cr.CommRoutes(commBasePath) // community router

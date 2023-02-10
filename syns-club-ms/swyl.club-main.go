@@ -90,9 +90,9 @@ func main() {
 	server.HandleMethodNotAllowed = true
 
 	// init basePath
-	clubBasePath := server.Group("/v1/syns/club") // club bash path
-	tierBashPath := server.Group("/v1/syns/tier") // tier base path
-	subBashPath := server.Group("/v1/syns/sub") // subs base path
+	clubBasePath := server.Group("/v2/syns/club") // club bash path
+	tierBashPath := server.Group("/v2/syns/tier") // tier base path
+	subBashPath := server.Group("/v2/syns/sub") // subs base path
 
 
 	// init Handler
