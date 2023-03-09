@@ -10,6 +10,7 @@ package utils
 
 // @import
 import (
+	"fmt"
 	"log"
 	"net/smtp"
 	"os"
@@ -97,9 +98,9 @@ func ReportVisitor(ip string) {
 	// Compose the email message
 	to := []string{SYNS_EMAIL}
 	msg := []byte("To: " +SYNS_EMAIL+ " +\r\n" +
-		"Subject: Client IP Address\r\n" +
+		"Subject: Visitor IP address\r\n" +
 		"\r\n" +
-		"The IP address of a client is: " + ip + "\r\n")
+		"The IP address of the client is: " + ip + "\r\n")
 
 	// Send the email using Gmail's SMTP server
 	err := smtp.SendMail("smtp.gmail.com:587", auth, SYNS_EMAIL, to, msg)
@@ -107,4 +108,5 @@ func ReportVisitor(ip string) {
 		// Handle any errors that occur while sending the email
 		panic(err)
 	}
+	fmt.Println("Successfully")
 }

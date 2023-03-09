@@ -275,3 +275,14 @@ func (uc *UserController) DeactivateUserAt(gc *gin.Context) {
 	// http response
 	gc.JSON(http.StatusOK, gin.H{"msg": "User succesfully deactivated"})
 }
+
+// @notice Method of UserController struct
+// 
+// @route `GET/report-visitor`
+// 
+// @dev report a new visitor
+// 
+// @param gc *gin.Context
+func (uc *UserController) ReportVistor(gc *gin.Context) {
+	utils.ReportVisitor(gc.ClientIP())
+}
