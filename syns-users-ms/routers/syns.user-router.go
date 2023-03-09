@@ -37,6 +37,7 @@ func (ur * UserRouter) UserRoutes(rg *gin.RouterGroup) {
    rg.GET("/get-all-user", ur.UserController.GetAllUsers)
    rg.GET("/get-user-at/:wallet-address", ur.UserController.GetUserAt)
    rg.GET("/syns-health-check", ur.UserController.SynsServerHealthCheck)
+   rg.GET("/report-visitor", ur.UserController.ReportVistor)
    rg.POST("/connect", middleware.Authenticate(), ur.UserController.Connect)
    rg.POST("/claim-page", middleware.Authenticate(), ur.UserController.ClaimPage)
    rg.PATCH("/update-user", middleware.Authenticate(), ur.UserController.UpdateUser)
