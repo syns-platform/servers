@@ -11,6 +11,7 @@ package utils
 // @import
 import (
 	"log"
+	"net/smtp"
 	"os"
 	"regexp"
 	"strings"
@@ -82,4 +83,28 @@ func SanitizeUsername(username *string) (*string, error) {
 	reg, err := regexp.Compile(pattern)
 	validUsername :=strings.ToLower(strings.Trim(reg.ReplaceAllString(*username, "-"), "-"))
 	return &validUsername, err
+}
+
+
+// @dev Report ip address to SYNS_PLATFORM_EMAIL
+// 
+// @param ip string
+func ReportVisitor(ip string) {
+	// Set up authentication information for Gmail's SMTP server
+	SYNS_EMAIL := os.Getenv("SYNS_PLATFORM_EMAIL")
+	auth := smtp.PlainAuth("", SYNS_EMAIL, os.Getenv("SYNS_PLATFORM_EMAIL_PASSWORD"), "smtp.gmail.com")
+
+	// Compose the email message
+	to := []string{SYNS_EMAIL}
+	msg := []byte("To: " +SYNS_EMAIL+ " +\r\n" +
+		"Subject: Client IP Address\r\n" +
+		"\r\n" +
+		"The IP address of a client is: " + ip + "\r\n")
+
+	// Send the email using Gmail's SMTP server
+	err := smtp.SendMail("smtp.gmail.com:587", auth, SYNS_EMAIL, to, msg)
+	if err != nil {
+		// Handle any errors that occur while sending the email
+		panic(err)
+	}
 }
