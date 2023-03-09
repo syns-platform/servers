@@ -43,7 +43,6 @@ func UserControllerConstructor(userDao dao.UserDao) *UserController{
 // 
 // @param gc *gin.Context
 func (uc *UserController) SynsServerHealthCheck(gc *gin.Context) {
-	utils.ReportVisitor(gc.ClientIP())
 	gc.JSON(200, gin.H{"syns-user": "Status OK"})
 }
 
