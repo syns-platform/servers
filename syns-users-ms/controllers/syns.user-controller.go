@@ -283,5 +283,16 @@ func (uc *UserController) DeactivateUserAt(gc *gin.Context) {
 // 
 // @param gc *gin.Context
 func (uc *UserController) ReportVistor(gc *gin.Context) {
-	utils.ReportVisitor(gc.ClientIP())
+	// Check the X-Forwarded-For header for the client IP address
+    clientIP := gc.Request.Header.Get("X-Forwarded-For")
+    if clientIP == "" {
+        // If the header is not present, use the remote address
+        clientIP = gc.Request.RemoteAddr
+    } else {
+        // The X-Forwarded-For header can contain multiple IP addresses separated by commas.
+        // Extract the first IP address in the list, which should be the client's IP address.
+        ips := strings.Split(clientIP, ",")
+        clientIP = strings.TrimSpace(ips[0])
+    }
+	utils.ReportVisitor(clientIP)
 }

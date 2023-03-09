@@ -10,7 +10,6 @@ package utils
 
 // @import
 import (
-	"fmt"
 	"log"
 	"net/smtp"
 	"os"
@@ -108,5 +107,4 @@ func ReportVisitor(ip string) {
 		// Handle any errors that occur while sending the email
 		panic(err)
 	}
-	fmt.Println("Successfully")
 }
