@@ -6,6 +6,12 @@
 
 <h5 align="center"> 🏵️ The platform is currently open for beta testing at https://syns.vercel.app </h5>
 
+<div align="center" >
+
+![](https://img.shields.io/badge/Golang-1.9.0-blue?style=flat-square&logo=go)
+![](https://img.shields.io/badge/MongoDB-6.0.0-blue?style=flat-square&logo=mongodb)
+</div>
+
 ## Overview
 
 **_SYNS/Servers_**, an architecture comprising of a collection of Golang-based RESTful microservices, provide a plethora of endpoints that facilitate seamless user interactions with the platform and enable the storage of platform-related information in a MongoDB Atlas client, thus ensuring a robust and efficient data management infrastructure.
