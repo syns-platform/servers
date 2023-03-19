@@ -1,6 +1,6 @@
 <p align="center">
 <br />
-<a href="https://github.com/syns-platform/servers"><img src="https://github.com/syns-platform/materials/blob/master/logo.svg?raw=true" width="150" alt=""/></a>
+<a href="https://github.com/syns-platform"><img src="https://github.com/syns-platform/materials/blob/master/logo.svg?raw=true" width="150" alt=""/></a>
 <h1 align="center">SYNS - Spart Your Noble Story - v2.0</h1>
 </p>
 
