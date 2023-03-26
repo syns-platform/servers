@@ -9,7 +9,10 @@
 <div align="center" >
 
 ![](https://img.shields.io/badge/Golang-1.9.0-blue?style=flat-square&logo=go)
+![](https://img.shields.io/badge/Gin_Gonic-1.8.1-blue?style=flat-square&logo=go)
+![](https://img.shields.io/badge/Go_Ethereum-1.10.26-blue?style=flat-square&logo=go)
 ![](https://img.shields.io/badge/MongoDB-6.0.0-blue?style=flat-square&logo=mongodb)
+
 </div>
 
 ## Overview
