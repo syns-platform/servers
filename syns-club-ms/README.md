@@ -1,6 +1,6 @@
 <p align="center">
 <br />
-<a href="https://github.com/syns-platform/servers"><img src="https://github.com/syns-platform/materials/blob/master/logo.svg?raw=true" width="150" alt=""/></a>
+<a href="https://github.com/syns-platform"><img src="https://github.com/syns-platform/materials/blob/master/main_logos/Syns_Official_Main_Logo_V3.svg?raw=true" width="150" alt=""/>
 <h1 align="center">SYNS - Spark Your Noble Story - v2.0</h1>
 <h4 align="center">Club Microservice</h4>
 
