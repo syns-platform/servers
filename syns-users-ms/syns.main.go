@@ -27,7 +27,9 @@ var (
 	ctx			context.Context
 	mongoClient		*mongo.Client
 	userCollection		*mongo.Collection
+	feedbackCollection	*mongo.Collection
 	ur 			*routers.UserRouter
+	fr 			*routers.FeedbackRouter
 )
 
 // @dev Runs before main()
@@ -49,15 +51,23 @@ func init() {
 
 	// get userCollection
 	userCollection = db.GetMongoCollection(mongoClient, "users")
-
+	// get feedbackCollection
+	feedbackCollection = db.GetMongoCollection(mongoClient, "feedback")
+	
 	// init UserDao interface
 	ui := dao.UserDaoConstructor(ctx, userCollection)
+	// init UserDao interface
+	fi := dao.FeedbackDaoConstructor(ctx, feedbackCollection)
 
 	// init UserController
 	uc := controllers.UserControllerConstructor(ui)
+	// init UserController
+	fc := controllers.FeedbackControllerConstructor(fi)
 
 	// init UserRouter
 	ur = routers.UserRouterConstructor(uc)
+	// init UserRouter
+	fr = routers.FeedbackRouterConstructor(fc)
 }
 
 // @dev Root function
@@ -74,11 +84,11 @@ func main() {
 	// init basePath
 	userBasePath := server.Group("/v2/syns/user")
 	tokenBasePath := server.Group("/v2/syns/token")
+	feedbackBasePath := server.Group("/v2/syns/feedback/")
 
-	// init UserHandler
+	// init Handler
 	ur.UserRoutes(userBasePath)
-
-	// init TokenHandler
+	fr.FeedbackRoutes(feedbackBasePath)
 	routers.TokenRoutes(tokenBasePath);
 
 	// run server
