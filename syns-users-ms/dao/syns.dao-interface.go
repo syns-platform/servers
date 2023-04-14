@@ -11,7 +11,7 @@ package dao
 // @import
 import "Syns/servers/syns-users-ms/models"
 
-// @notice Dao interface
+// @notice UserDao interface
 type UserDao interface {
 
 	// @notice Connects to an account stored in the internal database using wallet address.
@@ -76,4 +76,16 @@ type UserDao interface {
 	// 
 	// @return error
 	DeactivateUserAt(walletAddress *string) error
+}
+
+// @notice FeedbackDao interface
+type FeedbackDao interface {
+	// @notice Handle feedback submission
+	// 
+	// @param email *string
+	// 
+	// @param feedback *string
+	// 
+	// @return error
+	SubmitFeedback(email *string, feedback *string) (error)
 }

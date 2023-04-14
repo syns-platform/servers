@@ -27,8 +27,14 @@ type UserDaoImpl struct {
 	mongoCollection		*mongo.Collection
 }
 
+// @notic Root struct for Feedback methods
+type FeedbackDaoImpl struct {
+	ctx 			context.Context
+	mongoCollection		*mongo.Collection
+}
 
-// @dev Constructor
+
+// @dev User Constructor
 func UserDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) UserDao {
 	return &UserDaoImpl{
 		ctx: ctx,
@@ -36,6 +42,13 @@ func UserDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 	}
 }
 
+// @dev Feedback Constructor
+func FeedbackDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) FeedbackDao {
+	return &FeedbackDaoImpl{
+		ctx: ctx,
+		mongoCollection: mongoCollection,
+	}
+}
 
 // @notice Method of UserDaoImpl struct
 // 
@@ -291,4 +304,29 @@ func (ui *UserDaoImpl) DeactivateUserAt(walletAddress *string) error {
 
 	// response OK
 	return nil
+}
+
+
+// @notice Method of FeedbackDaoImpl struct
+// 
+// @dev Handle feedback submission
+// 
+// @param email *string
+// 
+// @param feedback *string
+// 
+// @return error
+func (fi *FeedbackDaoImpl) SubmitFeedback(email *string, feedback *string) (error){
+	// prepare new Feedback
+	newFeedback := &models.Feedback{
+		Email: *email,
+		Feedback: *feedback,
+		Submitted_at: time.Now().Unix(),
+	}
+
+	// insert new feedback to internal database
+	_, err := fi.mongoCollection.InsertOne(fi.ctx, newFeedback);
+
+	// response OK
+	return err;
 }
