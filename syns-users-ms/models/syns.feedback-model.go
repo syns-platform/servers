@@ -11,6 +11,6 @@ package models
 // @notice The information related to a Syns user
 type Feedback struct {
 	Email string `json:"email"`
-	Feedback string `json:"feedback" validate:"required"`
+	Feedback string `json:"feedback" validate:"required,min=2"`
 	Submitted_at int64	`json:"submitted_at" bson:"submitted_at"`
 }

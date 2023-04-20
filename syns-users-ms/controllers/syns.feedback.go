@@ -12,6 +12,7 @@ import (
 	"Syns/servers/syns-users-ms/dao"
 	"Syns/servers/syns-users-ms/models"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,6 +42,12 @@ func (fc *FeedbackController) SubmitFeedback(gc *gin.Context) {
 	// bind json post data to param
 	if err := gc.ShouldBindJSON(&param); err != nil {
 		gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error":  err.Error()}); return;
+	}
+	
+	// export if `feedback` contains less than 3 characters
+	feedbackArr := strings.Split(strings.TrimSpace(param.Feedback), " ")
+	if len(feedbackArr) == 1 && len(feedbackArr[0]) < 4 {
+		gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Feedback too short!"}); return;
 	}
 
 	// struct validation
