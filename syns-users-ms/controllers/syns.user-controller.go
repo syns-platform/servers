@@ -282,6 +282,8 @@ func (uc *UserController) DeactivateUserAt(gc *gin.Context) {
 // @dev report a new visitor
 // 
 // @param gc *gin.Context
+// 
+// @notice DEPRECATED
 func (uc *UserController) ReportVistor(gc *gin.Context) {
 	// Check the X-Forwarded-For header for the client IP address
     clientIP := gc.Request.Header.Get("X-Forwarded-For")

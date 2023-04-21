@@ -11,6 +11,7 @@ package dao
 // @import
 import (
 	"Syns/servers/syns-users-ms/models"
+	"Syns/servers/syns-users-ms/utils"
 	"context"
 	"errors"
 	"log"
@@ -73,6 +74,9 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 	// find the user in database using user.wallet_address
 	dbRes := ui.mongoCollection.FindOne(ui.ctx, query).Decode(user)
 
+	// prepare `Avatar` string
+	avatar := utils.RandomizeAvatar()
+
 	// logic: if dbRes error == nil => user with `walletAddress` has already connected before
 	// logic: if dbRes error != nil => user with `walletAddress` has never connected before
 	if dbRes == nil {
@@ -83,6 +87,7 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 		newUser := &models.User{
 			Wallet_address: walletAddress,
 			Username: walletAddress,
+			Avatar: &avatar,
 			Joined_at: time.Now().Unix(),
 		}
 
