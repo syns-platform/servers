@@ -10,7 +10,9 @@ package utils
 
 // @import
 import (
+	"fmt"
 	"log"
+	"math/rand"
 	"net/smtp"
 	"os"
 	"regexp"
@@ -89,6 +91,8 @@ func SanitizeUsername(username *string) (*string, error) {
 // @dev Report ip address to SYNS_PLATFORM_EMAIL
 // 
 // @param ip string
+// 
+// @notice DEPRECATED
 func ReportVisitor(ip string) {
 	// Set up authentication information for Gmail's SMTP server
 	SYNS_EMAIL := os.Getenv("SYNS_PLATFORM_EMAIL")
@@ -107,4 +111,16 @@ func ReportVisitor(ip string) {
 		// Handle any errors that occur while sending the email
 		panic(err)
 	}
+}
+
+// @dev Calculate random avatar for users
+func RandomizeAvatar() string {
+	// Seed the random number generator with the current time
+    rand.Seed(time.Now().UnixNano())
+
+    // Generate a random number between 1 and 7
+    randomNum := rand.Intn(7) + 1
+
+	// return `avatar` string
+	return fmt.Sprintf("demo-avatar-%d.png", randomNum)
 }
