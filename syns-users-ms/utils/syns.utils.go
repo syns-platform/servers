@@ -41,7 +41,7 @@ func HandleException(e error) {if (e != nil) {log.Panic(e)}}
 // @return gin.HandlerFunc
 func SetupCorsConfig() gin.HandlerFunc {
 	return cors.New(cors.Config{
-		AllowOrigins: 		[]string{os.Getenv("CORS_ALLOW_LOCAL_ORIGIN"), os.Getenv("CORS_ALLOW_PRODUCTION_CLIENT_ORIGIN")},
+		AllowOrigins: 		[]string{os.Getenv("CORS_ALLOW_LOCAL_ORIGIN"), os.Getenv("CORS_ALLOW_PRODUCTION_CLIENT_ORIGIN"), os.Getenv("CORS_ALLOW_STAGING_CLIENT_ORIGIN")},
 		AllowMethods:		[]string{"POST", "PATCH", "PUT", "DELETE", "GET"},
 		AllowHeaders: 		[]string{"Origin", "Authorization", "Access-Control-Allow-Origin"},	
 		AllowCredentials: 	true,
