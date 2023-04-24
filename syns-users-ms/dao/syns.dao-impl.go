@@ -87,6 +87,7 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 		newUser := &models.User{
 			Wallet_address: walletAddress,
 			Username: walletAddress,
+			Display_name: walletAddress,
 			Avatar: &avatar,
 			Joined_at: time.Now().Unix(),
 		}
