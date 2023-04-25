@@ -13,13 +13,27 @@ DOCKER_PULL=docker pull
 DOCKER_PUSH=docker push
 DOCKER_IMAGE_LIST_ID=docker images -q
 DOCKER_CONTAINER_LIST_ID=docker ps -aq
-DOCKER_BUILD_SCRIPT = docker build --no-cache -t $(SYNS_USER_MS_IMAGE) .
-DOCKER_RUN_SCRIPT = docker run -d --rm $\
+DOCKER_BUILD_SCRIPT=docker build --no-cache -t $(SYNS_USER_MS_IMAGE) .
+DOCKER_RUN_SCRIPT=docker run -d --rm $\
 					--name $(SYNS_USER_MS_SERVER) $\
 					--env-file .env $\
 					-e GIN_MODE=release $\
 					-p $(SYNS_USERS_PORT):$(PRODUCTION_PORT) $\
 					$(SYNS_USER_MS_IMAGE)
+
+ENV_VARS=$(shell grep -v '^#' .env | xargs)
+GOOGLE_CLOUD_PROJECT_ID=syns-platform
+GOOGLE_CLOUD_REGION=us-central1
+
+
+GOOGLE_CLOUD_BUILD_SCRIPT=gcloud builds submit --tag gcr.io/$(GOOGLE_CLOUD_PROJECT_ID)/$(SYNS_USER_MS_SERVER)
+
+GOOGLE_CLOUD_DEPLOY_SCRIPT=gcloud run deploy $(SYNS_USER_MS_SERVER) $\ 
+						--image gcr.io/$(GOOGLE_CLOUD_PROJECT_ID)/$(SYNS_USER_MS_SERVER) $\
+						--platform managed $\
+						--region $(GOOGLE_CLOUD_REGION) $\
+						--allow-unauthenticated $\
+						--set-env-vars "GIN_MODE=release,$(ENV_VARS)"
 
 
 #############################################
@@ -62,3 +76,14 @@ docker-dev-syns-users: docker-pull-syns-users docker-run-syns-users
 docker-clean:
 	$(DOCKER_RM) $(SYNS_USER_MS_SERVER) $&
 	$(DOCKER_RMI) $(SYNS_USER_MS_IMAGE):$(SYNS_USER_MS_TAG)
+
+
+
+#############################################
+######### Google Cloud BUILD ################
+#############################################
+gcloud-build:
+	$(GOOGLE_CLOUD_BUILD_SCRIPT)
+
+gcloud-deploy:gcloud-build
+	$(GOOGLE_CLOUD_DEPLOY_SCRIPT)
