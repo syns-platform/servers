@@ -10,6 +10,7 @@ package utils
 
 // @import
 import (
+	"Syns/servers/syns-users-ms/models"
 	"fmt"
 	"log"
 	"math/rand"
@@ -87,32 +88,6 @@ func SanitizeUsername(username *string) (*string, error) {
 	return &validUsername, err
 }
 
-
-// @dev Report ip address to SYNS_PLATFORM_EMAIL
-// 
-// @param ip string
-// 
-// @notice DEPRECATED
-func ReportVisitor(ip string) {
-	// Set up authentication information for Gmail's SMTP server
-	SYNS_EMAIL := os.Getenv("SYNS_PLATFORM_EMAIL")
-	auth := smtp.PlainAuth("", SYNS_EMAIL, os.Getenv("SYNS_PLATFORM_EMAIL_PASSWORD"), "smtp.gmail.com")
-
-	// Compose the email message
-	to := []string{SYNS_EMAIL}
-	msg := []byte("To: " +SYNS_EMAIL+ " +\r\n" +
-		"Subject: Visitor IP address\r\n" +
-		"\r\n" +
-		"The IP address of the client is: " + ip + "\r\n")
-
-	// Send the email using Gmail's SMTP server
-	err := smtp.SendMail("smtp.gmail.com:587", auth, SYNS_EMAIL, to, msg)
-	if err != nil {
-		// Handle any errors that occur while sending the email
-		panic(err)
-	}
-}
-
 // @dev Calculate random avatar for users
 func RandomizeAvatar() string {
 	// Seed the random number generator with the current time
@@ -123,4 +98,46 @@ func RandomizeAvatar() string {
 
 	// return `avatar` string
 	return fmt.Sprintf("demo-avatar-%d.png", randomNum)
+}
+
+// @dev Report ip address to SYNS_PLATFORM_EMAIL
+//
+// @param ip string
+func EmailNotification(mode string, args interface{}) {
+	// prepare states
+	synsFeedbackEmail := os.Getenv("SYNS_PLATFORM_ALERT_EMAIL")
+	synsFeedbackEmailPassword := os.Getenv("SYNS_PLATFORM_ALERT_EMAIL_PASSWORD")
+	subject := ""
+	description := ""
+	smtpHost := "smtp.titan.email" // Titan Email SMTP server
+	smtpPort := "587"              // Titan Email SMTP port
+
+	switch opt := args.(type) {
+	case models.Feedback:
+		if opt.Email == "" {
+			description = "From an anonymous: " +opt.Feedback
+		} else {
+			description = "From " +opt.Email+ ": " +opt.Feedback
+		}
+	default:
+		return
+	}
+
+	if mode == "FEEDBACK" {
+		subject = "Subject: New Feedback Alert"
+	}
+
+	// Set up authentication information for Gmail's SMTP server
+	auth := smtp.PlainAuth("", synsFeedbackEmail, synsFeedbackEmailPassword, smtpHost)
+
+	// Compose the email message
+	to := []string{synsFeedbackEmail}
+	msg := []byte("To: " +synsFeedbackEmail+ " +\r\n" +subject + "\r\n" + "\r\n" +description)
+
+	// Send the email using Gmail's SMTP server
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, synsFeedbackEmail, to, msg)
+	if err != nil {
+		// Handle any errors that occur while sending the email
+		panic(err)
+	}
 }
