@@ -85,5 +85,8 @@ docker-clean:
 gcloud-build:
 	$(GOOGLE_CLOUD_BUILD_SCRIPT)
 
-gcloud-deploy:gcloud-build
+gcloud-deploy: gcloud-build
 	$(GOOGLE_CLOUD_DEPLOY_SCRIPT)
+
+
+update-remote-image-docker-gcloud: docker-update-remote-image gcloud-deploy
