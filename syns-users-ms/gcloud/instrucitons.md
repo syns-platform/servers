@@ -30,7 +30,8 @@
 
    c. In the left-side menu, click on "Cloud Run" under the "Serverless" section.
 
-   d. Click on the "Create service" button => fill out the necessary information
+   d. Click on the "Create service" button => fill out the necessary information => REMEMBER to check on `Allow unauthenticated invocations
+Check this if you are creating a public API or website.`
 
    e. At the end of the console, click the drop down "Container, Networking, Security" => add all the environment variables and REMEMBER to include GIN_MODE=release variable
 
