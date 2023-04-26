@@ -112,19 +112,31 @@ func EmailNotification(mode string, args interface{}) {
 	smtpHost := "smtp.titan.email" // Titan Email SMTP server
 	smtpPort := "587"              // Titan Email SMTP port
 
-	switch opt := args.(type) {
-	case models.Feedback:
-		if opt.Email == "" {
-			description = "From an anonymous: " +opt.Feedback
-		} else {
-			description = "From " +opt.Email+ ": " +opt.Feedback
-		}
-	default:
-		return
-	}
-
+	// prepare subject
 	if mode == "FEEDBACK" {
 		subject = "Subject: New Feedback Alert"
+	} else if mode == "FIRST_CONNECT" {
+		subject = "Subject: New User Alert"
+	} else if mode == "RETURNER" {
+		subject = "Subject: Returner Alert"
+	}
+
+	// prepare description
+	switch obj := args.(type) {
+		case *models.Feedback:
+			if obj.Email == "" {
+				description = "Description: From an anonymous: " +obj.Feedback
+			} else {
+				description = "Description: From " +obj.Email+ ": " +obj.Feedback
+			}
+		case *models.User: 
+			if mode == "FIRST_CONNECT" {
+				description = *obj.Display_name + " first time connect to the gang."
+			} else if mode == "RETURNER" {
+				description = *obj.Display_name + " reconnect to the gang."
+			}
+	default:
+		return
 	}
 
 	// Set up authentication information for Gmail's SMTP server
