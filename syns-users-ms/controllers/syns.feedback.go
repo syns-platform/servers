@@ -11,6 +11,7 @@ package controllers
 import (
 	"Syns/servers/syns-users-ms/dao"
 	"Syns/servers/syns-users-ms/models"
+	"Syns/servers/syns-users-ms/utils"
 	"net/http"
 	"strings"
 
@@ -55,6 +56,9 @@ func (fc *FeedbackController) SubmitFeedback(gc *gin.Context) {
 
 	// invoke FeedbackDao.SubmitFeedback() api
 	if err := fc.FeedbackDao.SubmitFeedback(&param.Email, &param.Feedback); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
+
+	// alert new feedback submitted
+	utils.EmailNotification("FEEDBACK", *param);
 
 	// http response
 	gc.JSON(200,  gin.H{"msg": "Feedback successfully submitted"})
