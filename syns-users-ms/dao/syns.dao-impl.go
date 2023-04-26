@@ -80,6 +80,9 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 	// logic: if dbRes error == nil => user with `walletAddress` has already connected before
 	// logic: if dbRes error != nil => user with `walletAddress` has never connected before
 	if dbRes == nil {
+		// emit returner alert
+		utils.EmailNotification("RETURNER", user)
+
 		// return OK
 		return user, nil
 	} else if dbRes.Error() == "mongo: no documents in result" {
@@ -95,9 +98,13 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 		// insert new user to internal database
 		_, err := ui.mongoCollection.InsertOne(ui.ctx, newUser)
 
+		// emit new user alert
+		utils.EmailNotification("FIRST_CONNECT", newUser)
+
 		// return user and err
 		return newUser, err
 	} else {
+
 		// return nil, and other error result from mongoDB
 		return nil, dbRes
 	}
