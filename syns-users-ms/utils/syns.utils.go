@@ -121,6 +121,11 @@ func EmailNotification(mode string, args interface{}) {
 		subject = "Subject: Returner Alert"
 	}
 
+	// only emit alert with GIN_MODE = release
+	if mode == "RETURNER" && os.Getenv("GIN_MODE") != "release" {
+		return
+	}
+
 	// prepare description
 	switch obj := args.(type) {
 		case *models.Feedback:
