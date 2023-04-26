@@ -28,7 +28,7 @@ GOOGLE_CLOUD_REGION=us-central1
 
 GOOGLE_CLOUD_BUILD_SCRIPT=gcloud builds submit --tag gcr.io/$(GOOGLE_CLOUD_PROJECT_ID)/$(SYNS_USER_MS_SERVER)
 
-GOOGLE_CLOUD_DEPLOY_SCRIPT=gcloud run deploy $(SYNS_USER_MS_SERVER) $\ 
+GOOGLE_CLOUD_DEPLOY_SCRIPT=gcloud run deploy $(SYNS_USER_MS_SERVER) --source . $\ 
 						--image gcr.io/$(GOOGLE_CLOUD_PROJECT_ID)/$(SYNS_USER_MS_SERVER) $\
 						--platform managed $\
 						--region $(GOOGLE_CLOUD_REGION) $\
