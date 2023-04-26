@@ -130,9 +130,9 @@ func EmailNotification(mode string, args interface{}) {
 				isDevPurpose = true
 			}
 			if obj.Email == "" {
-				description = "Description: From an anonymous: " +obj.Feedback
+				description = "From an anonymous: " +obj.Feedback
 			} else {
-				description = "Description: From " +obj.Email+ ": " +obj.Feedback
+				description = "From " +obj.Email+ ": " +obj.Feedback
 			}
 		case *models.User: 
 			// check if this is dev purpose, i.e., the address is not in the set of Syns Dev addresses
