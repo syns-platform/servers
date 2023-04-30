@@ -14,7 +14,6 @@ import (
 	"Syns/servers/syns-users-ms/utils"
 	"context"
 	"errors"
-	"log"
 	"strings"
 	"time"
 
@@ -225,7 +224,6 @@ func (ui *UserDaoImpl) GetUserAt(walletAddress *string) (*models.User, error) {
 func (ui *UserDaoImpl) GetUserBy(username *string) (*models.User, error) {
 	// declare user placeholder
 	user := &models.User{}
-	log.Println(*username)
 
 	// set up find query
 	query := bson.D{{Key: "username", Value: username}}

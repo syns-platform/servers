@@ -18,7 +18,15 @@ import (
 /////////////////// 					///////////////////
 ///////////////////////////////////////////////////////////
 
-type MoralisNFTMetadata struct {
+type MoralisNFTResponse struct {
+	Total     *int    `json:"total"`
+	Page      int     `json:"page"`
+	PageSize  int     `json:"page_size"`
+	Cursor    string  `json:"cursor"`
+	Result    []moralisNFT   `json:"result"`
+}
+
+type moralisNFTMetadata struct {
 	Name         string     `json:"name"`
 	Description  string     `json:"description"`
 	AnimationURL *string    `json:"animation_url"`
@@ -27,7 +35,7 @@ type MoralisNFTMetadata struct {
 	Attributes   []struct{} `json:"attributes"`
 }
 
-type MoralisNFT struct {
+type moralisNFT struct {
 	TokenAddress      string      `json:"token_address"`
 	TokenID           string      `json:"token_id"`
 	Amount            string      `json:"amount"`
@@ -42,61 +50,53 @@ type MoralisNFT struct {
 	LastTokenURISync  time.Time   `json:"last_token_uri_sync"`
 	LastMetadataSync  time.Time   `json:"last_metadata_sync"`
 	MinterAddress     string      `json:"minter_address"`
-	NormalizedMetadata MoralisNFTMetadata `json:"normalized_metadata"`
+	NormalizedMetadata moralisNFTMetadata `json:"normalized_metadata"`
 	PossibleSpam      bool        `json:"possible_spam"`
 }
 
-type MoralisNFTResponse struct {
-	Total     *int    `json:"total"`
-	Page      int     `json:"page"`
-	PageSize  int     `json:"page_size"`
-	Cursor    string  `json:"cursor"`
-	Result    []MoralisNFT   `json:"result"`
-}
-
-///////////////////////////////////////////////////////////
-/////////////////// 					/////////////////// 
-/////////////////// 	   Alchemy		/////////////////// 
-/////////////////// 					/////////////////// 
-/////////////////////////////////////////////////////////// 
-type AlchemyNFTResponse struct {
-	OwnedNfts 		[]AlchemyNFT	`json:"ownedNfts"`
+///////////////////////////////////////////////////////////////////
+/////////////////// 							/////////////////// 
+///////////////////   Alchemy NFTs By Owner		/////////////////// 
+/////////////////// 							/////////////////// 
+///////////////////////////////////////////////////////////////////
+type AlchemyNFTsByOwnerResponse struct {
+	OwnedNfts 		[]alchemyNFT	`json:"ownedNfts"`
 	TotalCount		int				`json:"totalCount"`
 	BlockHash		string			`json:"blockHash"`
 }
 
-type AlchemyNFT struct {
-	Contract         AlContract         `json:"contract"`
-	ID               AlID               `json:"id"`
+type alchemyNFT struct {
+	Contract         alContract         `json:"contract"`
+	ID               alID               `json:"id"`
 	Balance          string           `json:"balance"`
 	Title            string           `json:"title"`
 	Description      string           `json:"description"`
-	TokenURI         AlTokenURI         `json:"tokenUri"`
-	Media            []AlMedia          `json:"media"`
-	Metadata         AlMetadata         `json:"metadata"`
+	TokenURI         alTokenURI         `json:"tokenUri"`
+	Media            []alMedia          `json:"media"`
+	Metadata         alMetadata         `json:"metadata"`
 	TimeLastUpdated  time.Time        `json:"timeLastUpdated"`
-	ContractMetadata AlContractMetadata `json:"contractMetadata"`
+	ContractMetadata alContractMetadata `json:"contractMetadata"`
 }
 
-type AlContract struct {
+type alContract struct {
 	Address string `json:"address"`
 }
 
-type AlID struct {
+type alID struct {
 	TokenID        string         	`json:"tokenId"`
-	TokenMetadata  AlTokenMetadata  `json:"tokenMetadata"`
+	TokenMetadata  alTokenMetadata  `json:"tokenMetadata"`
 }
 
-type AlTokenMetadata struct {
+type alTokenMetadata struct {
 	TokenType string `json:"tokenType"`
 }
 
-type AlTokenURI struct {
+type alTokenURI struct {
 	Gateway string `json:"gateway"`
 	Raw     string `json:"raw"`
 }
 
-type AlMedia struct {
+type alMedia struct {
 	Gateway   string `json:"gateway"`
 	Thumbnail string `json:"thumbnail"`
 	Raw       string `json:"raw"`
@@ -104,22 +104,87 @@ type AlMedia struct {
 	Bytes     int64  `json:"bytes"`
 }
 
-type AlMetadata struct {
+type alMetadata struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Image       string `json:"image"`
 	Audio       string `json:"audio"`
 }
 
-type AlContractMetadata struct {
+type alContractMetadata struct {
 	Name              string    	`json:"name"`
 	Symbol            string    	`json:"symbol"`
 	TokenType         string    	`json:"tokenType"`
 	ContractDeployer  string    	`json:"contractDeployer"`
 	DeployedBlockNumber int64   	`json:"deployedBlockNumber"`
-	OpenSea           AlOpenSea   	`json:"openSea"`
+	OpenSea           alOpenSea   	`json:"openSea"`
 }
 
-type AlOpenSea struct {
+type alOpenSea struct {
+	LastIngestedAt time.Time `json:"lastIngestedAt"`
+}
+
+
+///////////////////////////////////////////////////////////////////
+/////////////////// 							/////////////////// 
+///////////////////   Alchemy NFTs Metadata		/////////////////// 
+/////////////////// 							/////////////////// 
+///////////////////////////////////////////////////////////////////
+
+type AlchemyNftMetadataResponse struct {
+	Contract         alNftMetadataContract     `json:"contract"`
+	ID               alNftMetadataID           `json:"id"`
+	Title            string                     `json:"title"`
+	Description      string                     `json:"description"`
+	TokenURI         alNftMetadataTokenURI      `json:"tokenUri"`
+	Media            []alNftMetadataMedia       `json:"media"`
+	Metadata         alNftMetadataMetadata      `json:"metadata"`
+	TimeLastUpdated  time.Time                  `json:"timeLastUpdated"`
+	ContractMetadata alNftMetadataContractMeta  `json:"contractMetadata"`
+}
+
+type alNftMetadataContract struct {
+	Address string `json:"address"`
+}
+
+type alNftMetadataID struct {
+	TokenID       string                 `json:"tokenId"`
+	TokenMetadata alNftMetadataTokenMeta `json:"tokenMetadata"`
+}
+
+type alNftMetadataTokenMeta struct {
+	TokenType string `json:"tokenType"`
+}
+
+type alNftMetadataTokenURI struct {
+	Gateway string `json:"gateway"`
+	Raw     string `json:"raw"`
+}
+
+type alNftMetadataMedia struct {
+	Gateway   string `json:"gateway"`
+	Thumbnail string `json:"thumbnail"`
+	Raw       string `json:"raw"`
+	Format    string `json:"format"`
+	Bytes     int64  `json:"bytes"`
+}
+
+type alNftMetadataMetadata struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Image       string `json:"image"`
+	Audio       string `json:"audio"`
+}
+
+type alNftMetadataContractMeta struct {
+	Name              string                  `json:"name"`
+	Symbol            string                  `json:"symbol"`
+	TokenType         string                  `json:"tokenType"`
+	ContractDeployer  string                  `json:"contractDeployer"`
+	DeployedBlockNumber int64                 `json:"deployedBlockNumber"`
+	OpenSea           alNftMetadataOpenSea    `json:"openSea"`
+}
+
+type alNftMetadataOpenSea struct {
 	LastIngestedAt time.Time `json:"lastIngestedAt"`
 }
