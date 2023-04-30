@@ -8,16 +8,14 @@
 // @package
 package routers
 
-// @imports
 import (
 	"Syns/servers/syns-users-ms/controllers"
 
 	"github.com/gin-gonic/gin"
 )
 
-// @notice Method of UserController struct
-//
-// @dev Declares a list of endpoints
- func TokenRoutes(rg *gin.RouterGroup) {
-	rg.POST("/generate-access-token", controllers.GenerateAccessToken)
- }
+// @dev Declares list of endpoints
+func UtilsRouter (rg *gin.RouterGroup) {
+	rg.GET("/get-all-syns-tokens/:asset-contract", controllers.GetAllSynsTokens)
+	rg.GET("/get-nfts-owned-by/:owner-addr/:asset-contract", controllers.GetSynsTokensOwnedBy)
+}
