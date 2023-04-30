@@ -28,7 +28,7 @@ func FeedbackRouterConstructor(feedbackController *controllers.FeedbackControlle
 }
 
 
-// @notice Method of UserController struct
+// @notice Method of FeedbackRouter struct
 // 
 // @dev Declares a list of endpoints
 func (fr * FeedbackRouter) FeedbackRoutes(rg *gin.RouterGroup) {
