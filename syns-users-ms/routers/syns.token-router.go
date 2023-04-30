@@ -20,4 +20,5 @@ import (
 // @dev Declares a list of endpoints
  func TokenRoutes(rg *gin.RouterGroup) {
 	rg.POST("/generate-access-token", controllers.GenerateAccessToken)
+   rg.GET("/get-all-syns-tokens/:asset-contract", controllers.GetAllSyns721Tokens)
  }
