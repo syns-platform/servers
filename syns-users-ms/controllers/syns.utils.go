@@ -26,7 +26,7 @@ var (
 //
 // @dev Get all Syns tokens from blockchain
 //
-// @honor Moralis
+// @honor Moralis API
 //
 // @param gc *gin.Context
 func GetAllSynsTokens(gc *gin.Context) {
@@ -64,14 +64,44 @@ func GetSynsTokensOwnedBy(gc *gin.Context) {
 	url := ALCHEMY_BASE_URL+os.Getenv("ALCHEMY_API_KEY")+"/getNFTs?owner="+ownerAddr+"&contractAddresses[]="+assetContract+"&withMetadata=true&pageSize=100"
 
 	// prepare response object
-	resObject := &models.AlchemyNFTResponse{}
+	resObject := &models.AlchemyNFTsByOwnerResponse{}
 
 	// process http request
 	result := utils.DoHttp(url, "", "", resObject)
 
 	// convert result back to the correct model
-	NFTRes, _ := result.(*models.AlchemyNFTResponse)
+	NFTRes, _ := result.(*models.AlchemyNFTsByOwnerResponse)
 
 	// return this to client
 	gc.JSON(200, gin.H{"nfts": NFTRes.OwnedNfts})
+}
+
+
+// @route `GET/get-token-metadata/:asset-contract/:token-id/:token-type`
+// 
+// @dev Get token metadata based on asset contract and tokenId
+//
+// @honor Alchemy API
+//
+// @param gc *gin.Context
+func GetTokenMetadata(gc *gin.Context) {
+	// // prepare params
+	assetContract := gc.Param("asset-contract")
+	tokenId := gc.Param("token-id")
+	tokenType := gc.Param("token-type")
+
+	// prepare url
+	url := ALCHEMY_BASE_URL+os.Getenv("ALCHEMY_API_KEY")+"/getNFTMetadata?contractAddress="+assetContract+"&tokenId="+tokenId+"&tokenType="+tokenType+"&refreshCache=false"
+
+	// prepare response object
+	resObject := &models.AlchemyNftMetadataResponse{}
+
+	// process http request
+	result := utils.DoHttp(url, "", "", resObject)
+
+	// convert result back to the correct model
+	NFTRes, _ := result.(*models.AlchemyNftMetadataResponse)
+
+	// return this to client
+	gc.JSON(200,NFTRes)
 }
