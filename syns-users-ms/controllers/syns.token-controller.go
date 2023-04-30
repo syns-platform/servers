@@ -9,10 +9,7 @@
 package controllers
 
 import (
-	"Syns/servers/syns-users-ms/models"
 	"Syns/servers/syns-users-ms/utils"
-	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -79,32 +76,3 @@ func GenerateAccessToken(gc *gin.Context) {
 	gc.JSON(200, gin.H{"accessToken": accessToken})
 }
 
-// @route `GET/get-all-syns-tokens/:asset-contract`
-//
-// @dev Get all Syns 721 tokens from blockchain
-//
-// @param gc *gin.Context
-func GetAllSyns721Tokens(gc *gin.Context) {
-
-  assetContract := gc.Param("asset-contract")
-
-  url := "https://deep-index.moralis.io/api/v2/nft/"+assetContract+"?chain=mumbai&format=decimal&normalizeMetadata=true&media_items=false"
-
-  req, _ := http.NewRequest("GET", url, nil)
-
-  req.Header.Add("Accept", "application/json")
-  req.Header.Add("X-API-Key", os.Getenv("MORALIS_API_KEY"))
-
-  res, _ := http.DefaultClient.Do(req)
-
-  defer res.Body.Close()
-  body, _ := ioutil.ReadAll(res.Body)
-
-	NFTRes := &models.NFTResponse{}
-
-  // parse json from []byte to JSON
-  json.Unmarshal(body, NFTRes)
-
-	// return this to client
-  gc.JSON(200, gin.H{"nfts": NFTRes})
-}
