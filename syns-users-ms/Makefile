@@ -75,7 +75,7 @@ docker-dev-syns-users: docker-pull-syns-users docker-run-syns-users
 .PHONY: docker-clean
 docker-clean:
 	$(DOCKER_RM) $(SYNS_USER_MS_SERVER) $&
-	$(DOCKER_RMI) $(SYNS_USER_MS_IMAGE):$(SYNS_USER_MS_TAG)
+	$(DOCKER_RMI) $(SYNS_USER_MS_IMAGE)
 
 
 
