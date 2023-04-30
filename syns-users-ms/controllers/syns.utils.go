@@ -40,7 +40,7 @@ func GetAllSynsTokens(gc *gin.Context) {
 	// process http request
 	resObject = utils.DoHttp(url, "X-API-Key", os.Getenv("MORALIS_API_KEY"), &resObject)
 
-	// return this to client
+	// return to client
 	gc.JSON(200, gin.H{"nfts": resObject["result"]})
   }
 
@@ -65,7 +65,7 @@ func GetSynsTokensOwnedBy(gc *gin.Context) {
 	// process http request
 	resObject = utils.DoHttp(url, "", "", &resObject)
 
-	// return this to client
+	// return to client
 	gc.JSON(200, gin.H{"nfts": resObject["ownedNfts"]})
 }
 
@@ -92,6 +92,35 @@ func GetTokenMetadata(gc *gin.Context) {
 	// process http request
 	resObject = utils.DoHttp(url, "", "", &resObject)
 
-	// return this to client
-	gc.JSON(200,NFTRes)
+	// return to client
+	gc.JSON(200, resObject)
+}
+
+
+// @route `GET/get-owners-for-token/:asset-contract/:token-id`
+// 
+// @dev Get an object of current owner and original creator of a token
+//
+// @honor Moralis API
+//
+// @param gc *gin.Context
+func GetOwnersForToken(gc *gin.Context) {
+	// prepare params
+	assetContract := gc.Param("asset-contract")
+	tokenId := gc.Param("token-id")
+
+	// prepare url
+	url := MORALIS_BASE_URL+assetContract+"/"+tokenId+"/owners?chain=mumbai&format=decimal&normalizeMetadata=true&media_items=false"
+
+	// prepare response object
+	var resObject map[string]interface{}
+
+	// process http request
+	resObject = utils.DoHttp(url, "X-API-Key", os.Getenv("MORALIS_API_KEY"), &resObject)
+
+	// extract the result field
+	result := resObject["result"].([]interface{})[0].(map[string]interface{})
+
+	// return to client
+	gc.JSON(200, gin.H{"originalCreator": result["minter_address"], "currentOwner": result["owner_of"]})
 }
