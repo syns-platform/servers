@@ -9,7 +9,6 @@
 package controllers
 
 import (
-	"Syns/servers/syns-users-ms/models"
 	"Syns/servers/syns-users-ms/utils"
 	"os"
 
@@ -36,16 +35,13 @@ func GetAllSynsTokens(gc *gin.Context) {
 	url := MORALIS_BASE_URL+assetContract+"?chain=mumbai&format=decimal&normalizeMetadata=true&media_items=false"
   
 	// prepare response object
-	resObject := &models.MoralisNFTResponse{}
+	var resObject map[string]interface{}
 
 	// process http request
-	result := utils.DoHttp(url, "X-API-Key", os.Getenv("MORALIS_API_KEY"), resObject)
+	resObject = utils.DoHttp(url, "X-API-Key", os.Getenv("MORALIS_API_KEY"), &resObject)
 
-	// convert result back to the correct model
-	NFTRes, _ := result.(*models.MoralisNFTResponse)
-  
-	  // return this to client
-	gc.JSON(200, gin.H{"nfts": NFTRes.Result})
+	// return this to client
+	gc.JSON(200, gin.H{"nfts": resObject["result"]})
   }
 
 // @route `GET/get-nfts-owned-by/:owner-addr/:asset-contract`
@@ -64,16 +60,13 @@ func GetSynsTokensOwnedBy(gc *gin.Context) {
 	url := ALCHEMY_BASE_URL+os.Getenv("ALCHEMY_API_KEY")+"/getNFTs?owner="+ownerAddr+"&contractAddresses[]="+assetContract+"&withMetadata=true&pageSize=100"
 
 	// prepare response object
-	resObject := &models.AlchemyNFTsByOwnerResponse{}
+	var resObject map[string]interface{}
 
 	// process http request
-	result := utils.DoHttp(url, "", "", resObject)
-
-	// convert result back to the correct model
-	NFTRes, _ := result.(*models.AlchemyNFTsByOwnerResponse)
+	resObject = utils.DoHttp(url, "", "", &resObject)
 
 	// return this to client
-	gc.JSON(200, gin.H{"nfts": NFTRes.OwnedNfts})
+	gc.JSON(200, gin.H{"nfts": resObject["ownedNfts"]})
 }
 
 
@@ -85,7 +78,7 @@ func GetSynsTokensOwnedBy(gc *gin.Context) {
 //
 // @param gc *gin.Context
 func GetTokenMetadata(gc *gin.Context) {
-	// // prepare params
+	// prepare params
 	assetContract := gc.Param("asset-contract")
 	tokenId := gc.Param("token-id")
 	tokenType := gc.Param("token-type")
@@ -94,13 +87,10 @@ func GetTokenMetadata(gc *gin.Context) {
 	url := ALCHEMY_BASE_URL+os.Getenv("ALCHEMY_API_KEY")+"/getNFTMetadata?contractAddress="+assetContract+"&tokenId="+tokenId+"&tokenType="+tokenType+"&refreshCache=false"
 
 	// prepare response object
-	resObject := &models.AlchemyNftMetadataResponse{}
+	var resObject map[string]interface{}
 
 	// process http request
-	result := utils.DoHttp(url, "", "", resObject)
-
-	// convert result back to the correct model
-	NFTRes, _ := result.(*models.AlchemyNftMetadataResponse)
+	resObject = utils.DoHttp(url, "", "", &resObject)
 
 	// return this to client
 	gc.JSON(200,NFTRes)

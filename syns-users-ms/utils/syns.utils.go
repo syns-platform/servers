@@ -178,7 +178,7 @@ func EmailNotification(mode string, args interface{}) {
 // @param url string
 // 
 // @return body []byte
-func DoHttp(url string, apiKeyHeader string, apiKey string, resObject interface{}) (interface{}) {
+func DoHttp(url string, apiKeyHeader string, apiKey string, resObject *map[string]interface{}) (map[string]interface{}) {
 	// prepare request
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("accept", "application/json")
@@ -196,5 +196,5 @@ func DoHttp(url string, apiKeyHeader string, apiKey string, resObject interface{
 	// parse json from []byte to JSON
 	json.Unmarshal(body, resObject)
 
-	return resObject
+	return *resObject
 }
