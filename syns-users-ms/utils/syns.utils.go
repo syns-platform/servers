@@ -11,6 +11,7 @@ package utils
 // @import
 import (
 	"Syns/servers/syns-users-ms/models"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -177,7 +178,7 @@ func EmailNotification(mode string, args interface{}) {
 // @param url string
 // 
 // @return body []byte
-func DoHttp(url string, apiKeyHeader string, apiKey string) ([]byte) {
+func DoHttp(url string, apiKeyHeader string, apiKey string, resObject interface{}) (interface{}) {
 	// prepare request
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("accept", "application/json")
@@ -192,5 +193,8 @@ func DoHttp(url string, apiKeyHeader string, apiKey string) ([]byte) {
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
 
-	return body
+	// parse json from []byte to JSON
+	json.Unmarshal(body, resObject)
+
+	return resObject
 }

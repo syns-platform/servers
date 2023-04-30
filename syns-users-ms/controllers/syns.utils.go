@@ -11,7 +11,6 @@ package controllers
 import (
 	"Syns/servers/syns-users-ms/models"
 	"Syns/servers/syns-users-ms/utils"
-	"encoding/json"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -36,16 +35,17 @@ func GetAllSynsTokens(gc *gin.Context) {
   
 	url := MORALIS_BASE_URL+assetContract+"?chain=mumbai&format=decimal&normalizeMetadata=true&media_items=false"
   
-	body := utils.DoHttp(url, "X-API-Key", os.Getenv("MORALIS_API_KEY"))
-
 	// prepare response object
-	NFTRes := &models.MoralisNFTResponse{}
-  
-	// parse json from []byte to JSON
-	json.Unmarshal(body, NFTRes)
+	resObject := &models.MoralisNFTResponse{}
+
+	// process http request
+	result := utils.DoHttp(url, "X-API-Key", os.Getenv("MORALIS_API_KEY"), resObject)
+
+	// convert result back to the correct model
+	NFTRes, _ := result.(*models.MoralisNFTResponse)
   
 	  // return this to client
-	gc.JSON(200, gin.H{"nfts": NFTRes})
+	gc.JSON(200, gin.H{"nfts": NFTRes.Result})
   }
 
 // @route `GET/get-nfts-owned-by/:owner-addr/:asset-contract`
@@ -63,14 +63,14 @@ func GetSynsTokensOwnedBy(gc *gin.Context) {
 	// prepare url
 	url := ALCHEMY_BASE_URL+os.Getenv("ALCHEMY_API_KEY")+"/getNFTs?owner="+ownerAddr+"&contractAddresses[]="+assetContract+"&withMetadata=true&pageSize=100"
 
-	// process http request
-	body := utils.DoHttp(url, "", "")
-
 	// prepare response object
-	NFTRes := &models.AlchemyNFTResponse{}
+	resObject := &models.AlchemyNFTResponse{}
 
-	// parse json from []byte to JSON
-	json.Unmarshal(body, NFTRes)
+	// process http request
+	result := utils.DoHttp(url, "", "", resObject)
+
+	// convert result back to the correct model
+	NFTRes, _ := result.(*models.AlchemyNFTResponse)
 
 	// return this to client
 	gc.JSON(200, gin.H{"nfts": NFTRes.OwnedNfts})
