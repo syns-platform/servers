@@ -9,8 +9,12 @@
 package controllers
 
 import (
+	"Syns/servers/syns-users-ms/models"
 	"Syns/servers/syns-users-ms/utils"
 	"os"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -83,17 +87,52 @@ func GetTokenMetadata(gc *gin.Context) {
 	tokenId := gc.Param("token-id")
 	tokenType := gc.Param("token-type")
 
-	// prepare url
-	url := ALCHEMY_BASE_URL+os.Getenv("ALCHEMY_API_KEY")+"/getNFTMetadata?contractAddress="+assetContract+"&tokenId="+tokenId+"&tokenType="+tokenType+"&refreshCache=false"
+	// prepare urls
+	alchemyUrl := ALCHEMY_BASE_URL+os.Getenv("ALCHEMY_API_KEY")+"/getNFTMetadata?contractAddress="+assetContract+"&tokenId="+tokenId+"&tokenType="+tokenType+"&refreshCache=false"
+	moralisUrl := MORALIS_BASE_URL+assetContract+"/"+tokenId+"/?chain=mumbai&format=decimal&normalizeMetadata=true&media_items=false"
 
-	// prepare response object
-	var resObject map[string]interface{}
 
-	// process http request
-	resObject = utils.DoHttp(url, "", "", &resObject)
+	// prepare response objects
+	var alchemyResObject map[string]interface{}
+	var moralisResObject map[string]interface{}
+
+	// process http requests
+	alchemyResObject = utils.DoHttp(alchemyUrl, "", "", &alchemyResObject)
+	moralisResObject = utils.DoHttp(moralisUrl,"X-API-Key", os.Getenv("MORALIS_API_KEY"), &moralisResObject)
+
+	// prepare integer fields
+	tokenIdInt, _ := strconv.Atoi(tokenId)
+	quantityInt, _ := strconv.Atoi(moralisResObject["amount"].(string))
+	unixTime, _ := time.Parse("2006-01-02T15:04:05.000Z", moralisResObject["last_token_uri_sync"].(string))
+	ercType := "ERC-721"
+	if strings.Compare(tokenType, "ERC1155") == 0 {
+		ercType = "ERC-1155"
+	} 
+	
+	// prepare SynsNFT struct
+	SynsNFT := models.SynsNFT{
+		TokenID: tokenIdInt,
+		AssetContract: assetContract,
+		TokenOwner: moralisResObject["owner_of"].(string),
+		OriginalOwner: moralisResObject["minter_address"].(string),
+		TokenURI: alchemyResObject["tokenUri"].(map[string]interface{})["raw"].(string),
+		Image: strings.Replace(alchemyResObject["metadata"].(map[string]interface{})["image"].(string), "ipfs://", "https://cloudflare-ipfs.com/ipfs/",1),
+		Audio: strings.Replace(alchemyResObject["metadata"].(map[string]interface{})["audio"].(string), "ipfs://", "https://cloudflare-ipfs.com/ipfs/",1),
+		ERCType: ercType,
+		Quantity: quantityInt,
+		OriginalQuantity: quantityInt,
+		IsListing: false,
+		ListingID: -1,
+		RoyaltyBps: -1,
+		Name: alchemyResObject["metadata"].(map[string]interface{})["name"].(string),
+		Description: alchemyResObject["description"].(string),
+		Age: int(unixTime.Unix()),
+		SharableLink: os.Getenv("OFFICIAL_PLATOFORM_URL")+"/syns-token/"+assetContract+"/"+tokenId,
+	}
+
 
 	// return to client
-	gc.JSON(200, resObject)
+	gc.JSON(200, SynsNFT)
 }
 
 
