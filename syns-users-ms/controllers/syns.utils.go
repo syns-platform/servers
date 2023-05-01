@@ -13,9 +13,9 @@ import (
 	"Syns/servers/syns-users-ms/utils"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -45,17 +45,79 @@ func GetAllSynsTokens(gc *gin.Context) {
 	}
 
 	// prepare url
-	url := MORALIS_BASE_URL+assetContract+"?chain=mumbai&format=decimal&normalizeMetadata=true&media_items=false"
+	moralisUrl := MORALIS_BASE_URL+assetContract+"?chain=mumbai&format=decimal&normalizeMetadata=true&media_items=false"
+	alchemyUrl := ALCHEMY_BASE_URL+os.Getenv("ALCHEMY_API_KEY")+"/getNFTsForCollection?contractAddress="+assetContract+"&withMetadata=true"
   
 	// prepare response object
-	var resObject map[string]interface{}
+	var moralisResObject map[string]interface{}
+	var alchemyResObject map[string]interface{}
 
 	// process http request
-	resObject = utils.DoHttp(url, "X-API-Key", os.Getenv("MORALIS_API_KEY"), &resObject)
+	moralisResObject = utils.DoHttp(moralisUrl, "X-API-Key", os.Getenv("MORALIS_API_KEY"), &moralisResObject)
+	alchemyResObject = utils.DoHttp(alchemyUrl, "", "", &alchemyResObject)
+
+	// prepare list of nfts from both APIs
+	moralisNFTs := moralisResObject["result"].([]interface{})
+	alchemyNFTs := alchemyResObject["nfts"].([]interface{})
+
+	// sort the list of Nfts by token_id from largest to smallest
+	sort.Slice(moralisNFTs, func(i, j int) bool {
+		// access token_ids from elements
+		tokenId_i := moralisNFTs[i].(map[string]interface{})["token_id"].(string)
+		tokenId_j := moralisNFTs[j].(map[string]interface{})["token_id"].(string)
+
+		// convert token_ids to integer
+		tokenIdInt_i, _ := strconv.Atoi(tokenId_i)
+		tokenIdInt_j, _ := strconv.Atoi(tokenId_j)
+
+		// return sorting logic
+		return tokenIdInt_i < tokenIdInt_j
+	})
+
+	// prepare an array of Syns Tokens
+	var SynsNFTs []models.SynsNFT
+
+	// implement Syns Token logics
+	for i := 0; i < len(moralisNFTs); i ++ {
+		// prepare fields
+		tokenIdInt, _ := strconv.Atoi(moralisNFTs[i].(map[string]interface{})["token_id"].(string))
+		quantityInt, _ := strconv.Atoi(moralisNFTs[i].(map[string]interface{})["amount"].(string))
+		ercType := "ERC-721"
+		if strings.Compare(moralisNFTs[i].(map[string]interface{})["contract_type"].(string), "ERC1155") == 0 {
+			ercType = "ERC-1155"
+		}
+		
+		// prepare SynsNFT struct 
+		SynsNFT := models.SynsNFT{
+			TokenID: tokenIdInt,
+			AssetContract: assetContract,
+			TokenOwner: "0x0000000000000000000000000000000000000000",
+			OriginalOwner: moralisNFTs[i].(map[string]interface{})["minter_address"].(string),
+			TokenURI: alchemyNFTs[i].(map[string]interface{})["tokenUri"].(map[string]interface{})["raw"].(string),
+			Image: strings.Replace(alchemyNFTs[i].(map[string]interface{})["metadata"].(map[string]interface{})["image"].(string), "ipfs://", "https://cloudflare-ipfs.com/ipfs/",1),
+			Audio: strings.Replace(alchemyNFTs[i].(map[string]interface{})["metadata"].(map[string]interface{})["audio"].(string), "ipfs://", "https://cloudflare-ipfs.com/ipfs/",1),
+			ERCType: ercType,
+			Quantity: quantityInt,
+			OriginalQuantity: quantityInt,
+			IsListing: false,
+			ListingID: -1,
+			RoyaltyBps: -1,
+			Name: alchemyNFTs[i].(map[string]interface{})["metadata"].(map[string]interface{})["name"].(string),
+			Description: alchemyNFTs[i].(map[string]interface{})["description"].(string),
+			Age: 0, // for future, use Moralis Track NFT transfers API to calculate token block_timestamp if neccessary
+			SharableLink: os.Getenv("OFFICIAL_PLATOFORM_URL")+"/syns-token/"+assetContract+"/"+moralisNFTs[i].(map[string]interface{})["token_id"].(string),
+		}
+
+		// append new SynsNFT to SynsNFTs
+		SynsNFTs = append(SynsNFTs, SynsNFT)
+	}
+
+
+
 
 	// return to client
-	gc.JSON(200, gin.H{"nfts": resObject["result"], "error": nil})
-  }
+	gc.JSON(200, gin.H{"nfts": SynsNFTs, "error": nil})
+	}
 
 // @route `GET/get-nfts-owned-by/:owner-addr/:asset-contract`
 // 
@@ -135,10 +197,9 @@ func GetTokenMetadata(gc *gin.Context) {
 		{gc.AbortWithStatusJSON(http.StatusNotFound, gin.H{"SynsTokenMetadata": nil, "error": "No metadata found!"}); return;}
 	}
 
-	// prepare integer fields
+	// prepare fields
 	tokenIdInt, _ := strconv.Atoi(tokenId)
 	quantityInt, _ := strconv.Atoi(moralisResObject["amount"].(string))
-	unixTime, _ := time.Parse("2006-01-02T15:04:05.000Z", moralisResObject["last_token_uri_sync"].(string))
 	ercType := "ERC-721"
 	if strings.Compare(tokenType, "ERC1155") == 0 {
 		ercType = "ERC-1155"

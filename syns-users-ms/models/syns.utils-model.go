@@ -8,6 +8,7 @@
 // @package
 package models
 
+// @notice struct for Syns Token
 type SynsNFT struct {
 	TokenID          int       `json:"tokenId"`
 	AssetContract    string    `json:"assetContract"`
