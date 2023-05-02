@@ -16,6 +16,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -112,9 +113,6 @@ func GetAllSynsTokens(gc *gin.Context) {
 		SynsNFTs = append(SynsNFTs, SynsNFT)
 	}
 
-
-
-
 	// return to client
 	gc.JSON(200, gin.H{"nfts": SynsNFTs, "error": nil})
 	}
@@ -182,15 +180,17 @@ func GetTokenMetadata(gc *gin.Context) {
 	// prepare urls
 	alchemyUrl := ALCHEMY_BASE_URL+os.Getenv("ALCHEMY_API_KEY")+"/getNFTMetadata?contractAddress="+assetContract+"&tokenId="+tokenId+"&tokenType="+tokenType+"&refreshCache=false"
 	moralisUrl := MORALIS_BASE_URL+assetContract+"/"+tokenId+"/?chain=mumbai&format=decimal&normalizeMetadata=true&media_items=false"
-
+	moraliTransfersUrl := MORALIS_BASE_URL+assetContract+"/"+tokenId+"/transfers?chain=mumbai&format=decimal&normalizeMetadata=true&media_items=false"
 
 	// prepare response objects
 	var alchemyResObject map[string]interface{}
 	var moralisResObject map[string]interface{}
+	var moralisTransferResObject map[string]interface{}
 
 	// process http requests
 	alchemyResObject = utils.DoHttp(alchemyUrl, "", "", &alchemyResObject)
 	moralisResObject = utils.DoHttp(moralisUrl,"X-API-Key", os.Getenv("MORALIS_API_KEY"), &moralisResObject)
+	moralisTransferResObject = utils.DoHttp(moraliTransfersUrl,"X-API-Key", os.Getenv("MORALIS_API_KEY"), &moralisTransferResObject)
 
 	// make sure tokenID is a valid tokenID within the smart contract (i.e. check if alchemyResObject and moralisResObject returns non-empty metadata)
 	if moralisResObject["message"] != nil && strings.Contains(moralisResObject["message"].(string), "No metadata found!") {
@@ -204,6 +204,10 @@ func GetTokenMetadata(gc *gin.Context) {
 	if strings.Compare(tokenType, "ERC1155") == 0 {
 		ercType = "ERC-1155"
 	} 
+
+	// prepare token age
+	transferResultArray := moralisTransferResObject["result"].([]interface{})
+ 	tokenAge, _ := time.Parse("2006-01-02T15:04:05.000Z", transferResultArray[len(transferResultArray) - 1].(map[string]interface{})["block_timestamp"].(string))
 	
 	// prepare SynsNFT struct
 	SynsNFT := models.SynsNFT{
@@ -222,10 +226,9 @@ func GetTokenMetadata(gc *gin.Context) {
 		RoyaltyBps: -1,
 		Name: alchemyResObject["metadata"].(map[string]interface{})["name"].(string),
 		Description: alchemyResObject["description"].(string),
-		Age: int(unixTime.Unix()),
+		Age: int(tokenAge.Unix()),
 		SharableLink: os.Getenv("OFFICIAL_PLATOFORM_URL")+"/syns-token/"+assetContract+"/"+tokenId,
 	}
-
 
 	// return to client
 	gc.JSON(200, gin.H{"SynsTokenMetadata": SynsNFT, "error": nil})
@@ -265,7 +268,6 @@ func GetOwnersForToken(gc *gin.Context) {
 	if len(resObject["result"].([]interface{})) == 0 {
 		{gc.AbortWithStatusJSON(http.StatusNotFound, gin.H{"owners": nil, "error": "No metadata found!"}); return;}
 	}
-
 
 	// // extract the result field
 	result := resObject["result"].([]interface{})[0].(map[string]interface{})
