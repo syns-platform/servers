@@ -51,11 +51,13 @@ func init() {
 
 	// get userCollection
 	userCollection = db.GetMongoCollection(mongoClient, "users")
+
 	// get feedbackCollection
 	feedbackCollection = db.GetMongoCollection(mongoClient, "feedback")
 	
 	// init UserDao interface
 	ui := dao.UserDaoConstructor(ctx, userCollection)
+	
 	// init UserDao interface
 	fi := dao.FeedbackDaoConstructor(ctx, feedbackCollection)
 

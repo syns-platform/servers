@@ -48,7 +48,7 @@ func init() {
 	mongoClient = db.EstablishMongoClient(ctx)
 
 	// get synsTokenCollection
-	synsTokenCollection = db.GetMongoCollection(mongoClient, "SynsTokens")
+	synsTokenCollection = db.GetMongoCollection(mongoClient, "syns-token")
 
 	// init SynsTokenDao interface
 	ti := dao.SynsTokenDaoConstructor(ctx, synsTokenCollection)
