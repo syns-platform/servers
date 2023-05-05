@@ -11,6 +11,7 @@ package controllers
 import (
 	"Syns/servers/syns-tokens-ms/dao"
 	"Syns/servers/syns-tokens-ms/models"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -45,12 +46,20 @@ func (stc *SynsTokenController) MintNewSynsToken(gc *gin.Context) {
 		gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return;
 	}
 
+	// make sure tokenHash is an empty string for new SynsToken
+	if strings.Compare(param.TokenHash, "") != 0 {gc.AbortWithStatusJSON(400, gin.H{"error": "Invalid new Syns Token"}); return}
+
+	// check if assetContract is valid
+	if !strings.EqualFold(param.AssetContract, OFFICUAL_SYNS_721_SC_ADDR) && !strings.EqualFold(param.AssetContract, OFFICUAL_SYNS_1155_SC_ADDR) {
+		gc.AbortWithStatusJSON(400, gin.H{"error": "Invalid asset contract input"}); return
+	}
+
 	// struct validation
 	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return}
 
 	// invoke TokenDao.MintNewSynsToken() api
 	if databaseErr := stc.SynsTokenDao.MintNewSynsToken(param); databaseErr != nil {
-		gc.AbortWithStatusJSON(500, gin.H{"error": databaseErr.Error()})
+		gc.AbortWithStatusJSON(500, gin.H{"error": databaseErr.Error()}); return;
 	}
 
 	// response 200
