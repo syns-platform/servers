@@ -42,6 +42,9 @@ func SynsTokenDaoConstructor(ctx context.Context, mongoCollection *mongo.Collect
 // @return *models.SynsNFT
 // 
 // @return error
-func (st *SynsTokenDaoImpl) MintNewSynsToken(synsNFT *models.SynsNFT) (error) {
-	return nil
+func (sti *SynsTokenDaoImpl) MintNewSynsToken(synsNFT *models.SynsNFT) (error) {
+	// inject new Syns  Token to internal database
+	_, err := sti.mongoCollection.InsertOne(sti.ctx, synsNFT)
+
+	return err
 }
