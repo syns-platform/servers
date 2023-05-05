@@ -43,7 +43,7 @@ GOOGLE_CLOUD_DEPLOY_SCRIPT=gcloud run deploy $(SYNS_TOKEN_MS_SERVER) --source . 
 # dev-mode
 .phony: dev
 dev: 
-	@$(COMPILEDAEMON_PATH) -command="./$(SYNS_token_MS_SERVER)"
+	$(COMPILEDAEMON_PATH) -command="./$(SYNS_TOKEN_MS_SERVER)"
 
 # local run
 .phony: go-run

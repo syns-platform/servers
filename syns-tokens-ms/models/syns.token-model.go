@@ -10,6 +10,7 @@ package models
 
 // @notice struct for Syns Token
 type SynsNFT struct {
+	TokenHash		 string    `json:"token_hash" bson:"token_hash" validate:"omitempty"`
 	TokenID          int       `json:"tokenId" bson:"token_id" validate:"required,number"`
 	AssetContract    string    `json:"assetContract" bson:"asset_contract" validate:"required,eth_addr"`
 	TokenOwner       string    `json:"tokenOwner" bson:"token_owner" validate:"required,eth_addr"`
