@@ -21,5 +21,5 @@ type SynsTokenDao interface {
 	// @param synsNFT SynsNFT
 	// 
 	// @return error
-	MintNewSynsToken(synsNFT *models.SynsNFT) (error)
+	MintNewSynsToken(synsNFT *models.SuperSyns721NFT) (error)
 }

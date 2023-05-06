@@ -39,7 +39,7 @@ func SynsTokenControllerConstructor(synsTokenDao dao.SynsTokenDao) *SynsTokenCon
 // @param gc *gin.Context
 func (stc *SynsTokenController) MintNewSynsToken(gc *gin.Context) {
 	// declare param
-	var param *models.SynsNFT
+	var param *models.SuperSyns721NFT
 
 	// bind json post data to param
 	if err := gc.ShouldBindJSON(&param); err != nil {

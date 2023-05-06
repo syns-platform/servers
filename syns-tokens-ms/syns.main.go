@@ -73,7 +73,7 @@ func main() {
 	server.HandleMethodNotAllowed = true
 
 	// init basePath
-	tokenBasePath := server.Group("/v2/syns/token")
+	tokenBasePath := server.Group("/v2/syns/nfts/")
 
 	// init Handler
 	tr.TokenRouter(tokenBasePath)

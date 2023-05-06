@@ -43,10 +43,10 @@ func SynsTokenDaoConstructor(ctx context.Context, mongoCollection *mongo.Collect
 // 
 // @param walletAddress *string
 // 
-// @return *models.SynsNFT
+// @return *models.SuperSyns721NFT
 // 
 // @return error
-func (sti *SynsTokenDaoImpl) MintNewSynsToken(synsNFT *models.SynsNFT) (error) {
+func (sti *SynsTokenDaoImpl) MintNewSynsToken(synsNFT *models.SuperSyns721NFT) (error) {
 	// marshal synsNFT to byte slice
 	synsNFTBytes, _ := json.Marshal(synsNFT)
 
