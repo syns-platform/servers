@@ -13,8 +13,8 @@ import (
 	"Syns/servers/syns-tokens-ms/models"
 )
 
-// @notice SynsTokenDao interface
-type SynsTokenDao interface {
+// @notice Syns721TokenDao interface
+type Syns721TokenDao interface {
 
 	// @notice Add a new Syns Token to database
 	// 

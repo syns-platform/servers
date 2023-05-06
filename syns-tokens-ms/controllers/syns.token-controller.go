@@ -22,13 +22,13 @@ var validate = validator.New()
 
 // @notice Root struct for other methods in controller
 type SynsTokenController struct {
-	SynsTokenDao dao.SynsTokenDao
+	Syns721TokenDao dao.Syns721TokenDao
 }
 
 // @dev Constructor
-func SynsTokenControllerConstructor(synsTokenDao dao.SynsTokenDao) *SynsTokenController{
+func Syns721TokenControllerConstructor(Syns721TokenDao dao.Syns721TokenDao) *SynsTokenController{
 	return &SynsTokenController {
-		SynsTokenDao: synsTokenDao,
+		Syns721TokenDao: Syns721TokenDao,
 	}
 }
 
@@ -37,9 +37,9 @@ func SynsTokenControllerConstructor(synsTokenDao dao.SynsTokenDao) *SynsTokenCon
 // @dev handle injecting new syns token to database
 // 
 // @param gc *gin.Context
-func (stc *SynsTokenController) MintNewSynsToken(gc *gin.Context) {
+func (stc *SynsTokenController) MintNewSyns721Token(gc *gin.Context) {
 	// declare param
-	var param *models.SuperSyns721NFT
+	var param *models.Syns721SuperNFT
 
 	// bind json post data to param
 	if err := gc.ShouldBindJSON(&param); err != nil {
@@ -57,8 +57,8 @@ func (stc *SynsTokenController) MintNewSynsToken(gc *gin.Context) {
 	// struct validation
 	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(400, gin.H{"error": err.Error()}); return}
 
-	// invoke TokenDao.MintNewSynsToken() api
-	if databaseErr := stc.SynsTokenDao.MintNewSynsToken(param); databaseErr != nil {
+	// invoke TokenDao.MintNewSyns721Token() api
+	if databaseErr := stc.Syns721TokenDao.MintNewSyns721Token(param); databaseErr != nil {
 		gc.AbortWithStatusJSON(500, gin.H{"error": databaseErr.Error()}); return;
 	}
 

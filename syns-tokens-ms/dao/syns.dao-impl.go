@@ -22,7 +22,7 @@ import (
 )
 
 // @notice Root struct for other methods in dao-impl
-type SynsTokenDaoImpl struct {
+type Syns721TokenDaoImpl struct {
 	ctx 			context.Context
 	mongoCollection		*mongo.Collection
 }
@@ -30,23 +30,23 @@ type SynsTokenDaoImpl struct {
 
 
 // @dev Syns Token Constructor
-func SynsTokenDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) SynsTokenDao {
-	return &SynsTokenDaoImpl{
+func Syns721TokenDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) Syns721TokenDao {
+	return &Syns721TokenDaoImpl{
 		ctx: ctx,
 		mongoCollection: mongoCollection,
 	}
 }
 
-// @notice Method of SynsTokenDaoImpl struct
+// @notice Method of Syns721TokenDaoImpl struct
 // 
 // @dev Add token
 // 
 // @param walletAddress *string
 // 
-// @return *models.SuperSyns721NFT
+// @return *models.Syns721SuperNFT
 // 
 // @return error
-func (sti *SynsTokenDaoImpl) MintNewSynsToken(synsNFT *models.SuperSyns721NFT) (error) {
+func (sti *Syns721TokenDaoImpl) MintNewSyns721Token(synsNFT *models.Syns721SuperNFT) (error) {
 	// marshal synsNFT to byte slice
 	synsNFTBytes, _ := json.Marshal(synsNFT)
 

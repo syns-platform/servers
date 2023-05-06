@@ -30,7 +30,7 @@ type SynsNFT struct {
 }
 
 // @notice struct for Syns Token
-type SuperSyns721NFT struct {
+type Syns721SuperNFT struct {
 	TokenHash		 string    `json:"token_hash" bson:"token_hash" validate:"omitempty"`
 	TokenID          int       `json:"tokenId" bson:"token_id" validate:"omitempty,number"`
 	AssetContract    string    `json:"assetContract" bson:"asset_contract" validate:"required,eth_addr"`

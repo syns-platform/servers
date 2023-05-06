@@ -26,7 +26,7 @@ var (
 	server			*gin.Engine
 	ctx			context.Context
 	mongoClient		*mongo.Client
-	synsTokenCollection		*mongo.Collection
+	syns721TokenCollection		*mongo.Collection
 	tr 			*routers.SynsTokenkRouter
 )
 
@@ -48,13 +48,13 @@ func init() {
 	mongoClient = db.EstablishMongoClient(ctx)
 
 	// get synsTokenCollection
-	synsTokenCollection = db.GetMongoCollection(mongoClient, "syns-token")
+	syns721TokenCollection = db.GetMongoCollection(mongoClient, "syns-721-tokens")
 
-	// init SynsTokenDao interface
-	ti := dao.SynsTokenDaoConstructor(ctx, synsTokenCollection)
+	// init Syns721TokenDao interface
+	ti := dao.Syns721TokenDaoConstructor(ctx, syns721TokenCollection)
 	
 	// init SynsTokenController
-	tc := controllers.SynsTokenControllerConstructor(ti)
+	tc := controllers.Syns721TokenControllerConstructor(ti)
 
 	// init SynsTokenRouter
 	tr = routers.SynsTokenRouterConstructor(tc)
@@ -73,10 +73,10 @@ func main() {
 	server.HandleMethodNotAllowed = true
 
 	// init basePath
-	tokenBasePath := server.Group("/v2/syns/nfts/")
+	tokenBasePath := server.Group("/v2/syns/nfts/721/")
 
 	// init Handler
-	tr.TokenRouter(tokenBasePath)
+	tr.Syns721TokenRouter(tokenBasePath)
 
 	// run server
 	if (os.Getenv("GIN_MODE") != "release") {
