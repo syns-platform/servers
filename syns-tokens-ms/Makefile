@@ -5,7 +5,7 @@ COMPILEDAEMON_PATH=~/go/bin/CompileDaemon # CompileDaemon for hot reload
 SYNS_TOKEN_MS_SERVER=syns-tokens-ms
 SYNS_TOKEN_PORT=41106
 SYNS_TOKEN_MS_TAG=3.0
-SYNS_TOKEN_MS_IMAGE=$(DOCKER_USERNAME)/$(SYNS_USER_MS_SERVER):$(SYNS_USER_MS_TAG)
+SYNS_TOKEN_MS_IMAGE=$(DOCKER_USERNAME)/$(SYNS_TOKEN_MS_SERVER):$(SYNS_TOKEN_MS_TAG)
 DOCKER_USERNAME=synsplatform
 DOCKER_RMI=docker rmi -f
 DOCKER_RM=docker rm -f
@@ -87,6 +87,5 @@ gcloud-build:
 
 gcloud-deploy: gcloud-build
 	$(GOOGLE_CLOUD_DEPLOY_SCRIPT)
-
 
 update-remote-image-docker-gcloud: docker-update-remote-image gcloud-deploy
