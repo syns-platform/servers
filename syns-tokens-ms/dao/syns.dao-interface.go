@@ -21,5 +21,13 @@ type Syns721TokenDao interface {
 	// @param synsNFT SynsNFT
 	// 
 	// @return error
-	MintNewSynsToken(synsNFT *models.SuperSyns721NFT) (error)
+	MintNewSyns721Token(synsNFT *models.Syns721SuperNFT) (error)
+
+
+	// @notice Get all Syns 721 Super Token
+	// 
+	// @param synsNFT SynsNFT
+	// 
+	// @return error
+	GetAllSyns721SuperTokens() (*[]models.Syns721SuperNFT, error)
 }

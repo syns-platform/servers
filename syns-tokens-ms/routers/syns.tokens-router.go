@@ -28,8 +28,9 @@ type SynsTokenkRouter struct {
  }
 
 // @dev Declares list of endpoints
-	rg.POST("/store-new-minted-token", middleware.AuthenticateSynsAPIKey(), str.SynsTokenController.MintNewSynsToken)
 func (str *SynsTokenkRouter) Syns721TokenRouter (rg *gin.RouterGroup) {
+	rg.POST("/store-new-minted-token", middleware.AuthenticateSynsAPIKey(), str.SynsTokenController.MintNewSyns721Token)
+	rg.GET("/get-all-syns-721-super-tokens", str.SynsTokenController.GetAllSyns721SuperTokens)
 
 	// Utils APIs
 	rg.GET("/get-all-syns-tokens/utils/:asset-contract", controllers.GetAllSynsTokens)

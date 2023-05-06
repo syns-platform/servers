@@ -71,3 +71,24 @@ func (sti *Syns721TokenDaoImpl) MintNewSyns721Token(synsNFT *models.Syns721Super
 		return errors.New("duplicated token")
 	}
 }
+
+
+// @notice Get all Syns 721 Super Token
+// 
+// @param synsNFT SynsNFT
+// 
+// @return error
+func (sti *Syns721TokenDaoImpl) GetAllSyns721SuperTokens() (*[]models.Syns721SuperNFT, error) {
+	// prepare tokens placeholder
+	var syns721SuperTokens []models.Syns721SuperNFT
+
+	// fetch all tokens in database
+	cursor, err := sti.mongoCollection.Find(sti.ctx, bson.D{})
+	if err != nil {return nil, err}
+
+	// decode cursor into declared token placeholder
+	if err = cursor.All(sti.ctx, &syns721SuperTokens); err != nil {return nil, err}
+
+	// return OK
+	return &syns721SuperTokens, nil
+}
