@@ -87,13 +87,11 @@ func main() {
 	userBasePath := server.Group("/v2/syns/user")
 	tokenBasePath := server.Group("/v2/syns/token")
 	feedbackBasePath := server.Group("/v2/syns/feedback/")
-	utilsBasePath := server.Group("/v2/syns/utils/")
 
 	// init Handler
 	ur.UserRoutes(userBasePath)
 	fr.FeedbackRoutes(feedbackBasePath)
 	routers.TokenRoutes(tokenBasePath)
-	routers.UtilsRouter(utilsBasePath)
 
 	// run server
 	if (os.Getenv("GIN_MODE") != "release") {

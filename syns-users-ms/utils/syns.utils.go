@@ -11,12 +11,9 @@ package utils
 // @import
 import (
 	"Syns/servers/syns-users-ms/models"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math/rand"
-	"net/http"
 	"net/smtp"
 	"os"
 	"regexp"
@@ -173,28 +170,3 @@ func EmailNotification(mode string, args interface{}) {
 	}
 }
 
-// @dev do http request
-// 
-// @param url string
-// 
-// @return body []byte
-func DoHttp(url string, apiKeyHeader string, apiKey string, resObject *map[string]interface{}) (map[string]interface{}) {
-	// prepare request
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("accept", "application/json")
-	if strings.Compare(apiKeyHeader, "") != 0 || strings.Compare(apiKey, "") != 0 {
-		req.Header.Add(apiKeyHeader, apiKey)
-	}
-
-	// ship request
-	res, _ := http.DefaultClient.Do(req)
-
-	// close request and prepare body
-	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
-
-	// parse json from []byte to JSON
-	json.Unmarshal(body, resObject)
-
-	return *resObject
-}
