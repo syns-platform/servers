@@ -66,15 +66,31 @@ func (stc *SynsTokenController) MintNewSyns721Token(gc *gin.Context) {
 	gc.JSON(200, gin.H{"error": nil})
 }
 
-
 // @route `GET/fetch-all-syns-721-super-tokens`
 // 
-// @dev handle fetching all users from backend
+// @dev handle fetching all tokens from backend
 // 
 // @param gc *gin.Context
 func (stc *SynsTokenController) GetAllSyns721SuperTokens(gc *gin.Context) {
-	// invokle GetAllSyns721SuperTokens method
+	// invokle GetAllSyns721SuperTokens dao method
 	syns721SuperTokens, err := stc.Syns721TokenDao.GetAllSyns721SuperTokens()
+	if err != nil {gc.AbortWithStatusJSON(500, gin.H{"syns721SuperTokens": nil, "error": err.Error()}); return}
+
+	// httpo response
+	gc.JSON(200, gin.H{"syns721SuperTokens": syns721SuperTokens, "error": nil})
+}
+
+// @route `GET/fetch-syns-721-super-tokens-owned-by/:token-owner`
+// 
+// @dev handle fetching all syns 721 super tokens owned by `token_owner` from backend
+// 
+// @param gc *gin.Context
+func (stc *SynsTokenController) GetAllSyns721SuperTokensOwnedBy(gc *gin.Context) {
+	// prepare param
+	tokenOwner := gc.Param("token-owner")
+
+	// invokle GetAllSyns721SuperTokensOwnedBy dao method
+	syns721SuperTokens, err := stc.Syns721TokenDao.GetAllSyns721SuperTokensOwnedBy(tokenOwner)
 	if err != nil {gc.AbortWithStatusJSON(500, gin.H{"syns721SuperTokens": nil, "error": err.Error()}); return}
 
 	// httpo response

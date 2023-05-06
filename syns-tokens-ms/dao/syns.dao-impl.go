@@ -72,10 +72,9 @@ func (sti *Syns721TokenDaoImpl) MintNewSyns721Token(synsNFT *models.Syns721Super
 	}
 }
 
-
 // @notice Get all Syns 721 Super Token
 // 
-// @param synsNFT SynsNFT
+// @return *[]models.Syns721SuperNFT
 // 
 // @return error
 func (sti *Syns721TokenDaoImpl) GetAllSyns721SuperTokens() (*[]models.Syns721SuperNFT, error) {
@@ -83,11 +82,36 @@ func (sti *Syns721TokenDaoImpl) GetAllSyns721SuperTokens() (*[]models.Syns721Sup
 	var syns721SuperTokens []models.Syns721SuperNFT
 
 	// fetch all tokens in database
-	cursor, err := sti.mongoCollection.Find(sti.ctx, bson.D{})
-	if err != nil {return nil, err}
+	cursor, dbRes := sti.mongoCollection.Find(sti.ctx, bson.D{})
+	if dbRes != nil {return nil, dbRes}
 
 	// decode cursor into declared token placeholder
-	if err = cursor.All(sti.ctx, &syns721SuperTokens); err != nil {return nil, err}
+	if decodedErr := cursor.All(sti.ctx, &syns721SuperTokens); decodedErr != nil {return nil, decodedErr}
+
+	// return OK
+	return &syns721SuperTokens, nil
+}
+
+// @notice Get all Syns 721 Super Token owned by an address
+// 
+// @param tokenOwner string
+// 
+// @return *[]models.Syns721SuperNFT
+// 
+// @return error
+func (sti *Syns721TokenDaoImpl) GetAllSyns721SuperTokensOwnedBy(tokenOwner string) (*[]models.Syns721SuperNFT, error) {
+	// prepare tokens placeholder
+	var syns721SuperTokens []models.Syns721SuperNFT
+
+	// prepare find query
+	query := bson.D{{Key: "token_owner", Value: strings.ToLower(tokenOwner)}}
+
+	// find tokens owned my tokenOwner
+	cursor, dbRes := sti.mongoCollection.Find(sti.ctx, query); 
+	if dbRes != nil {return nil, dbRes}
+
+	// decode cursor to the placeholder
+	if decodedErr := cursor.All(sti.ctx, &syns721SuperTokens); decodedErr != nil {return nil, decodedErr}
 
 	// return OK
 	return &syns721SuperTokens, nil

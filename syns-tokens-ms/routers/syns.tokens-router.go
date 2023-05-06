@@ -31,6 +31,7 @@ type SynsTokenkRouter struct {
 func (str *SynsTokenkRouter) Syns721TokenRouter (rg *gin.RouterGroup) {
 	rg.POST("/store-new-minted-token", middleware.AuthenticateSynsAPIKey(), str.SynsTokenController.MintNewSyns721Token)
 	rg.GET("/get-all-syns-721-super-tokens", str.SynsTokenController.GetAllSyns721SuperTokens)
+	rg.GET("/fetch-syns-721-super-tokens-owned-by/:token-owner", str.SynsTokenController.GetAllSyns721SuperTokensOwnedBy)
 
 	// Utils APIs
 	rg.GET("/get-all-syns-tokens/utils/:asset-contract", controllers.GetAllSynsTokens)

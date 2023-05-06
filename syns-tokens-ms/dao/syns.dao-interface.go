@@ -18,16 +18,24 @@ type Syns721TokenDao interface {
 
 	// @notice Add a new Syns Token to database
 	// 
-	// @param synsNFT SynsNFT
+	// @param synsNFT *models.Syns721SuperNFT
 	// 
 	// @return error
 	MintNewSyns721Token(synsNFT *models.Syns721SuperNFT) (error)
 
-
 	// @notice Get all Syns 721 Super Token
 	// 
-	// @param synsNFT SynsNFT
+	// @return *[]models.Syns721SuperNFT
 	// 
 	// @return error
 	GetAllSyns721SuperTokens() (*[]models.Syns721SuperNFT, error)
+
+	// @notice Get all Syns 721 Super Token owned by an address
+	// 
+	// @param tokenOwner string
+	// 
+	// @return *[]models.Syns721SuperNFT
+	// 
+	// @return error
+	GetAllSyns721SuperTokensOwnedBy(tokenOwner string) (*[]models.Syns721SuperNFT, error)
 }
