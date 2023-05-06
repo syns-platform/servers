@@ -9,11 +9,11 @@
 package main
 
 import (
-	"Syns/servers/syns-users-ms/controllers"
-	"Syns/servers/syns-users-ms/dao"
-	"Syns/servers/syns-users-ms/db"
-	"Syns/servers/syns-users-ms/routers"
-	"Syns/servers/syns-users-ms/utils"
+	"Syns/servers/syns-tokens-ms/controllers"
+	"Syns/servers/syns-tokens-ms/dao"
+	"Syns/servers/syns-tokens-ms/db"
+	"Syns/servers/syns-tokens-ms/routers"
+	"Syns/servers/syns-tokens-ms/utils"
 	"context"
 	"os"
 
@@ -26,10 +26,8 @@ var (
 	server			*gin.Engine
 	ctx			context.Context
 	mongoClient		*mongo.Client
-	userCollection		*mongo.Collection
-	feedbackCollection	*mongo.Collection
-	ur 			*routers.UserRouter
-	fr 			*routers.FeedbackRouter
+	synsTokenCollection		*mongo.Collection
+	tr 			*routers.SynsTokenkRouter
 )
 
 // @dev Runs before main()
@@ -49,27 +47,18 @@ func init() {
 	// init mongo client
 	mongoClient = db.EstablishMongoClient(ctx)
 
-	// get userCollection
-	userCollection = db.GetMongoCollection(mongoClient, "users")
+	// get synsTokenCollection
+	synsTokenCollection = db.GetMongoCollection(mongoClient, "syns-token")
 
-	// get feedbackCollection
-	feedbackCollection = db.GetMongoCollection(mongoClient, "feedback")
+	// init SynsTokenDao interface
+	ti := dao.SynsTokenDaoConstructor(ctx, synsTokenCollection)
 	
-	// init UserDao interface
-	ui := dao.UserDaoConstructor(ctx, userCollection)
+	// init SynsTokenController
+	tc := controllers.SynsTokenControllerConstructor(ti)
+
+	// init SynsTokenRouter
+	tr = routers.SynsTokenRouterConstructor(tc)
 	
-	// init UserDao interface
-	fi := dao.FeedbackDaoConstructor(ctx, feedbackCollection)
-
-	// init UserController
-	uc := controllers.UserControllerConstructor(ui)
-	// init UserController
-	fc := controllers.FeedbackControllerConstructor(fi)
-
-	// init UserRouter
-	ur = routers.UserRouterConstructor(uc)
-	// init UserRouter
-	fr = routers.FeedbackRouterConstructor(fc)
 }
 
 // @dev Root function
@@ -84,16 +73,10 @@ func main() {
 	server.HandleMethodNotAllowed = true
 
 	// init basePath
-	userBasePath := server.Group("/v2/syns/user")
-	tokenBasePath := server.Group("/v2/syns/token")
-	feedbackBasePath := server.Group("/v2/syns/feedback/")
-	utilsBasePath := server.Group("/v2/syns/utils/")
+	tokenBasePath := server.Group("/v2/syns/nfts/")
 
 	// init Handler
-	ur.UserRoutes(userBasePath)
-	fr.FeedbackRoutes(feedbackBasePath)
-	routers.TokenRoutes(tokenBasePath)
-	routers.UtilsRouter(utilsBasePath)
+	tr.TokenRouter(tokenBasePath)
 
 	// run server
 	if (os.Getenv("GIN_MODE") != "release") {

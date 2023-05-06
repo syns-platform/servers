@@ -47,7 +47,6 @@ func Authenticate() gin.HandlerFunc {
             token, err := jwt.ParseWithClaims(accessToken, &SynsClaims{}, func(token *jwt.Token) (interface{}, error) {
                return []byte(os.Getenv("JWT_SECRET_KEY")), nil
             })
-
             
             
             // Implement authenticating logic
