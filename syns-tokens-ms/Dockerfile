@@ -26,5 +26,8 @@ WORKDIR /syns-tokens-ms
 ## Copy the executable binary file and .env file from the last stage to the new stage
 COPY --from=builder /syns-tokens-ms/syns-tokens .
 
+## Copy contract-artifacts folder to new stage
+COPY --from=builder /syns-tokens-ms/contract-artifacts ./contract-artifacts
+
 # Execute the build
 CMD ["./syns-tokens"]
