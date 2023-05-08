@@ -17,7 +17,6 @@ import (
 	"fmt"
 	"log"
 	"math/big"
-	"strconv"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -76,10 +75,10 @@ func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Clien
 				minterAddr := common.HexToAddress(eventLog.Topics[1].Hex())
 
 				// prepare tokenId
-				tokenId, _ := strconv.ParseInt(eventLog.Topics[2].Hex(), 0, 64)
+				tokenId := eventLog.Topics[2]
 
 				// prepare royaltyBps
-				royaltyBps, _ := strconv.ParseInt(eventLog.Topics[3].Hex(), 0, 64)
+				royaltyBps := uint8(eventLog.Topics[3].Big().Uint64())
 
 				// prepare tokenAge
 				blockerHeader, _ := client.BlockByNumber(context.Background(), big.NewInt(0).SetUint64(eventLog.BlockNumber))
@@ -91,10 +90,12 @@ func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Clien
 				tokenUri := decoded[0].(string)
 
 				// prepare new Syns 721 super token
-				synsSuperToken := onchain.PrepareNewMintedSyns721SuperNFT(minterAddr.Hex(), tokenUri, int(tokenId), int(royaltyBps), tokenAge())
+				synsSuperToken := onchain.PrepareNewMintedSyns721SuperNFT(minterAddr.Hex(), tokenUri, tokenId, royaltyBps, tokenAge())
+
+				fmt.Println(synsSuperToken)
 
 				// add new token to database
-				sto.Syns721TokenDao.MintNewSyns721Token(synsSuperToken)
+				// sto.Syns721TokenDao.MintNewSyns721Token(synsSuperToken)
 			}
 		}
 	}()

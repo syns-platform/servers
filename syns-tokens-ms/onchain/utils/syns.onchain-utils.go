@@ -14,8 +14,8 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"math"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/ethereum/go-ethereum"
@@ -84,7 +84,7 @@ func ListenToOnChainEvent (client *ethclient.Client, abi abi.ABI, eventName, con
 // @param tokenId string
 // 
 // @param royaltyBps string
-func PrepareNewMintedSyns721SuperNFT(minterAddress, tokenURI string, tokenId, royaltyBps int, tokenAge uint64) (synsSuperToken *models.Syns721SuperNFT) {
+func PrepareNewMintedSyns721SuperNFT(minterAddress, tokenURI string, tokenId common.Hash, royaltyBps uint8, tokenAge uint64) (synsSuperToken *models.Syns721SuperNFT) {
 	// prepare urls
 	tokenUriCloudfareUrl := strings.Replace(tokenURI, "ipfs://", "https://cloudflare-ipfs.com/ipfs/",1)
 
@@ -96,7 +96,7 @@ func PrepareNewMintedSyns721SuperNFT(minterAddress, tokenURI string, tokenId, ro
 
 	// prepare SynsNFT struct
 	synsSuperToken = &models.Syns721SuperNFT{
-		TokenID: tokenId,
+		TokenID: tokenId.Big().Uint64(),
 		AssetContract: OFFICIAL_SYNS_721_SC_ADDR,
 		TokenOwner: minterAddress,
 		OriginalOwner: minterAddress,
@@ -106,15 +106,15 @@ func PrepareNewMintedSyns721SuperNFT(minterAddress, tokenURI string, tokenId, ro
 		ERCType: "ERC-721",
 		Quantity: 1,
 		IsListing: false,
-		ListingID: -1,
+		ListingID: math.MaxUint64,
 		RoyaltyBps: royaltyBps,
 		Name: tokenUriObj["name"].(string),
 		Description: tokenUriObj["description"].(string),
 		Age: tokenAge,
-		SharableLink: os.Getenv("OFFICIAL_PLATOFORM_URL")+"/syns-token/"+OFFICIAL_SYNS_721_SC_ADDR+"/"+strconv.Itoa(tokenId),
+		SharableLink: os.Getenv("OFFICIAL_PLATOFORM_URL")+"/syns-token/"+OFFICIAL_SYNS_721_SC_ADDR+"/"+tokenId.Big().String(),
 		Lister: minterAddress,
-		StartSale: 99999999999,
-		EndSale: 99999999999,
+		StartSale: 0,
+		EndSale: 0,
 		Currency: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
 		BuyouPricePerToken: "0",
 	}

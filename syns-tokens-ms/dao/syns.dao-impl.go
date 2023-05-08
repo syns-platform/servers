@@ -14,6 +14,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"math"
 	"math/big"
 	"strings"
 
@@ -109,10 +110,10 @@ func (sti *Syns721TokenDaoImpl) UpdatedSyns721SuperTokenBySynsListing(synsListin
 	// update listing information in syns721SuperToken
 	if (strings.Compare(eventName, "ListingAdded") == 0) {
 		syns721SuperToken.IsListing = true
-		syns721SuperToken.ListingID = int(synsListing.ListingId.Int64())
+		syns721SuperToken.ListingID = synsListing.ListingId.Uint64()
 	} else if (strings.Compare(eventName, "ListingRemoved") == 0) {
 		syns721SuperToken.IsListing = false
-		syns721SuperToken.ListingID = -1
+		syns721SuperToken.ListingID = math.MaxUint64
 	}
 	syns721SuperToken.Lister = synsListing.TokenOwner.Hex()
 	syns721SuperToken.StartSale = synsListing.StartSale.Uint64()
