@@ -16,12 +16,21 @@ import (
 // @notice Syns721TokenDao interface
 type Syns721TokenDao interface {
 
-	// @notice Add a new Syns Token to database
+	// @notice Add a new Syns 721 Super Token to database
 	// 
 	// @param synsNFT *models.Syns721SuperNFT
 	// 
 	// @return error
 	MintNewSyns721Token(synsNFT *models.Syns721SuperNFT) (error)
+
+	// @notice Update Syns 721 Super Token using Syns Listing from Syns Marketplace
+	// 
+	// @param synsListing models.SynsMarketplaceListing
+	// 
+	// @param eventName string
+	// 
+	// @return error
+	UpdatedSyns721SuperTokenBySynsListing(synsListing *models.SynsMarketplaceListing, eventName string) (error)
 
 	// @notice Get all Syns 721 Super Token
 	// 
