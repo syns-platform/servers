@@ -8,6 +8,12 @@
 // @package
 package models
 
+import (
+	"math/big"
+
+	"github.com/ethereum/go-ethereum/common"
+)
+
 // @notice struct for Syns Token
 type SynsNFT struct {
 	TokenID          int       `json:"tokenId" bson:"token_id" validate:"required,number"`
@@ -50,7 +56,22 @@ type Syns721SuperNFT struct {
 	SharableLink     string    `json:"sharableLink" bson:"sharable_link" validate:"required"`
 	Lister			 string	   `json:"lister" bson:"lister" validate:"required,eth_addr"`
 	StartSale		 uint64	   `json:"startSale" bson:"start_sale" validate:"omitempty,number"`
-	EndSale			 uint64	   `json:"endSale" bson:"end_sale" validate:"required,number"`
+	EndSale			 int64	   `json:"endSale" bson:"end_sale" validate:"required,number"`
 	Currency		 string	   `json:"currency" bson:"currency" validate:"required,eth_addr"`
 	BuyouPricePerToken	string	   `json:"buyoutPricePerToken" bson:"buyout_price_per_token" validate:"omitempty"`
+}
+
+
+// @notice struct for Syns Listing
+type SynsMarketplaceListing struct {
+	ListingId           *big.Int        `json:"listingId"`
+	TokenOwner          common.Address `json:"tokenOwner"`
+	AssetContract       common.Address `json:"assetContract"`
+	TokenId             *big.Int        `json:"tokenId"`
+	StartSale           *big.Int        `json:"startSale"`
+	EndSale             *big.Int        `json:"endSale"`
+	Quantity            *big.Int        `json:"quantity"`
+	Currency            common.Address `json:"currency"`
+	BuyoutPricePerToken *big.Int        `json:"buyoutPricePerToken"`
+	TokenType           uint8           `json:"tokenType"`
 }
