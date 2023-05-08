@@ -138,3 +138,23 @@ func DoHttp(url string, apiKeyHeader string, apiKey string, resObject *map[strin
 
 	return *resObject
 }
+
+// @dev hanle reading file from disk
+// 
+// @param relativePath string
+// 
+// @return map[string]interface{}
+func HandleReadFile(relativePath string) map[string]interface{} {
+	// Read file
+	readFile, err := ioutil.ReadFile(relativePath);
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Unmarshal the JSON data to extract the contract ABI
+	var jsonifyFile map[string]interface{}
+	json.Unmarshal(readFile, &jsonifyFile)
+
+	// return 
+	return jsonifyFile
+}

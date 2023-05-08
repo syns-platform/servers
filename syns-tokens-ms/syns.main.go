@@ -12,11 +12,13 @@ import (
 	"Syns/servers/syns-tokens-ms/controllers"
 	"Syns/servers/syns-tokens-ms/dao"
 	"Syns/servers/syns-tokens-ms/db"
+	"Syns/servers/syns-tokens-ms/onchain"
 	"Syns/servers/syns-tokens-ms/routers"
 	"Syns/servers/syns-tokens-ms/utils"
 	"context"
 	"os"
 
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -28,6 +30,8 @@ var (
 	mongoClient		*mongo.Client
 	syns721TokenCollection		*mongo.Collection
 	tr 			*routers.SynsTokenkRouter
+	to			*onchain.SynsTokenOnchain
+	client		*ethclient.Client
 )
 
 // @dev Runs before main()
@@ -56,8 +60,14 @@ func init() {
 	// init SynsTokenController
 	tc := controllers.Syns721TokenControllerConstructor(ti)
 
+	// init Syns721TokenOnchainConstructor
+	to = onchain.Syns721TokenOnchainConstructor(ti)
+
 	// init SynsTokenRouter
 	tr = routers.SynsTokenRouterConstructor(tc)
+
+	// Connect to the Ethereum client
+	client, _ = ethclient.Dial("wss://polygon-mumbai.g.alchemy.com/v2/"+os.Getenv("ALCHEMY_API_KEY"))
 	
 }
 
@@ -77,6 +87,9 @@ func main() {
 
 	// init Handler
 	tr.Syns721TokenRouter(tokenBasePath)
+
+	// @notice listen to newTokenMintedTo on-chain event to add new token to database
+	to.HandleNewSyns721TokenMinted(client, "contract-artifacts/SynsERC721.json")
 
 	// run server
 	if (os.Getenv("GIN_MODE") != "release") {

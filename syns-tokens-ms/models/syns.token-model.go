@@ -46,11 +46,11 @@ type Syns721SuperNFT struct {
 	RoyaltyBps       int       `json:"royaltyBps" bson:"royalty_bps" validate:"omitempty,number"`
 	Name             string    `json:"name" bson:"name" validate:"required"`
 	Description      string    `json:"description" bson:"description" validate:"omitempty"`
-	Age              int       `json:"age" bson:"age" validate:"required,number"`
+	Age              uint64       `json:"age" bson:"age" validate:"required,number"`
 	SharableLink     string    `json:"sharableLink" bson:"sharable_link" validate:"required"`
 	Lister			 string	   `json:"lister" bson:"lister" validate:"required,eth_addr"`
-	StartSale		 int	   `json:"startSale" bson:"start_sale" validate:"omitempty,number"`
-	EndSale			 int	   `json:"endSale" bson:"end_sale" validate:"required,number"`
+	StartSale		 uint64	   `json:"startSale" bson:"start_sale" validate:"omitempty,number"`
+	EndSale			 uint64	   `json:"endSale" bson:"end_sale" validate:"required,number"`
 	Currency		 string	   `json:"currency" bson:"currency" validate:"required,eth_addr"`
 	BuyouPricePerToken	string	   `json:"buyoutPricePerToken" bson:"buyout_price_per_token" validate:"omitempty"`
 }
