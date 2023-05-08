@@ -85,45 +85,55 @@ func (sti *Syns721TokenDaoImpl) UpdatedSyns721SuperTokenBySynsListing(synsListin
 	syns721SuperToken := &models.Syns721SuperNFT{}
 
 	// look up token in database
-	query := bson.D{{Key: "token_id", Value: int(synsListing.TokenId.Int64())}}
-	if dbRes := sti.mongoCollection.FindOne(sti.ctx, query).Decode(syns721SuperToken); dbRes != nil {
-		return dbRes
+	if (strings.Compare(eventName, "ListingAdded") == 0) {
+		query := bson.D{{Key: "token_id", Value: int(synsListing.TokenId.Int64())}}
+		if dbRes := sti.mongoCollection.FindOne(sti.ctx, query).Decode(syns721SuperToken); dbRes != nil {
+			return dbRes
+		}
+	} else if (strings.Compare(eventName, "ListingRemoved") == 0) {
+		query := bson.D{{Key: "listing_id", Value: int(synsListing.ListingId.Int64())}}
+		if dbRes := sti.mongoCollection.FindOne(sti.ctx, query).Decode(syns721SuperToken); dbRes != nil {
+			return dbRes
+		}
 	}
 
 	// prepare currentTokenHash
 	currentTokenHash := syns721SuperToken.TokenHash
 
-	// @logic: if eventName == "ListingAdded", update new listing
-	// @logic: if eventName == "listingRemoved", remove listing
+	// prepare buyoutPice 
+	ether := new(big.Float)
+	ether.SetString(synsListing.BuyoutPricePerToken.String())
+	ethValue := ether.Quo(ether, big.NewFloat(1e18))
+
+
+	// update listing information in syns721SuperToken
 	if (strings.Compare(eventName, "ListingAdded") == 0) {
-		// prepare buyoutPice 
-		ether := new(big.Float)
-		ether.SetString(synsListing.BuyoutPricePerToken.String())
-		ethValue := ether.Quo(ether, big.NewFloat(1e18))
-
-
-		// update listing information in syns721SuperToken
 		syns721SuperToken.IsListing = true
 		syns721SuperToken.ListingID = int(synsListing.ListingId.Int64())
-		syns721SuperToken.Lister = synsListing.TokenOwner.Hex()
-		syns721SuperToken.StartSale = synsListing.StartSale.Uint64()
-		syns721SuperToken.Currency = synsListing.Currency.Hex()
-		syns721SuperToken.BuyouPricePerToken = ethValue.String()
+	} else if (strings.Compare(eventName, "ListingRemoved") == 0) {
+		syns721SuperToken.IsListing = false
+		syns721SuperToken.ListingID = -1
+	}
+	syns721SuperToken.Lister = synsListing.TokenOwner.Hex()
+	syns721SuperToken.StartSale = synsListing.StartSale.Uint64()
+	syns721SuperToken.Currency = synsListing.Currency.Hex()
+	syns721SuperToken.BuyouPricePerToken = ethValue.String()
 
 
-		// marshal updated syns721SuperToken to byte slice
-		synsNFTBytes, _ := json.Marshal(syns721SuperToken)
+	// marshal updated syns721SuperToken to byte slice
+	synsNFTBytes, _ := json.Marshal(syns721SuperToken)
 
-		// calculate new token hash string
-		newTokenHash := crypto.Keccak256Hash(synsNFTBytes).Hex()
+	// calculate new token hash string
+	newTokenHash := crypto.Keccak256Hash(synsNFTBytes).Hex()
 
-		// update tokenHash
-		syns721SuperToken.TokenHash = newTokenHash
+	// update tokenHash
+	syns721SuperToken.TokenHash = newTokenHash
 
-		// prepare filter query
-		filter := bson.D{{Key: "token_hash", Value: currentTokenHash}}
+	// prepare filter query
+	filter := bson.D{{Key: "token_hash", Value: currentTokenHash}}
 
-		// prepare update query
+	// prepare update query based on eventName
+	if (strings.Compare(eventName, "ListingAdded") == 0) {
 		update := bson.D{
 			{Key: "$set", Value: bson.D{{Key: "token_hash", Value: newTokenHash}}},
 			{Key: "$set", Value: bson.D{{Key: "is_listing", Value: true}}},
@@ -133,7 +143,22 @@ func (sti *Syns721TokenDaoImpl) UpdatedSyns721SuperTokenBySynsListing(synsListin
 			{Key: "$set", Value: bson.D{{Key: "currency", Value: synsListing.Currency.Hex()}}},
 			{Key: "$set", Value: bson.D{{Key: "buyout_price_per_token", Value: ethValue.String()}}},
 		}
-
+	
+		// update updated syns721SuperToken in internal database
+		if dbRes := sti.mongoCollection.FindOneAndUpdate(sti.ctx, filter, update); dbRes.Err() != nil {
+			return dbRes.Err()
+		}
+	} else if (strings.Compare(eventName, "ListingRemoved") == 0) {
+		update := bson.D{
+			{Key: "$set", Value: bson.D{{Key: "token_hash", Value: newTokenHash}}},
+			{Key: "$set", Value: bson.D{{Key: "is_listing", Value: false}}},
+			{Key: "$set", Value: bson.D{{Key: "listing_id", Value: -1}}},
+			{Key: "$set", Value: bson.D{{Key: "lister", Value: synsListing.TokenOwner.Hex()}}},
+			{Key: "$set", Value: bson.D{{Key: "start_sale", Value: synsListing.StartSale.Uint64()}}},
+			{Key: "$set", Value: bson.D{{Key: "currency", Value: synsListing.Currency.Hex()}}},
+			{Key: "$set", Value: bson.D{{Key: "buyout_price_per_token", Value: ethValue.String()}}},
+		}
+	
 		// update updated syns721SuperToken in internal database
 		if dbRes := sti.mongoCollection.FindOneAndUpdate(sti.ctx, filter, update); dbRes.Err() != nil {
 			return dbRes.Err()
