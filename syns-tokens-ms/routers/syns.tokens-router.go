@@ -10,7 +10,6 @@ package routers
 
 import (
 	"Syns/servers/syns-tokens-ms/controllers"
-	"Syns/servers/syns-tokens-ms/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,7 +28,6 @@ type SynsTokenkRouter struct {
 
 // @dev Declares list of endpoints
 func (str *SynsTokenkRouter) Syns721TokenRouter (rg *gin.RouterGroup) {
-	rg.POST("/store-new-minted-token", middleware.AuthenticateSynsAPIKey(), str.SynsTokenController.MintNewSyns721Token)
 	rg.GET("/get-all-syns-721-super-tokens", str.SynsTokenController.GetAllSyns721SuperTokens)
 	rg.GET("/fetch-syns-721-super-tokens-owned-by/:token-owner", str.SynsTokenController.GetAllSyns721SuperTokensOwnedBy)
 
