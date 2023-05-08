@@ -44,9 +44,11 @@ func Syns721TokenOnchainConstructor(Syns721TokenDao dao.Syns721TokenDao) *SynsTo
 	}
 }
 
-// @dev Handle adding new minted token to database based on `newTokenMintedTo` event onchain
+// @dev Handle adding new minted token to database based on `newTokenMintedTo` event from SynsERC721 Smart Contract
 // 
 // @param client *ethclient.Client
+// 
+// @param pathToContract string
 // 
 // @param pathToContract string
 func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Client, pathToContract string) {
@@ -69,23 +71,23 @@ func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Clien
 			select {
 			case err := <-synsErc721Subscription.Err():
 				log.Fatal(err)
-			case log := <-synsErc721EventLogs:
+			case eventLog := <-synsErc721EventLogs:
 				// prepare lister
-				minterAddr := common.HexToAddress(log.Topics[1].Hex())
+				minterAddr := common.HexToAddress(eventLog.Topics[1].Hex())
 
 				// prepare tokenId
-				tokenId, _ := strconv.ParseInt(log.Topics[2].Hex(), 0, 64)
+				tokenId, _ := strconv.ParseInt(eventLog.Topics[2].Hex(), 0, 64)
 
 				// prepare royaltyBps
-				royaltyBps, _ := strconv.ParseInt(log.Topics[3].Hex(), 0, 64)
+				royaltyBps, _ := strconv.ParseInt(eventLog.Topics[3].Hex(), 0, 64)
 
 				// prepare tokenAge
-				blockerHeader, _ := client.BlockByNumber(context.Background(), big.NewInt(0).SetUint64(log.BlockNumber))
+				blockerHeader, _ := client.BlockByNumber(context.Background(), big.NewInt(0).SetUint64(eventLog.BlockNumber))
 				tokenAge := blockerHeader.Time
 
 				// prepare tokenUri
 				event := abi.Events["newTokenMintedTo"]
-				decoded, _ := event.Inputs.UnpackValues(log.Data)
+				decoded, _ := event.Inputs.UnpackValues(eventLog.Data)
 				tokenUri := decoded[0].(string)
 
 				// prepare new Syns 721 super token
@@ -99,9 +101,11 @@ func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Clien
 }
 
 
-// @dev Handle adding new minted token to database based on `newTokenMintedTo` event onchain
+// @dev Handle update listing information by listening to `ListingAdded` event from SynsMarketplace Smart Contract
 // 
 // @param client *ethclient.Client
+// 
+// @param pathToContract string
 // 
 // @param pathToContract string
 func (sto *SynsTokenOnchain) HandleNewSyns721ListingAdded(client *ethclient.Client, pathToContract string) {
@@ -147,8 +151,59 @@ func (sto *SynsTokenOnchain) HandleNewSyns721ListingAdded(client *ethclient.Clie
 					if dbRes := sto.Syns721TokenDao.UpdatedSyns721SuperTokenBySynsListing(&listingAddedEvent.Listing, eventName); dbRes != nil {
 						log.Fatal(dbRes)
 					} else {
-						log.Println("Successfully updated Syns 721 super token based on Syns Listing!")
+						log.Println("New Event Alert - ListingAdded: Successfully updated Syns 721 super token based on Syns Listing!")
 					}
+				}
+			}
+		}
+	}()
+}
+
+
+
+// @dev Handle adding new minted token to database based on `newTokenMintedTo` event onchain
+// 
+// @param client *ethclient.Client
+// 
+// @param pathToContract string
+// 
+// @param pathToContract string
+func (sto *SynsTokenOnchain) HandleSyns721RemoveSale(client *ethclient.Client, pathToContract string) {
+	// prepare eventName
+	eventName := "ListingRemoved"
+
+	// Extract the contract ABI from the JSON file
+	stringifiedContractABI := onchain.StringifyContractABI(pathToContract)
+
+	// Parse the ABI into a Go type for ERC721 token contract
+    contractABI, err := abi.JSON(strings.NewReader(stringifiedContractABI))
+    if err != nil {
+        log.Fatal(err)
+    }
+
+	// prepare synsErc721Subscription and synsErc721EventLogs from onchain `newTokenMintedTo` event
+	synsListingSubscription, synsListingEventLogs := onchain.ListenToOnChainEvent(client, contractABI, eventName, OFFICIAL_SYNS_MARKETPLACE_SC_ADDR)
+
+	// Start event loop in background to do database logics
+	go func() {
+		for {
+			select {
+			case err := <-synsListingSubscription.Err(): 
+				log.Fatal(err)
+			case eventLog := <-synsListingEventLogs:
+				// prepare synsListing
+				synsListing := models.SynsMarketplaceListing{
+					ListingId: eventLog.Topics[1].Big(),
+					TokenOwner: common.HexToAddress(eventLog.Topics[2].Hex()),
+					StartSale: big.NewInt(0),
+					BuyoutPricePerToken: big.NewInt(0),
+				}
+
+				// update super token logics
+				if dbRes := sto.Syns721TokenDao.UpdatedSyns721SuperTokenBySynsListing(&synsListing, eventName); dbRes != nil {
+					log.Fatal(dbRes)
+				} else {
+					log.Println("New Event Alert - ListingRemoved: Successfully updated Syns 721 super token based on Syns Listing!")
 				}
 			}
 		}
