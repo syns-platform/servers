@@ -91,6 +91,9 @@ func main() {
 	// @notice listen to newTokenMintedTo on-chain event to add new token to database
 	to.HandleNewSyns721TokenMinted(client, "contract-artifacts/SynsERC721.json")
 
+	// @notice listen to ListingAdded on-chain event to update listing token in database
+	to.HandleNewSyns721ListingAdded(client, "contract-artifacts/SynsMarketplace.json")
+
 	// run server
 	if (os.Getenv("GIN_MODE") != "release") {
 		server.Run(os.Getenv("SOURCE_IP"))

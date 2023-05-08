@@ -10,9 +10,11 @@ package onchain
 
 import (
 	"Syns/servers/syns-tokens-ms/dao"
+	"Syns/servers/syns-tokens-ms/models"
 	onchain "Syns/servers/syns-tokens-ms/onchain/utils"
 	"Syns/servers/syns-tokens-ms/utils"
 	"context"
+	"fmt"
 	"log"
 	"math/big"
 	"strconv"
@@ -26,7 +28,7 @@ import (
 // constants
 var (
 	OFFICIAL_SYNS_721_SC_ADDR = utils.HandleReadFile("contract-artifacts/SynsERC721Address.json")["address"].(string)
-	OFFICUAL_SYNS_MARKETPLACE_SC_ADDR = utils.HandleReadFile("contract-artifacts/SynsMarketplaceAddress.json")["address"].(string)
+	OFFICIAL_SYNS_MARKETPLACE_SC_ADDR = utils.HandleReadFile("contract-artifacts/SynsMarketplaceAddress.json")["address"].(string)
 )
 
 
@@ -43,6 +45,10 @@ func Syns721TokenOnchainConstructor(Syns721TokenDao dao.Syns721TokenDao) *SynsTo
 }
 
 // @dev Handle adding new minted token to database based on `newTokenMintedTo` event onchain
+// 
+// @param client *ethclient.Client
+// 
+// @param pathToContract string
 func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Client, pathToContract string) {
 	// Extract the contract ABI from the JSON file
 	contractABI := onchain.StringifyContractABI(pathToContract)
@@ -87,6 +93,63 @@ func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Clien
 
 				// add new token to database
 				sto.Syns721TokenDao.MintNewSyns721Token(synsSuperToken)
+			}
+		}
+	}()
+}
+
+
+// @dev Handle adding new minted token to database based on `newTokenMintedTo` event onchain
+// 
+// @param client *ethclient.Client
+// 
+// @param pathToContract string
+func (sto *SynsTokenOnchain) HandleNewSyns721ListingAdded(client *ethclient.Client, pathToContract string) {
+	// prepare eventName
+	eventName := "ListingAdded"
+
+	// Extract the contract ABI from the JSON file
+	stringifiedContractABI := onchain.StringifyContractABI(pathToContract)
+
+	// Parse the ABI into a Go type for ERC721 token contract
+    contractABI, err := abi.JSON(strings.NewReader(stringifiedContractABI))
+    if err != nil {
+        log.Fatal(err)
+    }
+
+	// prepare synsErc721Subscription and synsErc721EventLogs from onchain `newTokenMintedTo` event
+	synsListingSubscription, synsListingEventLogs := onchain.ListenToOnChainEvent(client, contractABI, eventName, OFFICIAL_SYNS_MARKETPLACE_SC_ADDR)
+
+	// Start event loop in background to do database logics
+	go func() {
+		for {
+			select {
+			case err := <-synsListingSubscription.Err(): 
+				log.Fatal(err)
+			case eventLog := <-synsListingEventLogs:
+				// prepare listingAddedEvent struct
+				var listingAddedEvent struct {
+					ListingId            *big.Int
+					AssetContract        common.Address
+					Lister               common.Address
+					Listing              models.SynsMarketplaceListing
+				}
+
+				// Unpackge into listingAddedEvent
+				err = contractABI.UnpackIntoInterface(&listingAddedEvent, eventName, eventLog.Data)
+				if err != nil {
+					fmt.Println("Failed to decode event log data:", err)
+					return
+				}
+
+				// @logic if listing is created by tokenType = 1 (i.e. ERC721) => update syns721SuperToken in database
+				if (listingAddedEvent.Listing.TokenType == 1) {
+					if dbRes := sto.Syns721TokenDao.UpdatedSyns721SuperTokenBySynsListing(&listingAddedEvent.Listing, eventName); dbRes != nil {
+						log.Fatal(dbRes)
+					} else {
+						log.Println("Successfully updated Syns 721 super token based on Syns Listing!")
+					}
+				}
 			}
 		}
 	}()

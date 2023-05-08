@@ -59,11 +59,10 @@ func StringifyContractABI(relativePath string) string {
 // 
 // @return chan types.Log
 func ListenToOnChainEvent (client *ethclient.Client, abi abi.ABI, eventName, contractAddr string) (ethereum.Subscription, chan types.Log) {
-
 	// Create event filter to listen for `eventName` event
     eventFilter := ethereum.FilterQuery{
-        Addresses: []common.Address{common.HexToAddress(contractAddr)}, // address of the SynsERC721SC
-        Topics: [][]common.Hash{{abi.Events[eventName].ID}}, //topic hash of the `eventName` event
+        Addresses: []common.Address{common.HexToAddress(contractAddr)},
+        Topics: [][]common.Hash{{abi.Events[eventName].ID}},
     }
 
 	 // Create channel to receive event logs
@@ -122,4 +121,3 @@ func PrepareNewMintedSyns721SuperNFT(minterAddress, tokenURI string, tokenId, ro
 
 	return synsSuperToken
 }
-
