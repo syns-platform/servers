@@ -15,7 +15,6 @@ import (
 	"encoding/json"
 	"log"
 	"math"
-	"os"
 	"strings"
 
 	"github.com/ethereum/go-ethereum"
@@ -30,6 +29,7 @@ var (
 	OFFICIAL_SYNS_721_SC_ADDR = utils.HandleReadFile("contract-artifacts/SynsERC721Address.json")["address"].(string)
 	ALCHEMY_BASE_URL = "https://polygon-mumbai.g.alchemy.com/nft/v2/"
 	MORALIS_BASE_URL = "https://deep-index.moralis.io/api/v2/"
+	OFFICIAL_PLATOFORM_URL="https://syns-platform.com"
 )
 
 // @dev access contract ABI
@@ -106,12 +106,12 @@ func PrepareNewMintedSyns721SuperNFT(minterAddress, tokenURI string, tokenId com
 		ERCType: "ERC-721",
 		Quantity: 1,
 		IsListing: false,
-		ListingID: math.MaxUint64,
+		ListingID: math.MaxUint32,
 		RoyaltyBps: royaltyBps,
 		Name: tokenUriObj["name"].(string),
 		Description: tokenUriObj["description"].(string),
 		Age: tokenAge,
-		SharableLink: os.Getenv("OFFICIAL_PLATOFORM_URL")+"/syns-token/"+OFFICIAL_SYNS_721_SC_ADDR+"/"+tokenId.Big().String(),
+		SharableLink: OFFICIAL_PLATOFORM_URL+"/syns-token/"+OFFICIAL_SYNS_721_SC_ADDR+"/"+tokenId.Big().String(),
 		Lister: minterAddress,
 		StartSale: 0,
 		EndSale: 0,

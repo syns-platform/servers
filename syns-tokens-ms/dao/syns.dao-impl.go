@@ -113,7 +113,7 @@ func (sti *Syns721TokenDaoImpl) UpdatedSyns721SuperTokenBySynsListing(synsListin
 		syns721SuperToken.ListingID = synsListing.ListingId.Uint64()
 	} else if (strings.Compare(eventName, "ListingRemoved") == 0) {
 		syns721SuperToken.IsListing = false
-		syns721SuperToken.ListingID = math.MaxUint64
+		syns721SuperToken.ListingID = math.MaxUint32
 	}
 	syns721SuperToken.Lister = synsListing.TokenOwner.Hex()
 	syns721SuperToken.StartSale = synsListing.StartSale.Uint64()
@@ -153,7 +153,7 @@ func (sti *Syns721TokenDaoImpl) UpdatedSyns721SuperTokenBySynsListing(synsListin
 		update := bson.D{
 			{Key: "$set", Value: bson.D{{Key: "token_hash", Value: newTokenHash}}},
 			{Key: "$set", Value: bson.D{{Key: "is_listing", Value: false}}},
-			{Key: "$set", Value: bson.D{{Key: "listing_id", Value: -1}}},
+			{Key: "$set", Value: bson.D{{Key: "listing_id", Value: math.MaxUint32}}},
 			{Key: "$set", Value: bson.D{{Key: "lister", Value: synsListing.TokenOwner.Hex()}}},
 			{Key: "$set", Value: bson.D{{Key: "start_sale", Value: synsListing.StartSale.Uint64()}}},
 			{Key: "$set", Value: bson.D{{Key: "currency", Value: synsListing.Currency.Hex()}}},

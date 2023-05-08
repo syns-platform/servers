@@ -27,6 +27,7 @@ var (
 	MORALIS_BASE_URL = "https://deep-index.moralis.io/api/v2/"
 	OFFICUAL_SYNS_721_SC_ADDR = "0xfDe11549f6133020721975BAc8A054EF6FCb4C0f"
 	OFFICUAL_SYNS_1155_SC_ADDR = "0x8aa884a1297f10C5B9Daa48Cd8e85Acb4C713933"
+	OFFICIAL_PLATOFORM_URL="https://syns-platform.com"
 )
 
 // @route `GET/get-all-syns-tokens/:asset-contract`
@@ -106,7 +107,7 @@ func GetAllSynsTokens(gc *gin.Context) {
 			Name: alchemyNFTs[i].(map[string]interface{})["metadata"].(map[string]interface{})["name"].(string),
 			Description: alchemyNFTs[i].(map[string]interface{})["description"].(string),
 			Age: 0, // for future, use Moralis Track NFT transfers API to calculate token block_timestamp if neccessary
-			SharableLink: os.Getenv("OFFICIAL_PLATOFORM_URL")+"/syns-token/"+assetContract+"/"+moralisNFTs[i].(map[string]interface{})["token_id"].(string),
+			SharableLink: OFFICIAL_PLATOFORM_URL+"/syns-token/"+assetContract+"/"+moralisNFTs[i].(map[string]interface{})["token_id"].(string),
 		}
 
 		// append new SynsNFT to SynsNFTs
@@ -201,7 +202,7 @@ func GetSynsTokensOwnedBy(gc *gin.Context) {
 			Name: alchemyNFTs[i].(map[string]interface{})["metadata"].(map[string]interface{})["name"].(string),
 			Description: alchemyNFTs[i].(map[string]interface{})["description"].(string),
 			Age: 0, // for future, use Moralis Track NFT transfers API to calculate token block_timestamp if neccessary
-			SharableLink: os.Getenv("OFFICIAL_PLATOFORM_URL")+"/syns-token/"+assetContract+"/"+moralisNFTs[i].(map[string]interface{})["token_id"].(string),
+			SharableLink: OFFICIAL_PLATOFORM_URL+"/syns-token/"+assetContract+"/"+moralisNFTs[i].(map[string]interface{})["token_id"].(string),
 		}
 
 		// append new SynsNFT to SynsNFTs
@@ -286,7 +287,7 @@ func GetTokenMetadata(gc *gin.Context) {
 		Name: alchemyResObject["metadata"].(map[string]interface{})["name"].(string),
 		Description: alchemyResObject["description"].(string),
 		Age: int(tokenAge.Unix()),
-		SharableLink: os.Getenv("OFFICIAL_PLATOFORM_URL")+"/syns-token/"+assetContract+"/"+tokenId,
+		SharableLink: OFFICIAL_PLATOFORM_URL+"/syns-token/"+assetContract+"/"+tokenId,
 	}
 
 	// return to client
