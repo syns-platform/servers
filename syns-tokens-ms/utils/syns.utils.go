@@ -11,13 +11,13 @@ package utils
 import (
 	"Syns/servers/syns-tokens-ms/models"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/smtp"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
@@ -77,26 +77,21 @@ func EmailNotification(mode string, args interface{}) {
 	description := ""
 	smtpHost := "smtp.titan.email" // Titan Email SMTP server
 	smtpPort := "587"              // Titan Email SMTP port
-	isDevPurpose := false;
 
 	// prepare subject
-	if mode == "NEW NFT" {
-		subject = "Subject: New NFT Minted Alert"
+	if mode == "NEW_TOKEN_MINTED" {
+		subject = "Subject: New Syns 721 NFT Minted Alert"
 	}
 
 	// prepare description
 	switch obj := args.(type) {
-		case *models.SynsNFT:
-			if os.Getenv("GIN_MODE") != "release" {
-				isDevPurpose = true
-			}
-			description = "Token ID: " +strconv.Itoa(obj.TokenID)+ ".\n Minter address: " +obj.TokenOwner+"."
+		case *models.Syns721SuperNFT:
+			description = fmt.Sprintf("TokenID: %d.\nMinter address: %s", obj.TokenID, obj.TokenOwner)
 	default:
 		return
 	}
 
 	// only send email if this request is not for dev purpose
-	if !isDevPurpose {
 		// Set up authentication information for Gmail's SMTP server
 		auth := smtp.PlainAuth("", synsFeedbackEmail, synsFeedbackEmailPassword, smtpHost)
 
@@ -110,7 +105,6 @@ func EmailNotification(mode string, args interface{}) {
 			// Handle any errors that occur while sending the email
 			panic(err)
 		}
-	}
 }
 
 // @dev do http request

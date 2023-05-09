@@ -14,7 +14,6 @@ import (
 	onchain "Syns/servers/syns-tokens-ms/onchain/utils"
 	"Syns/servers/syns-tokens-ms/utils"
 	"context"
-	"fmt"
 	"log"
 	"math/big"
 	"strings"
@@ -89,10 +88,14 @@ func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Clien
 				// prepare new Syns 721 super token
 				synsSuperToken := onchain.PrepareNewMintedSyns721SuperNFT(minterAddr.Hex(), tokenUri, tokenId, royaltyBps, tokenAge())
 
-				fmt.Println(synsSuperToken)
-
 				// add new token to database
-				sto.Syns721TokenDao.MintNewSyns721Token(synsSuperToken)
+				if err := sto.Syns721TokenDao.MintNewSyns721Token(synsSuperToken); err != nil {
+					log.Fatal(err)
+				} else {
+					log.Println("New Event Alert - newTokenMintedTo: Successfully added new Syns 721 super token to database!")
+					// send an alert to admin
+					utils.EmailNotification("NEW_TOKEN_MINTED", synsSuperToken)
+				}
 			}
 		}
 	}()
@@ -138,7 +141,7 @@ func (sto *SynsTokenOnchain) HandleSyns721ListingAdded(client *ethclient.Client,
 				// Unpackge into listingAddedEvent
 				err = contractABI.UnpackIntoInterface(&listingAddedEvent, eventName, eventLog.Data)
 				if err != nil {
-					fmt.Println("Failed to decode event log data:", err)
+					log.Println("Failed to decode event log data:", err)
 					return
 				}
 
