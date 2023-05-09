@@ -18,9 +18,16 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+// constants
+var (
+	MAX_SAFE_VALUE = uint64(9007199254740991); // 9007199254740991 = 2^53 - 1 which is the safe value for Typescript in the client app
 )
 
 // @notice Root struct for other methods in dao-impl
@@ -153,7 +160,7 @@ func (sti *Syns721TokenDaoImpl) UpdatedSyns721SuperTokenBySynsListing(synsListin
 		update := bson.D{
 			{Key: "$set", Value: bson.D{{Key: "token_hash", Value: newTokenHash}}},
 			{Key: "$set", Value: bson.D{{Key: "is_listing", Value: false}}},
-			{Key: "$set", Value: bson.D{{Key: "listing_id", Value: math.MaxUint32}}},
+			{Key: "$set", Value: bson.D{{Key: "listing_id", Value: MAX_SAFE_VALUE}}},
 			{Key: "$set", Value: bson.D{{Key: "lister", Value: synsListing.TokenOwner.Hex()}}},
 			{Key: "$set", Value: bson.D{{Key: "start_sale", Value: synsListing.StartSale.Uint64()}}},
 			{Key: "$set", Value: bson.D{{Key: "currency", Value: synsListing.Currency.Hex()}}},
@@ -165,6 +172,62 @@ func (sti *Syns721TokenDaoImpl) UpdatedSyns721SuperTokenBySynsListing(synsListin
 			return dbRes.Err()
 		}
 	}
+	return nil
+}
+
+// @notice Transfer token from lister to buyer
+// 
+// @param listingId uint64
+// 
+// @param buyerAddr string
+// 
+// @return error
+func (sti *Syns721TokenDaoImpl) TransferSyns721SuperToken(listingId uint64, buyerAddr string) (error) {
+	// prepare Syns721SuperToken
+	syns721SuperToken := &models.Syns721SuperNFT{}
+
+	// prepare filter query
+	filter := bson.D{{Key: "listing_id", Value: listingId}}
+
+	// prepare update query
+	update := bson.D{
+		{Key: "$set", Value: bson.D{{Key: "token_owner", Value: buyerAddr}}},
+		{Key: "$set", Value: bson.D{{Key: "is_listing", Value: false}}},
+		{Key: "$set", Value: bson.D{{Key: "listing_id", Value: math.MaxUint32}}},
+		{Key: "$set", Value: bson.D{{Key: "lister", Value: buyerAddr}}},
+		{Key: "$set", Value: bson.D{{Key: "start_sale", Value: MAX_SAFE_VALUE}}},
+		{Key: "$set", Value: bson.D{{Key: "currency", Value: common.Address{}.Hex()}}},
+		{Key: "$set", Value: bson.D{{Key: "buyout_price_per_token", Value: "0.0"}}},
+	}
+
+	// Set the options to return the updated document
+	mongoOptions := options.FindOneAndUpdate().SetReturnDocument(options.After)
+
+	// update record and decode the record to syns721SuperToken
+	if dbRes := sti.mongoCollection.FindOneAndUpdate(sti.ctx, filter, update, mongoOptions).Decode(syns721SuperToken); dbRes != nil {
+		return dbRes
+	}
+
+	// record old token hash
+	oldTokenHash := syns721SuperToken.TokenHash
+
+	// marshal updated syns721SuperToken to byte slice
+	synsNFTBytes, _ := json.Marshal(syns721SuperToken)
+
+	// calculate new token hash string
+	newTokenHash := crypto.Keccak256Hash(synsNFTBytes).Hex()
+
+	// update filter query based on old token hash
+	filter = bson.D{{Key: "token_hash", Value: oldTokenHash}}
+
+	// update update query to update token_hash
+	update = bson.D{{Key: "$set", Value: bson.D{{Key: "token_hash", Value: newTokenHash}}}}
+
+	// update record with new token_hash
+	if dbRes := sti.mongoCollection.FindOneAndUpdate(sti.ctx, filter, update); dbRes.Err() != nil {
+		return dbRes.Err()
+	}
+
 	return nil
 }
 

@@ -32,6 +32,15 @@ type Syns721TokenDao interface {
 	// @return error
 	UpdatedSyns721SuperTokenBySynsListing(synsListing *models.SynsMarketplaceListing, eventName string) (error)
 
+	// @notice Transfer token from lister to buyer
+	// 
+	// @param listingId uint64
+	// 
+	// @param buyerAddr string
+	// 
+	// @return error
+	TransferSyns721SuperToken(listingId uint64, buyerAddr string) (error)
+
 	// @notice Get all Syns 721 Super Token
 	// 
 	// @return *[]models.Syns721SuperNFT
