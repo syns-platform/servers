@@ -63,7 +63,6 @@ func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Clien
 	// prepare synsErc721Subscription and synsErc721EventLogs from onchain `newTokenMintedTo` event
 	synsErc721Subscription, synsErc721EventLogs := onchain.ListenToOnChainEvent(client, abi, "newTokenMintedTo", OFFICIAL_SYNS_721_SC_ADDR)
 
-
 	// Start event loop in background to do database logics
 	go func() {
 		for {
@@ -95,7 +94,7 @@ func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Clien
 				fmt.Println(synsSuperToken)
 
 				// add new token to database
-				// sto.Syns721TokenDao.MintNewSyns721Token(synsSuperToken)
+				sto.Syns721TokenDao.MintNewSyns721Token(synsSuperToken)
 			}
 		}
 	}()
