@@ -48,8 +48,6 @@ func Syns721TokenOnchainConstructor(Syns721TokenDao dao.Syns721TokenDao) *SynsTo
 // @param client *ethclient.Client
 // 
 // @param pathToContract string
-// 
-// @param pathToContract string
 func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Client, pathToContract string) {
 	// Extract the contract ABI from the JSON file
 	contractABI := onchain.StringifyContractABI(pathToContract)
@@ -101,14 +99,12 @@ func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Clien
 }
 
 
-// @dev Handle update listing information by listening to `ListingAdded` event from SynsMarketplace Smart Contract
+// @dev Handle adding listing information on Syns 721 Super Token by listening to `ListingAdded` event from SynsMarketplace Smart Contract - createListing action
 // 
 // @param client *ethclient.Client
 // 
 // @param pathToContract string
-// 
-// @param pathToContract string
-func (sto *SynsTokenOnchain) HandleNewSyns721ListingAdded(client *ethclient.Client, pathToContract string) {
+func (sto *SynsTokenOnchain) HandleSyns721ListingAdded(client *ethclient.Client, pathToContract string) {
 	// prepare eventName
 	eventName := "ListingAdded"
 
@@ -161,14 +157,12 @@ func (sto *SynsTokenOnchain) HandleNewSyns721ListingAdded(client *ethclient.Clie
 
 
 
-// @dev Handle adding new minted token to database based on `newTokenMintedTo` event onchain
+// @dev Handle removing Syns Listing on Syns 721 Super Token by listening to `ListingRemoved` event from SynsMarketplace Smart Contract - cancleListing action
 // 
 // @param client *ethclient.Client
 // 
 // @param pathToContract string
-// 
-// @param pathToContract string
-func (sto *SynsTokenOnchain) HandleSyns721RemoveSale(client *ethclient.Client, pathToContract string) {
+func (sto *SynsTokenOnchain) HandleSyns721ListingRemoved(client *ethclient.Client, pathToContract string) {
 	// prepare eventName
 	eventName := "ListingRemoved"
 
@@ -181,7 +175,7 @@ func (sto *SynsTokenOnchain) HandleSyns721RemoveSale(client *ethclient.Client, p
         log.Fatal(err)
     }
 
-	// prepare synsErc721Subscription and synsErc721EventLogs from onchain `newTokenMintedTo` event
+	// prepare synsListingSubscription and synsListingEventLogs from onchain `newTokenMintedTo` event
 	synsListingSubscription, synsListingEventLogs := onchain.ListenToOnChainEvent(client, contractABI, eventName, OFFICIAL_SYNS_MARKETPLACE_SC_ADDR)
 
 	// Start event loop in background to do database logics
@@ -204,6 +198,53 @@ func (sto *SynsTokenOnchain) HandleSyns721RemoveSale(client *ethclient.Client, p
 					log.Fatal(dbRes)
 				} else {
 					log.Println("New Event Alert - ListingRemoved: Successfully updated Syns 721 super token based on Syns Listing!")
+				}
+			}
+		}
+	}()
+}
+
+// @dev Handle updating listing information on Syns 721 Super Token by listening to `NewSale` event from SynsMarketplace Smart Contract - Buy action
+// 
+// @param client *ethclient.Client
+// 
+// @param pathToContract string
+// 
+// @param pathToContract string
+func (sto *SynsTokenOnchain) HandleSyns721ListingTransfer(client *ethclient.Client, pathToContract string) {
+	// prepare eventName
+	eventName := "NewSale"
+
+	// Extract the contract ABI from the JSON file
+	stringifiedContractABI := onchain.StringifyContractABI(pathToContract)
+
+	// Parse the ABI into a Go type for ERC721 token contract
+    contractABI, err := abi.JSON(strings.NewReader(stringifiedContractABI))
+    if err != nil {
+        log.Fatal(err)
+    }
+
+	// prepare synsListingEventLogs and synsListingEventLogs from onchain `NewSale` event
+	synsListingSubscription, synsListingEventLogs := onchain.ListenToOnChainEvent(client, contractABI, eventName, OFFICIAL_SYNS_MARKETPLACE_SC_ADDR)
+
+	// Start event loop in background to do database logics
+	go func() {
+		for {
+			select {
+			case err := <-synsListingSubscription.Err():
+				log.Fatal(err)
+			case eventLog := <-synsListingEventLogs:
+				listingId := eventLog.Topics[1].Big().Uint64()
+				
+				event := contractABI.Events[eventName]
+				decoded, _ := event.Inputs.UnpackValues(eventLog.Data)
+
+				buyer := decoded[0].(common.Address).Hex()
+				
+				if err := sto.Syns721TokenDao.TransferSyns721SuperToken(listingId, buyer); err != nil {
+					log.Fatal(err)
+				} else {
+					log.Println("New Event Alert - NewSale: Successfully transfer Syns 721 super token!")
 				}
 			}
 		}

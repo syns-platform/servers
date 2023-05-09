@@ -14,7 +14,6 @@ import (
 	"context"
 	"encoding/json"
 	"log"
-	"math"
 	"strings"
 
 	"github.com/ethereum/go-ethereum"
@@ -30,6 +29,7 @@ var (
 	ALCHEMY_BASE_URL = "https://polygon-mumbai.g.alchemy.com/nft/v2/"
 	MORALIS_BASE_URL = "https://deep-index.moralis.io/api/v2/"
 	OFFICIAL_PLATOFORM_URL="https://syns-platform.com"
+	MAX_SAFE_VALUE = uint64(9007199254740991); // 9007199254740991 = 2^53 - 1 which is the safe value for Typescript in the client app
 )
 
 // @dev access contract ABI
@@ -106,7 +106,7 @@ func PrepareNewMintedSyns721SuperNFT(minterAddress, tokenURI string, tokenId com
 		ERCType: "ERC-721",
 		Quantity: 1,
 		IsListing: false,
-		ListingID: math.MaxUint32,
+		ListingID: MAX_SAFE_VALUE,
 		RoyaltyBps: royaltyBps,
 		Name: tokenUriObj["name"].(string),
 		Description: tokenUriObj["description"].(string),
