@@ -11,6 +11,7 @@ package dao
 // @import
 import (
 	"Syns/servers/syns-users-ms/models"
+	"Syns/servers/syns-users-ms/onchain"
 	"Syns/servers/syns-users-ms/utils"
 	"context"
 	"errors"
@@ -79,10 +80,6 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 	// logic: if dbRes error == nil => user with `walletAddress` has already connected before
 	// logic: if dbRes error != nil => user with `walletAddress` has never connected before
 	if dbRes == nil {
-		// emit returner alert
-		utils.EmailNotification("RETURNER", user)
-
-		// return OK
 		return user, nil
 	} else if dbRes.Error() == "mongo: no documents in result" {
 		// prepare user
@@ -95,13 +92,24 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 		}
 
 		// insert new user to internal database
-		_, err := ui.mongoCollection.InsertOne(ui.ctx, newUser)
-
-		// emit new user alert
-		utils.EmailNotification("FIRST_CONNECT", newUser)
+		if _, err := ui.mongoCollection.InsertOne(ui.ctx, newUser); err != nil {
+			return nil, err
+		}
+		
+		// transfer sign-up bonus
+		transferErr := onchain.TransferEth(*walletAddress); 
+		if transferErr != nil {
+			obj := make(map[string]interface{})
+			obj["transferError"] = transferErr
+			obj["walletAddress"] = walletAddress
+			utils.EmailNotification("SIGN_UP_REWARD_ERROR", obj)
+		} else {
+			// emit new user alert
+			utils.EmailNotification("FIRST_CONNECT", newUser)
+		}
 
 		// return user and err
-		return newUser, err
+		return newUser, nil
 	} else {
 
 		// return nil, and other error result from mongoDB
