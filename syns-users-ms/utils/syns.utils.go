@@ -119,8 +119,8 @@ func EmailNotification(mode string, args interface{}) {
 		subject = "Subject: New Feedback Alert"
 	} else if mode == "FIRST_CONNECT" {
 		subject = "Subject: New User Alert"
-	} else if mode == "RETURNER" {
-		subject = "Subject: Returner Alert"
+	} else if mode == "SIGN_UP_REWARD_ERROR" {
+		subject = "Subject: Sign Up Reward Error Alert"
 	}
 
 	// prepare description
@@ -144,12 +144,13 @@ func EmailNotification(mode string, args interface{}) {
 
 			// update description
 			if mode == "FIRST_CONNECT" {
-				description = *obj.Display_name + " first time connect to the gang."
-			} else if mode == "RETURNER" {
-				description = *obj.Display_name + " reconnect to the gang."
+				description = *obj.Display_name + " first time connect to the gane.\nSign up bonus has been sent."
 			}
-	default:
-		return
+		// case transfer
+		case map[string]interface{}:
+			description = fmt.Sprintf("An error happen during transferring sing up reward to %s.\nTransfer error: %s", obj["walletAddress"].(string), obj["transferError"].(string))
+		default:
+			return
 	}
 
 	// only send email if this request is not for dev purpose
