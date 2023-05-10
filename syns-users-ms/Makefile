@@ -4,7 +4,7 @@ include .env
 COMPILEDAEMON_PATH=~/go/bin/CompileDaemon # CompileDaemon for hot reload
 SYNS_USER_MS_SERVER=syns-users-ms
 SYNS_USERS_PORT=41105
-SYNS_USER_MS_TAG=3.0
+SYNS_USER_MS_TAG=3.1
 SYNS_USER_MS_IMAGE=$(DOCKER_USERNAME)/$(SYNS_USER_MS_SERVER):$(SYNS_USER_MS_TAG)
 DOCKER_USERNAME=synsplatform
 DOCKER_RMI=docker rmi -f
