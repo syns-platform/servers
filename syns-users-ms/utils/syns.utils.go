@@ -121,10 +121,13 @@ func EmailNotification(mode string, args interface{}) {
 		subject = "Subject: New User Alert"
 	} else if mode == "SIGN_UP_REWARD_ERROR" {
 		subject = "Subject: Sign Up Reward Error Alert"
+	} else if mode == "DEMO_REQUEST" {
+		subject = "Subject: New Demo Request Alert"
 	}
 
 	// prepare description
 	switch obj := args.(type) {
+		// case feedback
 		case *models.Feedback:
 			if os.Getenv("GIN_MODE") != "release" {
 				isDevPurpose = true
@@ -134,6 +137,7 @@ func EmailNotification(mode string, args interface{}) {
 			} else {
 				description = "From " +obj.Email+ ": " +obj.Feedback
 			}
+		// case first connect
 		case *models.User: 
 			// check if this is dev purpose, i.e., the address is not in the set of Syns Dev addresses
 			for _, address := range synsDevAddersses {
@@ -141,7 +145,6 @@ func EmailNotification(mode string, args interface{}) {
 					isDevPurpose = true
 				}
 			}
-
 			// update description
 			if mode == "FIRST_CONNECT" {
 				description = *obj.Display_name + " first time connect to the gane.\nSign up bonus has been sent."
@@ -149,6 +152,9 @@ func EmailNotification(mode string, args interface{}) {
 		// case transfer
 		case map[string]interface{}:
 			description = fmt.Sprintf("An error happen during transferring sing up reward to %s.\nTransfer error: %s", obj["walletAddress"].(string), obj["transferError"].(string))
+		// case demo request
+		case *models.DemoRequest: 
+			description = fmt.Sprintf("New demo request submitted by %s", obj.Email)
 		default:
 			return
 	}
