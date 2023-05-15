@@ -87,5 +87,19 @@ type FeedbackDao interface {
 	// @param feedback *string
 	// 
 	// @return error
-	SubmitFeedback(email *string, feedback *string) (error)
+	SubmitFeedback(email, feedback *string) (error)
+}
+
+// @notice DemoRequestDao interface
+type DemoRequestDao interface {
+	// @notice Handle demo request submission
+	// 
+	// @param email *string
+	// 
+	// @param name *string
+	// 
+	// @param question *string
+	// 
+	// @return error
+	SubmitDemoRequest(email, name, question *string) (error)
 }

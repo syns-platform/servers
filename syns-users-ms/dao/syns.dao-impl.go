@@ -34,6 +34,12 @@ type FeedbackDaoImpl struct {
 	mongoCollection		*mongo.Collection
 }
 
+// @notic Root struct for DemoRequest methods
+type DemoRequestDaoImpl struct {
+	ctx 			context.Context
+	mongoCollection		*mongo.Collection
+}
+
 
 // @dev User Constructor
 func UserDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) UserDao {
@@ -46,6 +52,14 @@ func UserDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) 
 // @dev Feedback Constructor
 func FeedbackDaoConstructor(ctx context.Context, mongoCollection *mongo.Collection) FeedbackDao {
 	return &FeedbackDaoImpl{
+		ctx: ctx,
+		mongoCollection: mongoCollection,
+	}
+}
+
+// @dev DemoRequest Constructor
+func DemoRequestConstructor(ctx context.Context, mongoCollection *mongo.Collection) DemoRequestDao {
+	return &DemoRequestDaoImpl{
 		ctx: ctx,
 		mongoCollection: mongoCollection,
 	}
@@ -345,6 +359,33 @@ func (fi *FeedbackDaoImpl) SubmitFeedback(email *string, feedback *string) (erro
 
 	// insert new feedback to internal database
 	_, err := fi.mongoCollection.InsertOne(fi.ctx, newFeedback);
+
+	// response OK
+	return err;
+}
+
+// @notice Method of DemoRequestDaoImpl struct
+// 
+// @dev Handle Demo request submission
+// 
+// @param email *string
+// 
+// @param name *string
+// 
+// @param question *string
+// 
+// @return error
+func (di *DemoRequestDaoImpl) SubmitDemoRequest(email, name, question *string) (error){
+	// prepare new Feedback
+	newFeedback := &models.DemoRequest{
+		Email: *email,
+		Name: *name,
+		Question: *question,
+		Submitted_at: time.Now().Unix(),
+	}
+
+	// insert new feedback to internal database
+	_, err := di.mongoCollection.InsertOne(di.ctx, newFeedback);
 
 	// response OK
 	return err;
