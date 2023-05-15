@@ -26,10 +26,9 @@ var (
 	server			*gin.Engine
 	ctx			context.Context
 	mongoClient		*mongo.Client
-	userCollection		*mongo.Collection
-	feedbackCollection	*mongo.Collection
 	ur 			*routers.UserRouter
 	fr 			*routers.FeedbackRouter
+	drr 			*routers.DemoRequestRouter
 )
 
 // @dev Runs before main()
@@ -50,26 +49,32 @@ func init() {
 	mongoClient = db.EstablishMongoClient(ctx)
 
 	// get userCollection
-	userCollection = db.GetMongoCollection(mongoClient, "users")
-
+	userCollection := db.GetMongoCollection(mongoClient, "users")
 	// get feedbackCollection
-	feedbackCollection = db.GetMongoCollection(mongoClient, "feedback")
+	feedbackCollection := db.GetMongoCollection(mongoClient, "feedback")
+	// get feedbackCollection
+	demoRequestCollection := db.GetMongoCollection(mongoClient, "demo-requests")
 	
 	// init UserDao interface
 	ui := dao.UserDaoConstructor(ctx, userCollection)
-	
-	// init UserDao interface
+	// init FeedbackDao interface
 	fi := dao.FeedbackDaoConstructor(ctx, feedbackCollection)
+	// init DemoRequestDao interface
+	dri := dao.DemoRequestConstructor(ctx, demoRequestCollection)
 
 	// init UserController
 	uc := controllers.UserControllerConstructor(ui)
-	// init UserController
+	// init FeedbackController
 	fc := controllers.FeedbackControllerConstructor(fi)
+	// init DemoRequestController
+	drc := controllers.DemoRequestControllerConstructor(dri)
 
 	// init UserRouter
 	ur = routers.UserRouterConstructor(uc)
-	// init UserRouter
+	// init FeedbackRouter
 	fr = routers.FeedbackRouterConstructor(fc)
+	// init DemoRequestRouter
+	drr = routers.DemoRequestRouterConstructor(drc)
 }
 
 // @dev Root function
@@ -87,11 +92,13 @@ func main() {
 	userBasePath := server.Group("/v2/syns/user")
 	tokenBasePath := server.Group("/v2/syns/token")
 	feedbackBasePath := server.Group("/v2/syns/feedback/")
+	demoRequestBasePath := server.Group("/v2/syns/demo-request/")
 
 	// init Handler
 	ur.UserRoutes(userBasePath)
 	fr.FeedbackRoutes(feedbackBasePath)
 	routers.TokenRoutes(tokenBasePath)
+	drr.DemoRequestRoutes(demoRequestBasePath)
 
 	// run server
 	if (os.Getenv("GIN_MODE") != "release") {
