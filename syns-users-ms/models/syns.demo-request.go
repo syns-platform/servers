@@ -8,9 +8,10 @@
 // @package
 package models
 
-// @notice The information related to a Feedback
-type Feedback struct {
-	Email string `json:"email"`
-	Feedback string `json:"feedback" validate:"required,min=2"`
+// @notice The information related to a Demo Request
+type DemoRequest struct {
+	Email string `json:"email" validate:"email"`
+   Name string `json:"name" validate:"omitempty"`
+	Question string `json:"feedback" validate:"omitempty"`
 	Submitted_at int64	`json:"submitted_at" bson:"submitted_at"`
 }
