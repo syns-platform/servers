@@ -20,6 +20,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -251,7 +252,8 @@ func (sti *Syns721TokenDaoImpl) GetAllSyns721SuperTokensOwnedBy(tokenOwner strin
 	var syns721SuperTokens []models.Syns721SuperNFT
 
 	// prepare find query
-	query := bson.D{{Key: "token_owner", Value: strings.ToLower(tokenOwner)}}
+	query := bson.D{{Key: "token_owner", Value: primitive.Regex{Pattern: "^" + tokenOwner + "$", Options: "i"}}}
+	
 
 	// find tokens owned my tokenOwner
 	cursor, dbRes := sti.mongoCollection.Find(sti.ctx, query); 
