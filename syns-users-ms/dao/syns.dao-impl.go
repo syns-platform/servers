@@ -142,7 +142,7 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 // @return error
 func (ui *UserDaoImpl) ClaimPage(userParam *models.User) (*models.User, error) {
 	// lower case walletAddress
-	*userParam.Wallet_address = strings.ToLower(*userParam.Wallet_address)
+	userParam.Wallet_address = strings.ToLower(userParam.Wallet_address)
 
 	// declare user placeholder
 	user:= &models.User{}
@@ -188,10 +188,10 @@ func (ui *UserDaoImpl) ClaimPage(userParam *models.User) (*models.User, error) {
 // 
 // @dev Checks if a username has been taken
 // 
-// @param username *string
+// @param username string
 // 
 // @return bool
-func (ui *UserDaoImpl) CheckUsernameAvailability(username *string) (bool, error) {
+func (ui *UserDaoImpl) CheckUsernameAvailability(username string) (bool, error) {
 	// prepare filter
 	filter := bson.D{{Key: "username", Value: username}}
 
@@ -215,17 +215,17 @@ func (ui *UserDaoImpl) CheckUsernameAvailability(username *string) (bool, error)
 // 
 // @dev Gets a user at wallet address.
 // 
-// @param walletAddress *string
+// @param walletAddress string
 // 
 // @return *models.User
 // 
 // @return error
-func (ui *UserDaoImpl) GetUserAt(walletAddress *string) (*models.User, error) {
+func (ui *UserDaoImpl) GetUserAt(walletAddress string) (*models.User, error) {
 	// declare user placeholder
 	user := &models.User{}
 
 	// set up find query
-	query := bson.D{{Key: "wallet_address", Value: strings.ToLower(*walletAddress)}}
+	query := bson.D{{Key: "wallet_address", Value: primitive.Regex{Pattern: "^" +walletAddress+ "$", Options: "i"}}}
 
 	// find the user in database using walletAddress
 	if dbRes := ui.mongoCollection.FindOne(ui.ctx, query).Decode(user); dbRes != nil {return nil, dbRes}
@@ -238,12 +238,12 @@ func (ui *UserDaoImpl) GetUserAt(walletAddress *string) (*models.User, error) {
 // 
 // @dev Gets a user by username.
 // 
-// @param username *string
+// @param username string
 // 
 // @return *models.User
 // 
 // @return error
-func (ui *UserDaoImpl) GetUserBy(username *string) (*models.User, error) {
+func (ui *UserDaoImpl) GetUserBy(username string) (*models.User, error) {
 	// declare user placeholder
 	user := &models.User{}
 
@@ -321,10 +321,10 @@ func (ui *UserDaoImpl) UpdateUser(user *models.User) error {
 // 
 // @dev Deletes a user at wallet address.
 // 
-// @param walletAddress *string
+// @param walletAddress string
 // 
 // @return error
-func (ui *UserDaoImpl) DeactivateUserAt(walletAddress *string) error {
+func (ui *UserDaoImpl) DeactivateUserAt(walletAddress string) error {
 	// set up find query
 	filter := bson.D{{Key: "wallet_address", Value: walletAddress}}
 
@@ -344,16 +344,16 @@ func (ui *UserDaoImpl) DeactivateUserAt(walletAddress *string) error {
 // 
 // @dev Handle feedback submission
 // 
-// @param email *string
+// @param email string
 // 
-// @param feedback *string
+// @param feedback string
 // 
 // @return error
-func (fi *FeedbackDaoImpl) SubmitFeedback(email *string, feedback *string) (error){
+func (fi *FeedbackDaoImpl) SubmitFeedback(email string, feedback string) (error){
 	// prepare new Feedback
 	newFeedback := &models.Feedback{
-		Email: *email,
-		Feedback: *feedback,
+		Email: email,
+		Feedback: feedback,
 		Submitted_at: time.Now().Unix(),
 	}
 
@@ -368,19 +368,19 @@ func (fi *FeedbackDaoImpl) SubmitFeedback(email *string, feedback *string) (erro
 // 
 // @dev Handle Demo request submission
 // 
-// @param email *string
+// @param email string
 // 
-// @param name *string
+// @param name string
 // 
-// @param question *string
+// @param question string
 // 
 // @return error
-func (di *DemoRequestDaoImpl) SubmitDemoRequest(email, name, question *string) (error){
+func (di *DemoRequestDaoImpl) SubmitDemoRequest(email, name, question string) (error){
 	// prepare new Feedback
 	newFeedback := &models.DemoRequest{
-		Email: *email,
-		Name: *name,
-		Question: *question,
+		Email: email,
+		Name: name,
+		Question: question,
 		Submitted_at: time.Now().Unix(),
 	}
 

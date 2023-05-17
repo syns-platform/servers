@@ -40,12 +40,12 @@ func GenerateAccessToken(gc *gin.Context) {
 	}
 	
 	// test param.UserWalletAddress to match ETH Crypto wallet address convention
-	UserWalletAddressMatched, err := utils.TestEthAddress(&param.UserWalletAddress)
+	UserWalletAddressMatched, err := utils.TestEthAddress(param.UserWalletAddress)
 	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test param.UserWalletAddress against regex"}); return;}
 	if !UserWalletAddressMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!ETH_ADDRESS - param.UserWalletAddress is not an ETH crypto wallet address"}); return;}
 
 	// test param.Signature to see if it's a valid ethereum signed signature
-	signedMsgMatched, err := utils.TestSignature(&param.Signature)
+	signedMsgMatched, err := utils.TestSignature(param.Signature)
 	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "!REGEX - cannot test param.signature against regex"}); return;}
 	if !signedMsgMatched {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "!SIGNATURE - param.signature is not an ETH cyphertext"}); return;}
 

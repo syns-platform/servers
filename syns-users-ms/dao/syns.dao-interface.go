@@ -33,28 +33,28 @@ type UserDao interface {
 
 	// @notice Checks if a username has been taken
 	// 
-	// @param username *string
+	// @param username string
 	// 
 	// @return bool
-	CheckUsernameAvailability(username *string) (bool, error)
+	CheckUsernameAvailability(username string) (bool, error)
 
 	// @notice Gets a user at wallet address.
 	// 
-	// @param walletAddress *string
+	// @param walletAddress string
 	// 
 	// @return *models.User
 	// 
 	// @return error
-	GetUserAt(walletAddress *string) (*models.User, error)
+	GetUserAt(walletAddress string) (*models.User, error)
 
 	// @notice Gets a user by username.
 	// 
-	// @param username *string
+	// @param username string
 	// 
 	// @return *models.User
 	// 
 	// @return error
-	GetUserBy(username *string) (*models.User, error)
+	GetUserBy(username string) (*models.User, error)
 
 	// @notice Gets all user.
 	// 
@@ -72,34 +72,34 @@ type UserDao interface {
 
 	// @notice Deletes a user at wallet address.
 	// 
-	// @param walletAddress *string
+	// @param walletAddress string
 	// 
 	// @return error
-	DeactivateUserAt(walletAddress *string) error
+	DeactivateUserAt(walletAddress string) error
 }
 
 // @notice FeedbackDao interface
 type FeedbackDao interface {
 	// @notice Handle feedback submission
 	// 
-	// @param email *string
+	// @param email string
 	// 
-	// @param feedback *string
+	// @param feedback string
 	// 
 	// @return error
-	SubmitFeedback(email, feedback *string) (error)
+	SubmitFeedback(email, feedback string) (error)
 }
 
 // @notice DemoRequestDao interface
 type DemoRequestDao interface {
 	// @notice Handle demo request submission
 	// 
-	// @param email *string
+	// @param email string
 	// 
-	// @param name *string
+	// @param name string
 	// 
-	// @param question *string
+	// @param question string
 	// 
 	// @return error
-	SubmitDemoRequest(email, name, question *string) (error)
+	SubmitDemoRequest(email, name, question string) (error)
 }

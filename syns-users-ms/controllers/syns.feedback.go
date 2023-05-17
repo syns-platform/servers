@@ -55,7 +55,7 @@ func (fc *FeedbackController) SubmitFeedback(gc *gin.Context) {
 	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
 
 	// invoke FeedbackDao.SubmitFeedback() api
-	if err := fc.FeedbackDao.SubmitFeedback(&param.Email, &param.Feedback); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
+	if err := fc.FeedbackDao.SubmitFeedback(param.Email, param.Feedback); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return;}
 
 	// alert new feedback submitted
 	utils.EmailNotification("FEEDBACK", param);

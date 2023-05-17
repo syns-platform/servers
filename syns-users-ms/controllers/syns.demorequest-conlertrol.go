@@ -48,7 +48,7 @@ func (fc *DemoRequestController) SubmitDemoRequest(gc *gin.Context) {
 	if err := validate.Struct(param); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"msg": nil, "error": err.Error()}); return;}
 
 	// invoke DemoRequestDao.SubmitDemoRequest() api
-	if err := fc.DemoRequestDao.SubmitDemoRequest(&param.Email, &param.Name, &param.Question); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"msg": nil, "error": err.Error()}); return;}
+	if err := fc.DemoRequestDao.SubmitDemoRequest(param.Email, param.Name, param.Question); err != nil {gc.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"msg": nil, "error": err.Error()}); return;}
 
 	// alert new demo request submitted
 	utils.EmailNotification("DEMO_REQUEST", param);

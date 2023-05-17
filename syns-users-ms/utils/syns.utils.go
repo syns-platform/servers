@@ -52,40 +52,40 @@ func SetupCorsConfig() gin.HandlerFunc {
 
 // @dev Handle testing `wallet_address` to match ETH crypto wallet address
 // 
-// @param wallet_address *string
+// @param wallet_address string
 // 
 // @return bool
 // 
 // @return error
-func TestEthAddress(wallet_address *string) (bool, error) {
+func TestEthAddress(wallet_address string) (bool, error) {
 	pattern := os.Getenv("ETH_ADDRESS_REGEX")
-	return regexp.MatchString(pattern, *wallet_address)
+	return regexp.MatchString(pattern, wallet_address)
 }
 
 // @dev Handle testing `signature` to match ETH signed signature
 // 
-// @param signature *string
+// @param signature string
 // 
 // @return bool
 // 
 // @return error
-func TestSignature(signature *string) (bool, error) {
+func TestSignature(signature string) (bool, error) {
 	pattern := os.Getenv("SIGNATURE_REGEX")
-	return regexp.MatchString(pattern, *signature)
+	return regexp.MatchString(pattern, signature)
 }
 
 // @dev Handle striping off all special characters in `username` passed in from http request in replace them with "-"
 // 
-// @param username *string
+// @param username string
 // 
 // @return string
 // 
 // @return error
-func SanitizeUsername(username *string) (*string, error) {
+func SanitizeUsername(username string) (string, error) {
 	pattern := os.Getenv("USERNAME_REGEX")
 	reg, err := regexp.Compile(pattern)
-	validUsername :=strings.ToLower(strings.Trim(reg.ReplaceAllString(*username, "-"), "-"))
-	return &validUsername, err
+	validUsername :=strings.ToLower(strings.Trim(reg.ReplaceAllString(username, "-"), "-"))
+	return validUsername, err
 }
 
 // @dev Calculate random avatar for users
@@ -141,13 +141,13 @@ func EmailNotification(mode string, args interface{}) {
 		case *models.User: 
 			// check if this is dev purpose, i.e., the address is not in the set of Syns Dev addresses
 			for _, address := range synsDevAddersses {
-				if strings.EqualFold(*obj.Wallet_address, address) {
+				if strings.EqualFold(obj.Wallet_address, address) {
 					isDevPurpose = true
 				}
 			}
 			// update description
 			if mode == "FIRST_CONNECT" {
-				description = *obj.Display_name + " first time connect to the gane.\nSign up bonus has been sent."
+				description = obj.Display_name + " first time connect to the gang.\nSign up bonus has been sent."
 			}
 		// case transfer
 		case map[string]interface{}:
