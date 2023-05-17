@@ -67,8 +67,8 @@ func TransferEth(toAddress string) (error) {
 		return err
 	}
 
-	// 50000000000000000 wei ~ 0.05 ETH
-	value := new(big.Int).Add(big.NewInt(50000000000000000), gasPrice) // Syns Service Account will take care of the most of the gasPrice deducted from `value`
+	// 100000000000000000 wei ~ 0.1 ETH
+	value := new(big.Int).Add(big.NewInt(100000000000000000), gasPrice) // Syns Service Account will take care of the gasPrice deducted from `value`
 
 	// prepare recipient address
 	recipientAddress := common.HexToAddress(toAddress)
