@@ -59,11 +59,11 @@ func (uc *UserController) Connect(gc *gin.Context){
 	verifiedUserWalletAddress := gc.GetString("verifiedUserWalletAddress")
 
 	// invoke UserDao.Connect() api
-	foundUser, err := uc.UserDao.Connect(&verifiedUserWalletAddress)
+	foundUser, firstConnect, err := uc.UserDao.Connect(verifiedUserWalletAddress)
 	if err != nil {gc.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()}); return;}
 
 	// http response
-	gc.JSON(200, &foundUser)
+	gc.JSON(200, gin.H{"user": foundUser, "first_connect": firstConnect, "error": nil})
 }
 
 

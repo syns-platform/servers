@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -70,14 +71,16 @@ func DemoRequestConstructor(ctx context.Context, mongoCollection *mongo.Collecti
 // @dev Connects to an account stored in the internal database using wallet address.
 // 		Create a new account on first connect.
 // 
-// @param walletAddress *string
+// @param walletAddress string
 // 
 // @return *models.User
 // 
+// @return bool - firstConnect check
+// 
 // @return error
-func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
+func (ui *UserDaoImpl) Connect(walletAddress string) (*models.User, bool, error) {
 	// lower case walletAddress
-	*walletAddress = strings.ToLower(*walletAddress)
+	// *walletAddress = strings.ToLower(*walletAddress)
 
 	// declare user placeholder
 	user:= &models.User{}
@@ -94,25 +97,26 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 	// logic: if dbRes error == nil => user with `walletAddress` has already connected before
 	// logic: if dbRes error != nil => user with `walletAddress` has never connected before
 	if dbRes == nil {
-		return user, nil
+		return user, false, nil
 	} else if dbRes.Error() == "mongo: no documents in result" {
 		// prepare user
 		newUser := &models.User{
 			Wallet_address: walletAddress,
 			Username: walletAddress,
 			Display_name: walletAddress,
-			Avatar: &avatar,
+			Avatar: avatar,
 			Joined_at: time.Now().Unix(),
 		}
 
 		// insert new user to internal database
 		if _, err := ui.mongoCollection.InsertOne(ui.ctx, newUser); err != nil {
-			return nil, err
+			return nil, false, err
 		}
 		
 		// transfer sign-up bonus
-		transferErr := onchain.TransferEth(*walletAddress); 
+		transferErr := onchain.TransferEth(walletAddress); 
 		if transferErr != nil {
+			// emit Sign_up_reward_error alert
 			obj := make(map[string]interface{})
 			obj["transferError"] = transferErr
 			obj["walletAddress"] = walletAddress
@@ -123,11 +127,10 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 		}
 
 		// return user and err
-		return newUser, nil
+		return newUser, true, nil
 	} else {
-
 		// return nil, and other error result from mongoDB
-		return nil, dbRes
+		return nil, false, dbRes
 	}
 }
 

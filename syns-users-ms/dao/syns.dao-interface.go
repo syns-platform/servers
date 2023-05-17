@@ -17,10 +17,14 @@ type UserDao interface {
 	// @notice Connects to an account stored in the internal database using wallet address.
 	// 		   Create a new account on first connect.
 	// 
-	// @param walletAddress
+	// @param walletAddress string
+	// 
+	// @return *models.User
+	// 
+	// @return bool - first connect check
 	// 
 	// @return error
-	Connect(walletAddress *string) (*models.User, error)
+	Connect(walletAddress string) (*models.User, bool, error)
 
 	// @notice Lets a wallet owner claim a Syns page with passed-in username
 	// 
