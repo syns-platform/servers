@@ -111,8 +111,6 @@ func EmailNotification(mode string, args interface{}) {
 	description := ""
 	smtpHost := "smtp.titan.email" // Titan Email SMTP server
 	smtpPort := "587"              // Titan Email SMTP port
-	isDevPurpose := false;
-	synsDevAddersses := strings.Split(os.Getenv("SYNS_DEV_WALLET_ADDRESSES"), ",") 
 
 	// prepare subject
 	if mode == "FEEDBACK" {
@@ -129,9 +127,6 @@ func EmailNotification(mode string, args interface{}) {
 	switch obj := args.(type) {
 		// case feedback
 		case *models.Feedback:
-			if os.Getenv("GIN_MODE") != "release" {
-				isDevPurpose = true
-			}
 			if obj.Email == "" {
 				description = "From an anonymous: " +obj.Feedback
 			} else {
@@ -139,12 +134,6 @@ func EmailNotification(mode string, args interface{}) {
 			}
 		// case first connect
 		case *models.User: 
-			// check if this is dev purpose, i.e., the address is not in the set of Syns Dev addresses
-			for _, address := range synsDevAddersses {
-				if strings.EqualFold(obj.Wallet_address, address) {
-					isDevPurpose = true
-				}
-			}
 			// update description
 			if mode == "FIRST_CONNECT" {
 				description = obj.Display_name + " first time connect to the gang.\nSign up bonus has been sent."
@@ -159,21 +148,18 @@ func EmailNotification(mode string, args interface{}) {
 			return
 	}
 
-	// only send email if this request is not for dev purpose
-	if !isDevPurpose {
-		// Set up authentication information for Gmail's SMTP server
-		auth := smtp.PlainAuth("", synsFeedbackEmail, synsFeedbackEmailPassword, smtpHost)
+	// Set up authentication information for Gmail's SMTP server
+	auth := smtp.PlainAuth("", synsFeedbackEmail, synsFeedbackEmailPassword, smtpHost)
 
-		// Compose the email message
-		to := []string{synsFeedbackEmail}
-		msg := []byte("To: " +synsFeedbackEmail+ " +\r\n" +subject + "\r\n" + "\r\n" +description)
+	// Compose the email message
+	to := []string{synsFeedbackEmail}
+	msg := []byte("To: " +synsFeedbackEmail+ " +\r\n" +subject + "\r\n" + "\r\n" +description)
 
-		// Send the email using Gmail's SMTP server
-		err := smtp.SendMail(smtpHost+":"+smtpPort, auth, synsFeedbackEmail, to, msg)
-		if err != nil {
-			// Handle any errors that occur while sending the email
-			panic(err)
-		}
+	// Send the email using Gmail's SMTP server
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, synsFeedbackEmail, to, msg)
+	if err != nil {
+		// Handle any errors that occur while sending the email
+		panic(err)
 	}
 }
 
