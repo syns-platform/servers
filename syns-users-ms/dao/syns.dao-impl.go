@@ -83,7 +83,7 @@ func (ui *UserDaoImpl) Connect(walletAddress *string) (*models.User, error) {
 	user:= &models.User{}
 
 	// set up find query
-	query := bson.D{{Key: "wallet_address", Value: walletAddress}}
+	query := bson.D{{Key: "wallet_address", Value: primitive.Regex{Pattern: "^" + walletAddress + "$", Options: "i"}}}
 	
 	// find the user in database using user.wallet_address
 	dbRes := ui.mongoCollection.FindOne(ui.ctx, query).Decode(user)
@@ -148,7 +148,7 @@ func (ui *UserDaoImpl) ClaimPage(userParam *models.User) (*models.User, error) {
 	user:= &models.User{}
 
 	// set up find query
-	walletQuery := bson.D{{Key: "wallet_address", Value: userParam.Wallet_address}}
+	walletQuery := bson.D{{Key: "wallet_address", Value: primitive.Regex{Pattern: "^" + userParam.Wallet_address + "$", Options: "i"}}}
 	usernameQuery := bson.D{{Key: "username", Value: userParam.Username}}
 	
 	// find the user in database using user.wallet_address
@@ -326,7 +326,7 @@ func (ui *UserDaoImpl) UpdateUser(user *models.User) error {
 // @return error
 func (ui *UserDaoImpl) DeactivateUserAt(walletAddress string) error {
 	// set up find query
-	filter := bson.D{{Key: "wallet_address", Value: walletAddress}}
+	filter := bson.D{{Key: "wallet_address", Value: primitive.Regex{Pattern: "^" +walletAddress+ "$", Options: "i"}}}
 
 	// delete user from internal database
 	result, err := ui.mongoCollection.DeleteOne(ui.ctx, filter)
