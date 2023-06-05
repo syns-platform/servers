@@ -56,4 +56,15 @@ type Syns721TokenDao interface {
 	// 
 	// @return error
 	GetAllSyns721SuperTokensOwnedBy(tokenOwner string) (*[]models.Syns721SuperNFT, error)
+
+	// @notice Get single Syns 721 Super Token
+	// 
+	// @param assetContract string
+	// 
+	// @param tokenId string
+	// 
+	// @return *models.Syns721SuperNFT
+	// 
+	// @return error
+	GetSyns721SuperTokenMetadata(assetContract, tokenId string) (*models.Syns721SuperNFT, error)
 }

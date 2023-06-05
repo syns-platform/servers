@@ -96,3 +96,21 @@ func (stc *SynsTokenController) GetAllSyns721SuperTokensOwnedBy(gc *gin.Context)
 	// httpo response
 	gc.JSON(200, gin.H{"syns721SuperTokens": syns721SuperTokens, "error": nil})
 }
+
+// @route `GET//fetch-syns-721-super-token/:asset-contract/:token-id`
+// 
+// @dev handle fetching specific syns 721 super token by assetContract and tokenId
+// 
+// @param gc *gin.Context
+func (stc *SynsTokenController) GetSyns721SuperTokenMetadata(gc *gin.Context) {
+	// prepare param
+	assetContract := gc.Param("asset-contract")
+	tokenId := gc.Param("token-id")
+
+	// invokle GetSyns721SuperToken dao method
+	syns721SuperToken, err := stc.Syns721TokenDao.GetSyns721SuperTokenMetadata(assetContract, tokenId)
+	if err != nil {gc.AbortWithStatusJSON(500, gin.H{"syns721SuperTokenMetadata": nil, "error": err.Error()}); return}
+
+	// httpo response
+	gc.JSON(200, gin.H{"syns721SuperTokenMetadata": syns721SuperToken, "error": nil})
+}

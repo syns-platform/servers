@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"math/big"
+	"strconv"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -264,4 +265,35 @@ func (sti *Syns721TokenDaoImpl) GetAllSyns721SuperTokensOwnedBy(tokenOwner strin
 
 	// return OK
 	return &syns721SuperTokens, nil
+}
+
+// @dev Get single Syns 721 Super Token
+// 
+// @param assetContract string
+// 
+// @param tokenId string
+// 
+// @return *models.Syns721SuperNFT
+// 
+// @return error
+func (sti *Syns721TokenDaoImpl) GetSyns721SuperTokenMetadata(assetContract, tokenId string) (*models.Syns721SuperNFT, error) {
+	// prepare tokens placeholder
+	var syns721SuperToken models.Syns721SuperNFT
+	
+	// convert tokenId to number
+	tokenIdInt, _ := strconv.Atoi(tokenId)
+
+	// prepare find query
+	query := bson.D{
+		{Key: "asset_contract", Value: primitive.Regex{Pattern: "^" + assetContract + "$", Options: "i"}},
+		{Key: "token_id", Value: tokenIdInt},
+	}
+	
+
+	// find tokens owned my tokenOwner
+	dbRes := sti.mongoCollection.FindOne(sti.ctx, query).Decode(&syns721SuperToken); 
+	if dbRes != nil {return nil, dbRes}
+
+	// return OK
+	return &syns721SuperToken, nil
 }

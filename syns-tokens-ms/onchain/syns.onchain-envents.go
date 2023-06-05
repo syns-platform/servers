@@ -90,7 +90,7 @@ func (sto *SynsTokenOnchain) HandleNewSyns721TokenMinted(client *ethclient.Clien
 
 				// add new token to database
 				if err := sto.Syns721TokenDao.MintNewSyns721Token(synsSuperToken); err != nil {
-					log.Fatal(err)
+					log.Panic(err)
 				} else {
 					log.Println("New Event Alert - newTokenMintedTo: Successfully added new Syns 721 super token to database!")
 					// send an alert to admin
@@ -148,7 +148,7 @@ func (sto *SynsTokenOnchain) HandleSyns721ListingAdded(client *ethclient.Client,
 				// @logic if listing is created by tokenType = 1 (i.e. ERC721) => update syns721SuperToken in database
 				if (listingAddedEvent.Listing.TokenType == 1) {
 					if dbRes := sto.Syns721TokenDao.UpdatedSyns721SuperTokenBySynsListing(&listingAddedEvent.Listing, eventName); dbRes != nil {
-						log.Fatal(dbRes)
+						log.Panic(dbRes)
 					} else {
 						log.Println("New Event Alert - ListingAdded: Successfully updated Syns 721 super token based on Syns Listing!")
 					}
@@ -198,7 +198,7 @@ func (sto *SynsTokenOnchain) HandleSyns721ListingRemoved(client *ethclient.Clien
 
 				// update super token logics
 				if dbRes := sto.Syns721TokenDao.UpdatedSyns721SuperTokenBySynsListing(&synsListing, eventName); dbRes != nil {
-					log.Fatal(dbRes)
+					log.Panic(dbRes)
 				} else {
 					log.Println("New Event Alert - ListingRemoved: Successfully updated Syns 721 super token based on Syns Listing!")
 				}
@@ -245,7 +245,7 @@ func (sto *SynsTokenOnchain) HandleSyns721ListingTransfer(client *ethclient.Clie
 				buyer := decoded[0].(common.Address).Hex()
 				
 				if err := sto.Syns721TokenDao.TransferSyns721SuperToken(listingId, buyer); err != nil {
-					log.Fatal(err)
+					log.Panic(err)
 				} else {
 					log.Println("New Event Alert - NewSale: Successfully transfer Syns 721 super token!")
 				}

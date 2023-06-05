@@ -30,6 +30,7 @@ type SynsTokenkRouter struct {
 func (str *SynsTokenkRouter) Syns721TokenRouter (rg *gin.RouterGroup) {
 	rg.GET("/get-all-syns-721-super-tokens", str.SynsTokenController.GetAllSyns721SuperTokens)
 	rg.GET("/fetch-syns-721-super-tokens-owned-by/:token-owner", str.SynsTokenController.GetAllSyns721SuperTokensOwnedBy)
+	rg.GET("/fetch-syns-721-super-token-metadata/:asset-contract/:token-id", str.SynsTokenController.GetSyns721SuperTokenMetadata)
 
 	// Utils APIs
 	rg.GET("/get-all-syns-tokens/utils/:asset-contract", controllers.GetAllSynsTokens)
