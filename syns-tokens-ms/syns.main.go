@@ -91,10 +91,11 @@ func main() {
 	// @notice listen to newTokenMintedTo on-chain event to add new token to database
 	to.HandleNewSyns721TokenMinted(client, "contract-artifacts/SynsERC721.json")
 
-	// @notice listen to ListingAdded on-chain event to update listing token in database
-	to.HandleSyns721ListingAdded(client, "contract-artifacts/SynsMarketplace.json")
-	to.HandleSyns721ListingRemoved(client, "contract-artifacts/SynsMarketplace.json")
-	to.HandleSyns721ListingTransfer(client, "contract-artifacts/SynsMarketplace.json")
+	// @notice listen to ListingAdded, ListingRemoved, listingTransfer on-chain events to update listing token in database
+	pathToMarketplacesc := "contract-artifacts/SynsMarketplace.json"
+	to.HandleSyns721ListingAdded(client, pathToMarketplacesc)
+	to.HandleSyns721ListingRemoved(client, pathToMarketplacesc)
+	to.HandleSyns721ListingTransfer(client, pathToMarketplacesc)
 
 	// run server
 	if (os.Getenv("GIN_MODE") != "release") {
