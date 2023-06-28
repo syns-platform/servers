@@ -14,12 +14,14 @@ DOCKER_PUSH=docker push
 DOCKER_IMAGE_LIST_ID=docker images -q
 DOCKER_CONTAINER_LIST_ID=docker ps -aq
 DOCKER_BUILD_SCRIPT=docker build --no-cache -t $(SYNS_USER_MS_IMAGE) .
-DOCKER_RUN_SCRIPT=docker run -d --rm $\
-					--name $(SYNS_USER_MS_SERVER) $\
-					--env-file .env $\
-					-e GIN_MODE=release $\
-					-p $(SYNS_USERS_PORT):$(PRODUCTION_PORT) $\
-					$(SYNS_USER_MS_IMAGE)
+DOCKER_RUN_SCRIPT=docker run $\
+		-d $\
+		--name $(SYNS_USER_MS_SERVER) $\
+		--restart=unless-stopped $\
+		--env-file .env $\
+		-e GIN_MODE=release $\
+		-p $(SYNS_USERS_PORT):$(PRODUCTION_PORT) $\
+		$(SYNS_USER_MS_IMAGE)
 
 ENV_VARS=$(shell grep -v '^#' .env | xargs)
 GOOGLE_CLOUD_PROJECT_ID=syns-platform
@@ -60,7 +62,10 @@ docker-remove-syns-users-img:
 docker-build-syns-users: docker-remove-syns-users-img
 	$(DOCKER_BUILD_SCRIPT)
 
-docker-run-syns-users:
+docker-remove-syns-users-container:
+	$(DOCKER_RM) $(SYNS_USER_MS_SERVER)
+
+docker-run-syns-users: docker-remove-syns-users-container
 	$(DOCKER_RUN_SCRIPT)
 
 docker-update-remote-image: docker-build-syns-users
