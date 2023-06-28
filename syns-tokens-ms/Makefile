@@ -14,12 +14,13 @@ DOCKER_PUSH=docker push
 DOCKER_IMAGE_LIST_ID=docker images -q
 DOCKER_CONTAINER_LIST_ID=docker ps -aq
 DOCKER_BUILD_SCRIPT=docker build --no-cache -t $(SYNS_TOKEN_MS_IMAGE) .
-DOCKER_RUN_SCRIPT=docker run -d --rm $\
-					--name $(SYNS_TOKEN_MS_SERVER) $\
-					--env-file .env $\
-					-e GIN_MODE=release $\
-					-p $(SYNS_TOKEN_PORT):$(PRODUCTION_PORT) $\
-					$(SYNS_TOKEN_MS_IMAGE)
+DOCKER_RUN_SCRIPT=docker run -d $\
+			--name $(SYNS_TOKEN_MS_SERVER) $\
+			--restart=unless-stopped $\
+			--env-file .env $\
+			-e GIN_MODE=release $\
+			-p $(SYNS_TOKEN_PORT):$(PRODUCTION_PORT) $\
+			$(SYNS_TOKEN_MS_IMAGE)
 
 ENV_VARS=$(shell grep -v '^#' .env | xargs)
 GOOGLE_CLOUD_PROJECT_ID=syns-platform
@@ -60,7 +61,10 @@ docker-remove-syns-token-img:
 docker-build-syns-token: docker-remove-syns-token-img
 	$(DOCKER_BUILD_SCRIPT)
 
-docker-run-syns-token:
+docker-remove-syns-token-container:
+	$(DOCKER_RM) $(SYNS_TOKEN_MS_SERVER)
+
+docker-run-syns-token: docker-remove-syns-token-container
 	$(DOCKER_RUN_SCRIPT)
 
 docker-update-remote-image: docker-build-syns-token
